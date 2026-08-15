@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Brick by Brick — Anvora Games</title>
+<meta name="description" content="Brick by Brick — a neon arcade brick-breaker by Anvora Games. Break. Combo. Conquer.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect x=%2210%22 y=%2225%22 width=%2280%22 height=%2218%22 rx=%224%22 fill=%22%233fd8ff%22/><rect x=%2210%22 y=%2257%22 width=%2280%22 height=%2218%22 rx=%224%22 fill=%22%23b565ff%22/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="appRoot">
+
+  <!-- ============================================================
+       MENU / OVERLAY SCREENS  (full-viewport, one active at a time)
+       ============================================================ -->
+  <div id="menuLayer">
+
+    <!-- ---------- MAIN MENU ---------- -->
+    <section id="screen-menu" class="screen active" aria-label="Main Menu">
+      <canvas id="menuBg" class="menu-bg" aria-hidden="true"></canvas>
+      <div class="panel panel--wide">
+        <div class="logo-block">
+          <h1>BRICK <span class="grad">BY</span> BRICK</h1>
+          <p class="tagline">BREAK. COMBO. CONQUER.</p>
+        </div>
+        <nav class="menu-btns">
+          <button class="btn btn-primary" data-action="play" aria-label="Play game">PLAY</button>
+          <button class="btn btn-ghost" data-action="howto" aria-label="How to play">HOW TO PLAY</button>
+          <button class="btn btn-ghost" data-action="settings" aria-label="Settings">SETTINGS</button>
+          <button class="btn btn-ghost" data-action="stats" aria-label="Statistics">STATS</button>
+        </nav>
+        <div class="menu-footer">
+          <p class="brand-line">ANVORA GAMES</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- HOW TO PLAY ---------- -->
+    <section id="screen-howto" class="screen" aria-label="How to Play">
+      <div class="panel panel--wide">
+        <h2>How to Play</h2>
+        <div class="block">
+          <h3>Goal</h3>
+          <ul class="plain-list">
+            <li>Keep the ball alive with your paddle and destroy every brick.</li>
+            <li>Chain destructions without losing the ball to build your combo multiplier.</li>
+            <li>Catch falling power-ups for temporary boosts.</li>
+          </ul>
+        </div>
+        <div class="block">
+          <h3>Desktop Controls</h3>
+          <ul class="plain-list">
+            <li>Move paddle — Mouse movement, A / D, or Left / Right arrow keys</li>
+            <li>Launch ball — Space</li>
+            <li>Pause — Esc</li>
+          </ul>
+        </div>
+        <div class="block">
+          <h3>Mobile Controls</h3>
+          <ul class="plain-list">
+            <li>Move paddle — drag your finger anywhere on the arena</li>
+            <li>Or use the ◀ ▶ touch buttons</li>
+            <li>Launch ball — tap LAUNCH</li>
+            <li>Pause — tap ❚❚</li>
+          </ul>
+        </div>
+        <button class="btn btn-primary" data-action="back">Back</button>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <section id="screen-settings" class="screen" aria-label="Settings">
+      <div class="panel">
+        <h2>Settings</h2>
+        <div class="setting-row">
+          <label for="soundToggle">Sound</label>
+          <input type="checkbox" id="soundToggle" checked>
+        </div>
+        <div class="setting-row">
+          <label for="musicToggle">Music</label>
+          <input type="checkbox" id="musicToggle" checked>
+        </div>
+        <div class="setting-row">
+          <label for="particlesToggle">Particles</label>
+          <input type="checkbox" id="particlesToggle" checked>
+        </div>
+        <div class="setting-row">
+          <label for="shakeToggle">Screen Shake</label>
+          <input type="checkbox" id="shakeToggle" checked>
+        </div>
+        <p class="settings-note">ANVORA GAMES</p>
+        <button class="btn btn-primary" data-action="back">Back</button>
+      </div>
+    </section>
+
+    <!-- ---------- STATS ---------- -->
+    <section id="screen-stats" class="screen" aria-label="Statistics">
+      <div class="panel">
+        <h2>Statistics</h2>
+        <ul class="stat-list">
+          <li><span>High Score</span><b data-stat="highScore">0</b></li>
+          <li><span>Highest Level</span><b data-stat="highestLevel">1</b></li>
+          <li><span>Games Played</span><b data-stat="gamesPlayed">0</b></li>
+          <li><span>Games Won</span><b data-stat="gamesWon">0</b></li>
+          <li><span>Bricks Destroyed</span><b data-stat="bricksDestroyed">0</b></li>
+          <li><span>Best Combo</span><b data-stat="bestCombo">x1</b></li>
+          <li><span>Power-Ups Collected</span><b data-stat="powerupsCollected">0</b></li>
+          <li><span>Total Score</span><b data-stat="totalScore">0</b></li>
+        </ul>
+        <div class="stat-actions">
+          <button class="btn btn-danger" id="resetStatsBtn">Reset Stats</button>
+          <button class="btn btn-primary" data-action="back">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- PAUSE ---------- -->
+    <section id="screen-pause" class="screen overlay" aria-label="Paused">
+      <div class="panel">
+        <h2>PAUSED</h2>
+        <nav class="menu-btns">
+          <button class="btn btn-primary" data-action="resume">RESUME</button>
+          <button class="btn btn-ghost" data-action="restart-level">RESTART LEVEL</button>
+          <button class="btn btn-ghost" data-action="main-menu">MAIN MENU</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ---------- LEVEL COMPLETE ---------- -->
+    <section id="screen-levelcomplete" class="screen overlay" aria-label="Level Complete">
+      <div class="panel">
+        <h2 class="celebrate">LEVEL COMPLETE!</h2>
+        <div class="result-grid">
+          <p>Score <b id="lcScore">0</b></p>
+          <p>Bricks Destroyed <b id="lcBricks">0</b></p>
+          <p>Combo <b id="lcCombo">x1</b></p>
+          <p>Bonus <b id="lcBonus">0</b></p>
+        </div>
+        <nav class="menu-btns">
+          <button class="btn btn-primary" data-action="next-level">NEXT LEVEL</button>
+          <button class="btn btn-ghost" data-action="main-menu">MAIN MENU</button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ---------- GAME OVER ---------- -->
+    <section id="screen-gameover" class="screen overlay" aria-label="Game Over">
+      <div class="panel">
+        <h2>GAME OVER</h2>
+        <p class="new-high" id="newHighTag" hidden>NEW HIGH SCORE!</p>
+        <div class="result-grid">
+          <p>Score <b id="goScore">0</b></p>
+          <p>High Score <b id="goHigh">0</b></p>
+          <p>Level <b id="goLevel">1</b></p>
+          <p>Best Combo <b id="goCombo">x1</b></p>
+          <p>Bricks Destroyed <b id="goBricks">0</b></p>
+        </div>
+        <nav class="menu-btns">
+          <button class="btn btn-primary" data-action="retry">TRY AGAIN</button>
+          <button class="btn btn-ghost" data-action="main-menu">MAIN MENU</button>
+        </nav>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ============================================================
+       GAME LAYER — HUD lives OUTSIDE the canvas (own flex row),
+       canvas centers inside the remaining flex space below it.
+       ============================================================ -->
+  <div id="gameLayer" hidden>
+
+    <div class="hud-bar" id="hudBar">
+      <div class="hud-stat"><span>Score</span><b id="hudScore">0</b></div>
+      <div class="hud-stat"><span>High Score</span><b id="hudHigh">0</b></div>
+      <div class="hud-stat"><span>Level</span><b id="hudLevel">1</b></div>
+      <div class="hud-stat"><span>Lives</span><b id="hudLives">3</b></div>
+      <div class="hud-stat"><span>Combo</span><b id="hudCombo">x1</b></div>
+      <button class="pause-btn" data-action="pause" aria-label="Pause game">❚❚</button>
+    </div>
+
+    <div class="arena-area" id="arenaArea">
+      <canvas id="gameCanvas" aria-label="Brick by Brick game arena" role="img"></canvas>
+      <div class="level-banner" id="levelBanner" hidden></div>
+      <div class="combo-popup" id="comboPopup" hidden></div>
+      <div class="life-lost-flash" id="lifeLostFlash" hidden></div>
+    </div>
+
+    <div class="touch-bar" id="touchBar" hidden>
+      <button class="touch-btn" data-side="left" aria-label="Move paddle left">◀</button>
+      <button class="touch-launch" id="touchLaunchBtn" aria-label="Launch ball">LAUNCH</button>
+      <button class="touch-btn" data-side="right" aria-label="Move paddle right">▶</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

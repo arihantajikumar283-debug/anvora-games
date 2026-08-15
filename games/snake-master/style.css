@@ -1,0 +1,1249 @@
+/* ============================================================
+   SNAKE MASTER — STYLESHEET
+   Created by Arihant | © 2026 Arihant. All Rights Reserved.
+   Organized into: Tokens (themes) → Reset → Background →
+   Layout → Components → Screens → Animations → Responsive
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. DESIGN TOKENS
+   Each theme is a set of CSS custom properties applied via
+   [data-theme="..."] on <body>. Swapping the attribute in JS
+   (see setTheme() in script.js) re-themes the whole app
+   instantly — no reload needed.
+------------------------------------------------------------- */
+
+:root {
+  --font-display: 'Poppins', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Consolas', 'Menlo', monospace;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --transition-fast: 120ms ease;
+  --transition-med: 240ms ease;
+  --glass-blur: 18px;
+}
+
+/* --- Dark theme (default): deep charcoal + teal/violet glow --- */
+body[data-theme="dark"] {
+  --bg: #0b0e14;
+  --bg-elevated: #131722;
+  --surface: rgba(23, 28, 43, 0.66);
+  --surface-solid: #171c2b;
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #eef1fb;
+  --text-muted: #8891ab;
+  --accent: #6ee7c9;
+  --accent-2: #a78bfa;
+  --danger: #ff6b81;
+  --food-1: #ff6b81;
+  --food-2: #ffd166;
+  --food-3: #6ee7c9;
+  --food-mystery: #c084fc;
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --shadow-glow: 0 0 24px rgba(110, 231, 201, 0.35);
+  --bg-gradient: radial-gradient(circle at 20% 20%, #1a2036 0%, #0b0e14 55%), radial-gradient(circle at 80% 80%, #1c1430 0%, transparent 60%);
+  --particle-color: #6ee7c9;
+}
+
+/* --- Light theme: soft, high-contrast, minimal --- */
+body[data-theme="light"] {
+  --bg: #eef1f8;
+  --bg-elevated: #ffffff;
+  --surface: rgba(255, 255, 255, 0.72);
+  --surface-solid: #ffffff;
+  --border: rgba(16, 19, 34, 0.08);
+  --text: #101322;
+  --text-muted: #5c6480;
+  --accent: #0f9d78;
+  --accent-2: #6d5bd0;
+  --danger: #e0435a;
+  --food-1: #e0435a;
+  --food-2: #e0a400;
+  --food-3: #0f9d78;
+  --food-mystery: #8a5cf6;
+  --grid-line: rgba(16, 19, 34, 0.05);
+  --shadow-glow: 0 0 18px rgba(15, 157, 120, 0.25);
+  --bg-gradient: radial-gradient(circle at 20% 20%, #ffffff 0%, #e7ecf7 60%), radial-gradient(circle at 80% 80%, #f3ecff 0%, transparent 60%);
+  --particle-color: #0f9d78;
+}
+
+/* --- Neon theme: near-black + saturated magenta/cyan --- */
+body[data-theme="neon"] {
+  --bg: #060008;
+  --bg-elevated: #0d0212;
+  --surface: rgba(18, 4, 24, 0.66);
+  --surface-solid: #120418;
+  --border: rgba(0, 240, 255, 0.16);
+  --text: #f7ecff;
+  --text-muted: #b58fd6;
+  --accent: #00f0ff;
+  --accent-2: #ff2fd0;
+  --danger: #ff3860;
+  --food-1: #ff2fd0;
+  --food-2: #f9ff21;
+  --food-3: #00f0ff;
+  --food-mystery: #ff9d00;
+  --grid-line: rgba(0, 240, 255, 0.06);
+  --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.45);
+  --bg-gradient: radial-gradient(circle at 25% 25%, #1a0022 0%, #060008 55%), radial-gradient(circle at 75% 75%, #200018 0%, transparent 60%);
+  --particle-color: #ff2fd0;
+}
+
+/* --- Cyberpunk theme: yellow/magenta on near-black slate --- */
+body[data-theme="cyberpunk"] {
+  --bg: #0a0a12;
+  --bg-elevated: #12121e;
+  --surface: rgba(22, 18, 34, 0.68);
+  --surface-solid: #16121e;
+  --border: rgba(255, 214, 10, 0.18);
+  --text: #fdf5e6;
+  --text-muted: #a89bb8;
+  --accent: #ffd60a;
+  --accent-2: #ff2ee6;
+  --danger: #ff3864;
+  --food-1: #ff2ee6;
+  --food-2: #ffd60a;
+  --food-3: #00e5ff;
+  --food-mystery: #7bff00;
+  --grid-line: rgba(255, 214, 10, 0.05);
+  --shadow-glow: 0 0 28px rgba(255, 214, 10, 0.4);
+  --bg-gradient: radial-gradient(circle at 15% 30%, #1c0a2e 0%, #0a0a12 55%), radial-gradient(circle at 85% 70%, #1a1400 0%, transparent 60%);
+  --particle-color: #ffd60a;
+}
+
+/* --- Ocean theme: deep blue + aqua glow --- */
+body[data-theme="ocean"] {
+  --bg: #051224;
+  --bg-elevated: #0a1c33;
+  --surface: rgba(10, 28, 51, 0.68);
+  --surface-solid: #0a1c33;
+  --border: rgba(88, 210, 255, 0.16);
+  --text: #eaf6ff;
+  --text-muted: #82a9c4;
+  --accent: #38bdf8;
+  --accent-2: #2dd4bf;
+  --danger: #fb7185;
+  --food-1: #fb7185;
+  --food-2: #fbbf24;
+  --food-3: #2dd4bf;
+  --food-mystery: #818cf8;
+  --grid-line: rgba(56, 189, 248, 0.06);
+  --shadow-glow: 0 0 26px rgba(56, 189, 248, 0.4);
+  --bg-gradient: radial-gradient(circle at 20% 20%, #0d2a4a 0%, #051224 55%), radial-gradient(circle at 80% 80%, #062133 0%, transparent 60%);
+  --particle-color: #38bdf8;
+}
+
+/* --- Forest theme: deep green + amber glow --- */
+body[data-theme="forest"] {
+  --bg: #0c1710;
+  --bg-elevated: #14231a;
+  --surface: rgba(18, 34, 24, 0.68);
+  --surface-solid: #14231a;
+  --border: rgba(163, 230, 53, 0.16);
+  --text: #eef7ec;
+  --text-muted: #93ab93;
+  --accent: #a3e635;
+  --accent-2: #fbbf24;
+  --danger: #f87171;
+  --food-1: #f87171;
+  --food-2: #fbbf24;
+  --food-3: #a3e635;
+  --food-mystery: #34d399;
+  --grid-line: rgba(163, 230, 53, 0.05);
+  --shadow-glow: 0 0 24px rgba(163, 230, 53, 0.35);
+  --bg-gradient: radial-gradient(circle at 20% 20%, #16301f 0%, #0c1710 55%), radial-gradient(circle at 80% 80%, #1a2914 0%, transparent 60%);
+  --particle-color: #a3e635;
+}
+
+/* ------------------------------------------------------------
+   2. RESET & BASE
+------------------------------------------------------------- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+/* Always reserve the vertical scrollbar's width (where supported).
+   Without this, any small change in page height — like a power-up
+   chip appearing above the board — can cross the "needs a
+   scrollbar" threshold and shift every element's available width
+   by ~15px. That shift is what reads as the board "zooming"; this
+   one line removes the possibility entirely. */
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  color: var(--text);
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color var(--transition-med), color var(--transition-med);
+}
+
+/* Readable focus ring everywhere — accessibility requirement */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* --- Animated background particle canvas (behind everything) --- */
+#bg-particles {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------
+   LOADING SCREEN
+   A brief, original branded transition shown while the app
+   boots (fonts settle, storage is checked, audio is wired up).
+   Fades out and unmounts itself — see Boot.run() in script.js.
+------------------------------------------------------------- */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--bg);
+  background-image: var(--bg-gradient);
+  opacity: 1;
+  transition: opacity 420ms ease;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(24px, 6vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.loading-logo-icon {
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent);
+  animation: loadingSpin 1.4s linear infinite;
+  display: inline-block;
+  font-size: 0.8em;
+}
+
+.loading-logo-accent {
+  color: var(--accent);
+  text-shadow: 0 0 16px var(--accent);
+}
+
+.loading-bar {
+  width: min(220px, 60vw);
+  height: 4px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 12px var(--accent);
+  transition: width 280ms ease;
+}
+
+.loading-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+@keyframes loadingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-logo-icon { animation: none; }
+}
+
+/* --- Glassmorphism surface used by panels & overlay cards --- */
+.glass {
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  border: 1px solid var(--border);
+}
+
+/* ------------------------------------------------------------
+   3. APP LAYOUT
+------------------------------------------------------------- */
+
+#app {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+}
+
+/* --- HUD (top scoreboard during play) --- */
+.hud {
+  width: min(600px, 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.hud-group {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.hud-stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 44px;
+}
+
+.hud-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.hud-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Brief pop when the score changes — retriggered via JS by
+   toggling the class off/on (see UI.updateHUD in script.js). */
+#hud-score.score-pop {
+  animation: scorePop 320ms ease;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent);
+}
+
+@keyframes scorePop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.combo-value {
+  color: var(--accent-2);
+  text-shadow: 0 0 12px var(--accent-2);
+}
+
+.hud-fps {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  margin-right: 4px;
+}
+
+.hud-actions {
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.icon-btn:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-glow);
+}
+
+/* --- Active power-up strip ---
+   min-height keeps this row's footprint identical whether 0 or
+   several chips are showing, so a power-up starting/ending never
+   reflows (and therefore never resizes) anything below it. */
+.powerup-strip {
+  width: min(600px, 100%);
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.powerup-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-glow);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  animation: chipIn 200ms ease;
+}
+
+.powerup-chip .chip-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* --- Stage: wraps the canvas + overlays ---
+   flex-shrink: 0 plus the fixed width/aspect-ratio above guarantee
+   this box's footprint never changes for any reason — not on
+   resize, not on power-up pickup, not on layout changes elsewhere
+   on the page. Board size is locked. */
+.stage {
+  position: relative;
+  width: min(600px, 100%);
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-glow), 0 20px 60px rgba(0, 0, 0, 0.35);
+  background: var(--bg-elevated);
+  --powerup-color: var(--accent);
+}
+
+/* Power-up "border glow" — an animated box-shadow ring. box-shadow
+   is painted outside the element's border box and is NOT part of
+   its layout size, so this can pulse freely without ever affecting
+   the board's actual width/height (even though .stage clips its
+   own contents with overflow: hidden, that only clips children —
+   never the element's own shadow). */
+.stage.stage-powered {
+  animation: powerupBorderPulse 1.1s ease-in-out infinite;
+}
+
+@keyframes powerupBorderPulse {
+  0%, 100% {
+    box-shadow: var(--shadow-glow), 0 0 0 2px var(--powerup-color), 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+  50% {
+    box-shadow: var(--shadow-glow), 0 0 28px 6px var(--powerup-color), 0 20px 60px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Very subtle "screen shake" — food pickups only. translate() only
+   ever repositions pixels; it never changes element size, so this
+   cannot be mistaken for zoom/resizing. Amplitude is intentionally
+   tiny (≤2px). */
+.stage.food-shake {
+  animation: foodShake 160ms ease;
+}
+
+@keyframes foodShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ------------------------------------------------------------
+   4. OVERLAYS (countdown / pause / win) — sit above the canvas
+------------------------------------------------------------- */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 8, 14, 0.55);
+  backdrop-filter: blur(3px);
+  animation: fadeIn var(--transition-med);
+}
+
+.countdown-number {
+  font-size: clamp(64px, 20vw, 140px);
+  font-weight: 800;
+  color: var(--accent);
+  text-shadow: 0 0 40px var(--accent);
+  animation: countPulse 1s ease;
+}
+
+.overlay-card {
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 220px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.overlay-card h2 {
+  font-size: 24px;
+}
+
+.win-title {
+  color: var(--food-2);
+  text-shadow: 0 0 24px var(--food-2);
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* --- Floating score popups ("+10") --- */
+.popup-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.score-popup {
+  position: absolute;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent);
+  animation: floatUp 800ms ease-out forwards;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Power-up pickup label — same floating mechanism as the score
+   popup, just smaller (the text is longer) and a touch slower so
+   the name is easy to read before it fades. */
+.score-popup--powerup {
+  font-size: 14px;
+  animation-duration: 950ms;
+}
+
+/* ------------------------------------------------------------
+   5. TOUCH CONTROLS (mobile)
+------------------------------------------------------------- */
+
+.touch-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 68px);
+  grid-template-rows: repeat(2, 68px);
+  gap: 10px;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.touch-btn {
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 24px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+  user-select: none;
+  touch-action: manipulation;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.touch-btn:active {
+  transform: scale(0.88);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: var(--shadow-glow);
+}
+
+.touch-up   { grid-column: 2; grid-row: 1; }
+.touch-left { grid-column: 1; grid-row: 2; }
+.touch-down { grid-column: 2; grid-row: 2; }
+.touch-right{ grid-column: 3; grid-row: 2; }
+
+/* ------------------------------------------------------------
+   6. SCREENS (menu / game over / settings / stats / achievements)
+------------------------------------------------------------- */
+
+.screen {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 48px;
+}
+
+.panel {
+  width: min(460px, 100%);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: riseIn var(--transition-med);
+}
+
+.panel h1 {
+  font-size: 24px;
+}
+
+.menu-panel {
+  gap: 20px;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.logo {
+  font-size: clamp(32px, 7vw, 44px);
+  text-align: center;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  animation: logoFloat 4s ease-in-out infinite;
+}
+
+.logo-neon {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent), 0 0 30px var(--accent), 0 0 60px var(--accent-2);
+  animation: neonFlicker 3.2s ease-in-out infinite;
+}
+
+.tagline {
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+.dev-credit {
+  color: var(--accent-2);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.app-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* --- Field / segmented control (difficulty, theme, language) --- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.segmented {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+}
+
+.segmented-grid {
+  flex-wrap: wrap;
+}
+
+.segment {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.segment:hover {
+  color: var(--text);
+}
+
+.segment.active {
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: var(--shadow-glow);
+}
+
+/* --- Volume sliders --- */
+.slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  appearance: none;
+  outline: none;
+  border: 1px solid var(--border);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: var(--shadow-glow);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: none;
+  box-shadow: var(--shadow-glow);
+  cursor: pointer;
+}
+
+/* --- Skin picker grid --- */
+.skin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.skin-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.skin-card:hover {
+  transform: translateY(-2px);
+}
+
+.skin-card.active {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.skin-card.locked {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.skin-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+
+.skin-name {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.skin-lock {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 11px;
+}
+
+/* --- Buttons --- */
+.btn {
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 14px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary {
+  background: var(--accent-2);
+  color: var(--bg);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px var(--accent-2);
+}
+
+.btn-lg {
+  padding: 16px 24px;
+  font-size: 16px;
+}
+
+.btn-sm {
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+.btn-glow {
+  animation: btnPulse 2.4s ease-in-out infinite;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+}
+
+.btn-menu {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn-menu:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-exit:hover {
+  border-color: var(--danger);
+  box-shadow: 0 0 20px rgba(255, 107, 129, 0.4);
+}
+
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: var(--bg);
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.start-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.key-hint {
+  opacity: 0.7;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.controls-hint {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.controls-hint h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.controls-hint ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+kbd {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin-right: 2px;
+}
+
+/* --- Game over screen specifics --- */
+.gameover-title {
+  text-align: center;
+  color: var(--danger);
+  text-shadow: 0 0 20px var(--danger);
+  font-size: clamp(28px, 6vw, 36px);
+  animation: shake 400ms ease;
+}
+
+.gameover-sub {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.result-stat {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Staggered entrance for the game-over result tiles (each tile's
+   position in the DOM sets its delay — no JS timers needed). */
+#screen-gameover .result-stat {
+  animation: riseIn 320ms ease both;
+}
+#screen-gameover .result-stat:nth-child(1) { animation-delay: 60ms; }
+#screen-gameover .result-stat:nth-child(2) { animation-delay: 120ms; }
+#screen-gameover .result-stat:nth-child(3) { animation-delay: 180ms; }
+#screen-gameover .result-stat:nth-child(4) { animation-delay: 240ms; }
+
+.result-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.result-value {
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.new-record {
+  text-align: center;
+  color: var(--food-2);
+  font-weight: 700;
+  animation: pulse 1.2s infinite;
+}
+
+.stats-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* --- Settings toggles --- */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 6px 0;
+}
+
+.toggle {
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: background var(--transition-fast);
+}
+
+.toggle[aria-checked="true"] {
+  background: var(--accent);
+}
+
+.toggle-dot {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform var(--transition-fast);
+}
+
+.toggle[aria-checked="true"] .toggle-dot {
+  transform: translateX(20px);
+  background: var(--bg);
+}
+
+/* --- Achievements --- */
+.achievement-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.achievement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  opacity: 0.5;
+}
+
+.achievement-item.unlocked {
+  opacity: 1;
+  border-color: var(--accent);
+  box-shadow: var(--shadow-glow);
+}
+
+.achievement-icon {
+  font-size: 22px;
+}
+
+.achievement-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.achievement-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* --- Toasts (achievement unlock / power-up pickup) --- */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--accent);
+  box-shadow: var(--shadow-glow);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 999;
+  animation: toastIn 400ms ease, toastOut 400ms ease 2.6s forwards;
+}
+
+.toast-powerup {
+  top: 76px;
+  border-color: var(--accent-2);
+}
+
+.toast-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.toast-powerup .toast-title {
+  color: var(--accent-2);
+}
+
+.toast-body {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   7. ANIMATIONS
+------------------------------------------------------------- */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countPulse {
+  0% { transform: scale(0.6); opacity: 0; }
+  40% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes floatUp {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
+  100% { opacity: 0; transform: translate(-50%, -140%) scale(1.2); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, -20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translate(-50%, -20px); }
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 22%, 24%, 55% { opacity: 0.7; }
+}
+
+@keyframes btnPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+  50% { box-shadow: var(--shadow-glow); }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   8. RESPONSIVE
+------------------------------------------------------------- */
+
+@media (min-width: 700px) {
+  .touch-controls {
+    display: none; /* hide on larger screens; shown again via JS on touch devices */
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 24px 18px;
+  }
+
+  .hud-group {
+    gap: 10px;
+  }
+
+  .hud-value {
+    font-size: 15px;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .skin-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

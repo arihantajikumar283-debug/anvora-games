@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvora Games — Play Instantly. No Downloads. Pure Fun.</title>
+  <meta name="description"
+    content="Anvora Games is a premium browser game portal. Play high-quality HTML5 games instantly — no downloads, no installs, just pure fun.">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2244%22 fill=%22none%22 stroke=%22%233fd8ff%22 stroke-width=%228%22/></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <div class="loader">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- ================= HEADER ================= -->
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="100" y2="100">
+                <stop offset="0" stop-color="#3fd8ff" />
+                <stop offset="1" stop-color="#b565ff" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="44" stroke="url(#lg1)" stroke-width="7" />
+            <circle cx="50" cy="50" r="26" stroke="url(#lg1)" stroke-width="7" opacity="0.55" />
+            <circle cx="50" cy="50" r="7" fill="url(#lg1)" />
+          </svg>
+        </span>
+        <span class="brand-word">ANVORA<small>GAMES</small></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html" class="active">Home</a>
+        <a href="games.html">Games</a>
+        <a href="games.html#categories">Categories</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="nav-tools">
+        <form class="search-box" role="search" onsubmit="return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.3-4.3" />
+          </svg>
+          <input type="text" placeholder="Search games…" aria-label="Search games">
+        </form>
+        <button class="icon-btn" data-theme-toggle aria-label="Toggle dark / light mode">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" />
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </svg>
+        </button>
+        <button class="nav-burger" aria-label="Open menu"
+          aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+
+    <div class="nav-mobile">
+      <a href="index.html" class="active">Home</a>
+      <a href="games.html">Games</a>
+      <a href="games.html#categories">Categories</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <form class="search-box" role="search" onsubmit="return false;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.3-4.3" />
+        </svg>
+        <input type="text" placeholder="Search games…" aria-label="Search games">
+      </form>
+    </div>
+  </header>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <canvas class="hero-canvas"></canvas>
+    <div class="hero-glow"></div>
+
+    <div class="portal" aria-hidden="true">
+      <svg viewBox="0 0 600 600" fill="none">
+        <defs>
+          <linearGradient id="portalGrad" x1="0" y1="0" x2="600" y2="600">
+            <stop offset="0" stop-color="#3fd8ff" />
+            <stop offset="1" stop-color="#b565ff" />
+          </linearGradient>
+        </defs>
+        <g class="portal-ring">
+          <circle cx="300" cy="300" r="270" stroke="url(#portalGrad)" stroke-width="1" stroke-dasharray="2 14"
+            opacity="0.5" />
+        </g>
+        <g class="portal-ring rev">
+          <circle cx="300" cy="300" r="220" stroke="url(#portalGrad)" stroke-width="1.4" opacity="0.35" />
+        </g>
+        <g class="portal-ring slow">
+          <circle cx="300" cy="300" r="170" stroke="url(#portalGrad)" stroke-width="1" stroke-dasharray="1 9"
+            opacity="0.5" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <p class="eyebrow">Browser-native · Zero installs</p>
+      <h1 class="hero-title">
+        <span class="gradient-text">ANVORA</span>
+        <span>GAMES</span>
+      </h1>
+      <p class="hero-subtitle">
+        <strong>Play Instantly.</strong> No Downloads. <strong>Pure Fun.</strong><br>
+        A premium portal for games that load in seconds and run anywhere.
+      </p>
+
+      <div class="hero-actions">
+        <a href="games.html" class="btn btn-primary">Play Games</a>
+        <a href="games.html#newest" class="btn btn-ghost">Newest Games</a>
+        <a href="about.html" class="btn btn-ghost">About</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><b>04</b><span>Games Live</span></div>
+        <div class="stat"><b>08</b><span>Categories</span></div>
+        <div class="stat"><b>0 MB</b><span>To Install</span></div>
+        <div class="stat"><b>100%</b><span>Free To Play</span></div>
+      </div>
+    </div>
+
+    <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+  </section>
+
+  <!-- ================= FEATURED GAMES ================= -->
+  <section id="newest">
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">The Library</p>
+          <h2>Featured Games</h2>
+        </div>
+        <p>Hand-picked titles from the Anvora catalog — new drops land here first.</p>
+      </div>
+
+      <div class="game-grid">
+
+        <article class="game-card reveal">
+          <div class="game-thumb">
+            <div class="art art-snake">
+              <img src="images/snake-master.png" alt="Snake Master">
+            </div>
+            <span class="badge badge-live">Live</span>
+            <span class="badge-cat">Arcade</span>
+          </div>
+          <div class="game-info">
+            <h3>Snake Master</h3>
+            <p>The classic reborn — guide your signal through a neon grid and chase the high score.</p>
+            <a href="games/snake-master/index.html" class="btn btn-primary btn-sm">Play Now</a>
+          </div>
+        </article>
+
+        <article class="game-card reveal">
+          <div class="game-thumb">
+            <img src="images/space-defender.png" alt="Space Defender" class="game-thumbnail-image">
+
+            <span class="badge badge-live">Live</span>
+            <span class="badge-cat">Action</span>
+          </div>
+
+          <div class="game-info">
+            <h3>Space Defender</h3>
+
+            <p>
+              Defend Earth against relentless waves of enemy ships in this
+              fast-paced arcade space shooter.
+            </p>
+
+            <a href="games/space-defender/index.html" class="btn btn-primary btn-sm">
+              Play Now
+            </a>
+          </div>
+        </article>
+
+        <article class="game-card reveal">
+          <div class="game-thumb">
+            <img src="images/pixel-racer.png" alt="Pixel Racer" class="game-thumbnail-image">
+            <span class="badge badge-live">Live</span>
+            <span class="badge-cat">Racing</span>
+          </div>
+
+          <div class="game-info">
+            <h3>Pixel Racer</h3>
+            <p>Race, drift, boost and battle your way to the top in this fast-paced pixel racing game.</p>
+
+            <a href="games/pixel-racer/index.html" class="btn btn-primary btn-sm">
+              Play Now
+            </a>
+          </div>
+        </article>
+
+        <article class="game-card reveal">
+          <div class="game-thumb">
+            <img src="images/brick-by-brick.png" alt="Brick by Brick" class="game-thumbnail-image">
+
+            <span class="badge badge-live">Live</span>
+            <span class="badge-cat">Puzzle</span>
+          </div>
+
+          <div class="game-info">
+            <h3>Brick by Brick</h3>
+            <p>
+              Smash bricks, build combos, collect power-ups, and conquer challenging levels.
+            </p>
+
+            <a href="games/brick-by-brick/index.html" class="btn btn-primary btn-sm">
+              Play Now
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CATEGORIES PREVIEW ================= -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Browse</p>
+          <h2>Explore by Category</h2>
+        </div>
+        <p>Eight ways into the catalog — jump straight to what you're in the mood for.</p>
+      </div>
+
+      <div class="cat-grid reveal">
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z" />
+            </svg></span>
+          <h4>Action</h4><span>High intensity</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg></span>
+          <h4>Puzzle</h4><span>Brain teasers</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 3v18M3 12h18" />
+            </svg></span>
+          <h4>Arcade</h4><span>Classic loops</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M3 17l4-8h6l4 8M5 21h14" />
+            </svg></span>
+          <h4>Racing</h4><span>Speed &amp; drift</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 3a9 9 0 000 18M3 12h18" />
+            </svg></span>
+          <h4>Sports</h4><span>Play the field</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16v12H4zM4 20h16M9 16v4M15 16v4" />
+            </svg></span>
+          <h4>Strategy</h4><span>Think ahead</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M12 3l2.6 5.9L21 10l-4.7 4 1.3 6.4L12 17.5 6.4 20.4 7.7 14 3 10l6.4-1.1z" />
+            </svg></span>
+          <h4>Kids</h4><span>Easy &amp; fun</span>
+        </a>
+        <a href="games.html#categories" class="cat-card"><span class="cat-icon"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M4 19V5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z" />
+              <path d="M14 3v5h5" />
+            </svg></span>
+          <h4>Educational</h4><span>Learn by play</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= WHY ANVORA ================= -->
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">Why Anvora</p>
+          <h2>Built for the way you actually play</h2>
+        </div>
+        <p>No accounts to babysit, no launchers to wait on — just a link and a game.</p>
+      </div>
+
+      <div class="feature-strip reveal">
+        <div class="feature-item">
+          <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h7l-1 8 11-14h-7l1-6z" />
+            </svg></span>
+          <h3>Instant load</h3>
+          <p>Every title is optimized to boot in seconds on any connection, on any device.</p>
+        </div>
+        <div class="feature-item">
+          <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="2" width="16" height="20" rx="3" />
+              <path d="M9 18h6" />
+            </svg></span>
+          <h3>Play anywhere</h3>
+          <p>Desktop, tablet or phone — the same polished experience follows you across screens.</p>
+        </div>
+        <div class="feature-item">
+          <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z" />
+            </svg></span>
+          <h3>Nothing to install</h3>
+          <p>No downloads, no updates, no clutter — Anvora runs entirely in your browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA ================= -->
+  <section>
+    <div class="container">
+      <div class="cta-band reveal">
+        <p class="eyebrow" style="justify-content:center;">Jump In</p>
+        <h2>Your next favorite game is one click away</h2>
+        <p style="margin-inline:auto;">Snake Master is live right now. More arrivals are already in the lab.</p>
+        <a href="games/snake-master/index.html" class="btn btn-primary">Play Snake Master</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="brand">
+            <span class="brand-mark">
+              <svg viewBox="0 0 100 100" fill="none">
+                <defs>
+                  <linearGradient id="lg2" x1="0" y1="0" x2="100" y2="100">
+                    <stop offset="0" stop-color="#3fd8ff" />
+                    <stop offset="1" stop-color="#b565ff" />
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="44" stroke="url(#lg2)" stroke-width="7" />
+                <circle cx="50" cy="50" r="26" stroke="url(#lg2)" stroke-width="7" opacity="0.55" />
+                <circle cx="50" cy="50" r="7" fill="url(#lg2)" />
+              </svg>
+            </span>
+            <span class="brand-word">ANVORA<small>GAMES</small></span>
+          </a>
+          <p>A premium browser game portal built for instant, lightweight play — no downloads, ever.</p>
+        </div>
+
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="games.html">Games</a></li>
+            <li><a href="games.html#categories">Categories</a></li>
+            <li><a href="about.html">About</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="about.html">Our Story</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="games/snake-master/index.html">Snake Master</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms</a></li>
+            <li><a href="privacy.html#cookies">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> Anvora Games. All rights reserved.</p>
+        <p class="dev-credit">Developed by <b>Arihant</b></p>
+        <div class="footer-social">
+          <a href="#" aria-label="X / Twitter"><svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.9 2H22l-7.6 8.7L23 22h-7l-5.5-6.6L4.2 22H1l8.1-9.3L1 2h7.2l5 6z" />
+            </svg></a>
+          <a href="#" aria-label="Discord"><svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M20 5.5A17 17 0 0016 4l-.4.9a15 15 0 00-7.2 0L8 4a17 17 0 00-4 1.5C1.7 9 1 12.5 1.3 16a17 17 0 004.9 2.4l.8-1.3a11 11 0 01-1.7-.8l.4-.3a12 12 0 0012.6 0l.4.3c-.5.3-1.1.6-1.7.8l.8 1.3A17 17 0 0022.7 16c.4-4-.6-7.5-2.7-10.5zM9 14c-.8 0-1.5-.8-1.5-1.7S8.1 10.5 9 10.5s1.5.8 1.5 1.8S9.9 14 9 14zm6 0c-.8 0-1.5-.8-1.5-1.7s.7-1.8 1.5-1.8 1.5.8 1.5 1.8S15.9 14 15 14z" />
+            </svg></a>
+          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M22 12s0-3.2-.4-4.7a3 3 0 00-2.1-2.1C17.9 4.7 12 4.7 12 4.7s-5.9 0-7.5.5a3 3 0 00-2.1 2.1C2 8.8 2 12 2 12s0 3.2.4 4.7a3 3 0 002.1 2.1c1.6.5 7.5.5 7.5.5s5.9 0 7.5-.5a3 3 0 002.1-2.1C22 15.2 22 12 22 12zM10 15V9l5.2 3z" />
+            </svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+
+</html>

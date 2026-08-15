@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Space Defender — Anvora Games</title>
+<meta name="description" content="Space Defender — an original arcade space shooter by Anvora Games. Fight, collect, upgrade and survive increasingly dangerous enemy fleets.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2244%22 fill=%22none%22 stroke=%22%233fd8ff%22 stroke-width=%228%22/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ======================= GAME CANVAS ======================= -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- ======================= UI ROOT ======================= -->
+<div id="uiRoot">
+
+  <!-- ---------- MAIN MENU ---------- -->
+  <section id="mainMenu" class="screen active">
+    <div class="menu-panel menu-panel--wide">
+      <div class="game-logo">
+        <span class="logo-ring"></span>
+        <h1>SPACE <span class="grad">DEFENDER</span></h1>
+        <p class="tagline">Fight. Collect. Upgrade. Survive.</p>
+      </div>
+
+      <button class="daily-chip" id="dailyChip" data-action="open-missions">
+        <span class="daily-dot"></span>
+        <span class="daily-text">
+          <span class="daily-title" id="dailyTitle">Today's Mission</span>
+          <span class="daily-desc" id="dailyDesc">Loading…</span>
+        </span>
+        <span class="daily-reward" id="dailyReward">+500</span>
+      </button>
+
+      <nav class="menu-buttons">
+        <button class="btn btn-primary" data-action="open-modes">Play</button>
+        <button class="btn btn-ghost" data-action="continue-game" id="continueBtn" disabled>Continue</button>
+        <button class="btn btn-ghost" data-action="open-upgrades">Upgrades</button>
+        <button class="btn btn-ghost" data-action="open-missions">Missions</button>
+        <button class="btn btn-ghost" data-action="open-achievements">Achievements</button>
+        <button class="btn btn-ghost" data-action="open-stats">Statistics</button>
+        <button class="btn btn-ghost" data-action="open-settings">Settings</button>
+        <button class="btn btn-ghost" data-action="open-instructions">Instructions</button>
+        <button class="btn btn-ghost" data-action="open-credits">Credits</button>
+      </nav>
+
+      <div class="menu-footer">
+        <div class="best-score-row">
+          <div class="best-score-chip">Best Score: <b id="menuBestScore">0</b></div>
+          <div class="best-score-chip">Coins: <b id="menuBankCoins">0</b></div>
+        </div>
+        <p class="dev-credit">Developed by <b>Arihant</b> &nbsp;·&nbsp; Anvora Games &nbsp;·&nbsp; © 2026</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- MODE SELECT ---------- -->
+  <section id="modeMenu" class="screen">
+    <div class="menu-panel">
+      <h2>Select Mode</h2>
+      <nav class="menu-buttons">
+        <button class="btn btn-primary mode-card" data-action="start-arcade">
+          <span class="mode-name">Arcade Mode</span>
+          <span class="mode-desc">Waves, bosses, upgrades &amp; missions</span>
+        </button>
+        <button class="btn btn-ghost mode-card" data-action="start-survival" id="survivalBtn">
+          <span class="mode-name">Survival Mode <span class="lock-tag" id="survivalLock">🔒 Reach Wave 5</span></span>
+          <span class="mode-desc">No breaks — endless escalating danger</span>
+        </button>
+        <button class="btn btn-ghost mode-card" data-action="start-bossrush" id="bossRushBtn">
+          <span class="mode-name">Boss Rush <span class="lock-tag" id="bossRushLock">🔒 Defeat 1 Boss</span></span>
+          <span class="mode-desc">Bosses back-to-back. No mercy.</span>
+        </button>
+      </nav>
+      <button class="btn btn-ghost" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- UPGRADES MENU ---------- -->
+  <section id="upgradesMenu" class="screen">
+    <div class="menu-panel menu-panel--wide">
+      <h2>Ship Upgrades</h2>
+      <p class="upgrades-bank">Coins Available: <b id="upgradesCoins">0</b></p>
+      <div class="upgrade-grid" id="upgradeGrid"></div>
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- MISSIONS MENU ---------- -->
+  <section id="missionsMenu" class="screen">
+    <div class="menu-panel menu-panel--wide">
+      <h2>Missions</h2>
+
+      <div class="mission-block">
+        <h3>Daily Challenge</h3>
+        <div class="mission-card" id="dailyMissionCard">
+          <p class="mission-desc" id="missionsDailyDesc">Loading…</p>
+          <div class="mission-progress"><div class="mission-progress-fill" id="missionsDailyFill"></div></div>
+          <div class="mission-row">
+            <span id="missionsDailyStatus">0 / 0</span>
+            <button class="btn btn-primary btn-sm" id="claimDailyBtn" disabled>Claim +500</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mission-block">
+        <h3>In-Run Objectives</h3>
+        <p class="mission-hint">Every run assigns 2 random objectives. Complete them mid-flight for bonus coins.</p>
+        <ul class="mission-pool-list">
+          <li>Destroy 20 enemies</li>
+          <li>Survive 60 seconds</li>
+          <li>Reach a x10 combo</li>
+          <li>Destroy 3 Elite ships</li>
+          <li>Defeat the boss</li>
+        </ul>
+      </div>
+
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- SETTINGS MENU ---------- -->
+  <section id="settingsMenu" class="screen">
+    <div class="menu-panel">
+      <h2>Settings</h2>
+
+      <div class="setting-row">
+        <label for="musicRange">Music Volume</label>
+        <input type="range" id="musicRange" min="0" max="100" value="60">
+      </div>
+      <div class="setting-row">
+        <label for="sfxRange">Sound Volume</label>
+        <input type="range" id="sfxRange" min="0" max="100" value="70">
+      </div>
+      <div class="setting-row">
+        <label for="shakeToggle">Screen Shake</label>
+        <input type="checkbox" id="shakeToggle" checked>
+      </div>
+      <div class="setting-row">
+        <label for="difficultySelect">Difficulty</label>
+        <select id="difficultySelect">
+          <option value="easy">Easy</option>
+          <option value="normal" selected>Normal</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="graphicsSelect">Graphics</label>
+        <select id="graphicsSelect">
+          <option value="low">Low (better performance)</option>
+          <option value="high" selected>High</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="touchToggle">Touch Controls</label>
+        <input type="checkbox" id="touchToggle">
+      </div>
+      <div class="setting-row">
+        <label for="darkToggle">High-Contrast HUD</label>
+        <input type="checkbox" id="darkToggle">
+      </div>
+      <div class="setting-row">
+        <label for="langSelect">Language</label>
+        <select id="langSelect">
+          <option value="en" selected>English</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <label for="fpsToggle">Show FPS Counter</label>
+        <input type="checkbox" id="fpsToggle">
+      </div>
+
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- STATISTICS MENU ---------- -->
+  <section id="statsMenu" class="screen">
+    <div class="menu-panel">
+      <h2>Statistics</h2>
+      <ul class="stat-list" id="statList">
+        <li><span>Games Played</span><b data-stat="gamesPlayed">0</b></li>
+        <li><span>Highest Score</span><b data-stat="highestScore">0</b></li>
+        <li><span>Highest Combo</span><b data-stat="highestCombo">0</b></li>
+        <li><span>Enemies Destroyed</span><b data-stat="enemiesDestroyed">0</b></li>
+        <li><span>Bosses Defeated</span><b data-stat="bossesDefeated">0</b></li>
+        <li><span>Coins Collected</span><b data-stat="coinsCollected">0</b></li>
+        <li><span>Powerups Collected</span><b data-stat="powerupsCollected">0</b></li>
+        <li><span>Total Time Played</span><b data-stat="totalTimePlayedDisplay">0m 0s</b></li>
+        <li><span>Shots Fired</span><b data-stat="shotsFired">0</b></li>
+        <li><span>Accuracy</span><b data-stat="accuracyDisplay">0%</b></li>
+      </ul>
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- ACHIEVEMENTS MENU ---------- -->
+  <section id="achievementsMenu" class="screen">
+    <div class="menu-panel menu-panel--wide">
+      <h2>Achievements</h2>
+      <div class="achievement-grid" id="achievementGrid"></div>
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- INSTRUCTIONS MENU ---------- -->
+  <section id="instructionsMenu" class="screen">
+    <div class="menu-panel menu-panel--wide">
+      <h2>Instructions</h2>
+      <div class="mission-block">
+        <h3>Desktop Controls</h3>
+        <ul class="mission-pool-list">
+          <li>Move — Arrow Keys or WASD</li>
+          <li>Fire — Space Bar (hold for sustained fire)</li>
+          <li>Special Ability (Star Strike) — E</li>
+          <li>Pause — P or Escape</li>
+        </ul>
+      </div>
+      <div class="mission-block">
+        <h3>Mobile Controls</h3>
+        <ul class="mission-pool-list">
+          <li>Move — On-screen D-Pad (bottom-left) or drag/swipe on screen</li>
+          <li>Fire — FIRE button (bottom-right)</li>
+          <li>Special Ability — ★ button next to Fire</li>
+          <li>Pause — ❚❚ button (top-right of HUD)</li>
+        </ul>
+      </div>
+      <div class="mission-block">
+        <h3>Tips</h3>
+        <ul class="mission-pool-list">
+          <li>Chain kills quickly to build your combo multiplier — it boosts score.</li>
+          <li>Fill the ★ meter by destroying enemies, then unleash Star Strike to clear the screen.</li>
+          <li>Spend coins in Upgrades between runs to permanently boost your ship.</li>
+          <li>Watch for the boss warning banner — a commander is inbound!</li>
+        </ul>
+      </div>
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- CREDITS MENU ---------- -->
+  <section id="creditsMenu" class="screen">
+    <div class="menu-panel">
+      <h2>Credits</h2>
+      <div class="credits-body">
+        <p><b>Space Defender</b></p>
+        <p>Developed by <b>Arihant</b></p>
+        <p>Company: <b>Anvora Games</b></p>
+        <p>© 2026 Anvora Games. All rights reserved.</p>
+        <p class="credits-note">All graphics, sounds and code in this game are original creations built for Anvora Games.</p>
+      </div>
+      <button class="btn btn-primary" data-action="back-to-menu">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------- HUD (in-game) ---------- -->
+  <div id="hud" class="hud">
+    <div class="hud-top-left">
+      <div class="bar-row">
+        <span class="bar-label">HP</span>
+        <div class="bar bar-health"><div class="bar-fill" id="healthFill"></div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">SH</span>
+        <div class="bar bar-shield"><div class="bar-fill" id="shieldFill"></div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">EN</span>
+        <div class="bar bar-energy"><div class="bar-fill" id="energyFill"></div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">★</span>
+        <div class="bar bar-special"><div class="bar-fill" id="specialFill"></div></div>
+      </div>
+    </div>
+
+    <div class="hud-top-center">
+      <div class="wave-chip"><span id="waveModeLabel">WAVE</span> <b id="waveNum">1</b></div>
+      <div class="env-chip" id="envChip">Earth Orbit</div>
+      <div class="weapon-chip" id="weaponChip">LV1 · Single Laser</div>
+      <div id="fpsCounter" class="fps-chip" hidden>0 FPS</div>
+    </div>
+
+    <div class="hud-top-right">
+      <div class="hud-stat">Score<b id="scoreDisp">0</b></div>
+      <div class="hud-stat">Best<b id="bestDisp">0</b></div>
+      <div class="hud-stat">Coins<b id="coinsDisp">0</b></div>
+    </div>
+
+    <div class="combo-display" id="comboDisplay" hidden>
+      <span id="comboText">COMBO x1</span>
+    </div>
+
+    <div class="mission-tracker" id="missionTracker"></div>
+
+    <div class="powerup-timers" id="powerupTimers"></div>
+
+    <div class="boss-bar-wrap" id="bossBarWrap" hidden>
+      <span class="boss-name" id="bossName">BOSS</span>
+      <span class="boss-phase" id="bossPhase">PHASE 1</span>
+      <div class="boss-bar"><div class="boss-bar-fill" id="bossBarFill"></div></div>
+    </div>
+
+    <button class="hud-pause-btn" data-action="pause-game" aria-label="Pause">❚❚</button>
+  </div>
+
+  <!-- ---------- BOSS WARNING ---------- -->
+  <div id="bossWarning" class="boss-warning" hidden>
+    <p class="bw-line1">⚠ WARNING ⚠</p>
+    <p class="bw-line2">HOSTILE COMMANDER DETECTED</p>
+  </div>
+
+  <!-- ---------- EVENT BANNER ---------- -->
+  <div id="eventBanner" class="event-banner" hidden></div>
+
+  <!-- ---------- CHOICE POPUP ---------- -->
+  <section id="choicePopup" class="screen overlay-screen">
+    <div class="menu-panel choice-panel">
+      <h2>Choose Your Upgrade</h2>
+      <div class="choice-options" id="choiceOptions"></div>
+    </div>
+  </section>
+
+  <!-- ---------- SCREEN FLASH (special ability) ---------- -->
+  <div id="screenFlash" class="screen-flash"></div>
+
+  <!-- ---------- PAUSE MENU ---------- -->
+  <section id="pauseMenu" class="screen overlay-screen">
+    <div class="menu-panel">
+      <h2>Paused</h2>
+      <nav class="menu-buttons">
+        <button class="btn btn-primary" data-action="resume-game">Resume</button>
+        <button class="btn btn-ghost" data-action="open-settings">Settings</button>
+        <button class="btn btn-ghost" data-action="restart-game">Restart</button>
+        <button class="btn btn-ghost" data-action="quit-to-menu">Quit to Menu</button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ---------- GAME OVER MENU ---------- -->
+  <section id="gameOverMenu" class="screen overlay-screen">
+    <div class="menu-panel">
+      <h2>Mission Failed</h2>
+      <div class="gameover-stats">
+        <p>Score: <b id="finalScoreDisp">0</b></p>
+        <p>Best: <b id="finalBestDisp">0</b></p>
+        <p>Enemies Destroyed: <b id="finalEnemiesDisp">0</b></p>
+        <p>Highest Combo: <b id="finalComboDisp">x1</b></p>
+        <p>Coins Earned: <b id="finalCoinsDisp">0</b></p>
+      </div>
+      <nav class="menu-buttons">
+        <button class="btn btn-primary" data-action="restart-game">Play Again <span class="kbd">Enter</span></button>
+        <button class="btn btn-ghost" data-action="open-upgrades">Upgrades</button>
+        <button class="btn btn-ghost" data-action="quit-to-menu">Main Menu</button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ---------- ACHIEVEMENT TOAST ---------- -->
+  <div id="achievementToast" class="achievement-toast" hidden>
+    <span class="toast-icon">★</span>
+    <div>
+      <p class="toast-label">Achievement Unlocked</p>
+      <p class="toast-name" id="toastName">—</p>
+    </div>
+  </div>
+
+  <!-- ---------- MISSION TOAST ---------- -->
+  <div id="missionToast" class="mission-toast" hidden>
+    <span class="toast-icon">✓</span>
+    <div>
+      <p class="toast-label">Mission Complete</p>
+      <p class="toast-name" id="missionToastName">—</p>
+    </div>
+  </div>
+
+  <!-- ---------- WAVE BANNER ---------- -->
+  <div id="waveBanner" class="wave-banner" hidden></div>
+
+  <!-- ---------- TOUCH CONTROLS ---------- -->
+  <div id="touchControls" class="touch-controls" hidden>
+    <div class="touch-dpad" id="touchDpad">
+      <button data-dir="up" aria-label="Move up">▲</button>
+      <button data-dir="left" aria-label="Move left">◀</button>
+      <button data-dir="down" aria-label="Move down">▼</button>
+      <button data-dir="right" aria-label="Move right">▶</button>
+    </div>
+    <div class="touch-actions">
+      <button class="touch-pause" data-action="pause-game" aria-label="Pause">❚❚</button>
+      <button class="touch-special" id="touchSpecialBtn" aria-label="Star Strike">★</button>
+      <button class="touch-fire" id="touchFireBtn" aria-label="Fire">FIRE</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

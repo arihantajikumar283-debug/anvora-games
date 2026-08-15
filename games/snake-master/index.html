@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="description" content="Snake Master — an original, modern take on the classic snake game with power-ups, skins, achievements and six visual themes." />
+  <meta name="theme-color" content="#0b0e14" />
+  <title>Snake Master — Created by Arihant</title>
+  <!-- Original, inline favicon — a coiled line + a bite of food.
+       No external file, so it never adds a network request. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0e14'/%3E%3Cpath d='M8 21c0-4.5 4.5-4.5 4.5-9S8 7.5 8 3' stroke='%236ee7c9' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='23' cy='11' r='3' fill='%23a78bfa'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="dark">
+
+  <!-- ======================================================
+       LOADING SCREEN
+       Shown instantly (no network assets to wait for), then
+       eased out by Boot.run() in script.js. Purely cosmetic —
+       if JS is slow to attach for any reason the CSS animation
+       still looks intentional rather than "stuck".
+  ======================================================= -->
+  <div id="loading-screen" class="loading-screen" role="status" aria-live="polite">
+    <div class="loading-logo">
+      <span class="loading-logo-icon">▲</span>
+      <span class="loading-logo-text">Snake<span class="loading-logo-accent">Master</span></span>
+    </div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loading-bar-fill"></div>
+    </div>
+    <p class="loading-hint" id="loading-hint">Preparing the board…</p>
+  </div>
+
+  <!-- Animated background particle layer — sits behind everything,
+       drawn by the BgParticles module in script.js. Purely decorative. -->
+  <canvas id="bg-particles"></canvas>
+
+  <!-- ======================================================
+       APP SHELL
+       Screens are toggled by UI.showScreen() in script.js.
+  ======================================================= -->
+  <div id="app">
+
+    <!-- ---------- Top HUD (visible during gameplay) ---------- -->
+    <header id="hud" class="hud hidden" aria-live="polite">
+      <div class="hud-group">
+        <div class="hud-stat">
+          <span class="hud-label" data-i18n="hud.score">Score</span>
+          <span class="hud-value" id="hud-score">0</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-label" data-i18n="hud.best">Best</span>
+          <span class="hud-value" id="hud-highscore">0</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-label" data-i18n="hud.length">Length</span>
+          <span class="hud-value" id="hud-length">1</span>
+        </div>
+      </div>
+      <div class="hud-group">
+        <div class="hud-stat">
+          <span class="hud-label" data-i18n="hud.time">Time</span>
+          <span class="hud-value" id="hud-time">00:00</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-label" data-i18n="hud.difficulty">Difficulty</span>
+          <span class="hud-value" id="hud-difficulty">Medium</span>
+        </div>
+        <div class="hud-stat" id="hud-combo-wrap" hidden>
+          <span class="hud-label" data-i18n="hud.combo">Combo</span>
+          <span class="hud-value combo-value" id="hud-combo">x1</span>
+        </div>
+      </div>
+      <div class="hud-group hud-actions">
+        <span class="hud-fps" id="hud-fps" hidden>60 FPS</span>
+        <button class="icon-btn" id="btn-fullscreen" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
+        <button class="icon-btn" id="btn-pause" title="Pause (P)" aria-label="Pause game">❚❚</button>
+      </div>
+    </header>
+
+    <!-- ---------- Active power-up strip ---------- -->
+    <div class="powerup-strip hidden" id="powerup-strip"></div>
+
+    <!-- ---------- Game canvas area ---------- -->
+    <main class="stage hidden" id="stage">
+      <canvas id="game-canvas" width="600" height="600" aria-label="Snake game board" role="img"></canvas>
+
+      <!-- Countdown overlay (3, 2, 1, Go!) -->
+      <div class="overlay hidden" id="countdown-overlay">
+        <div class="countdown-number" id="countdown-number">3</div>
+      </div>
+
+      <!-- Pause overlay -->
+      <div class="overlay hidden" id="pause-overlay">
+        <div class="overlay-card glass">
+          <h2 data-i18n="pause.title">Paused</h2>
+          <p class="muted" data-i18n="pause.sub">Take a breath. Press P or tap Resume.</p>
+          <button class="btn btn-primary" id="btn-resume" data-i18n="pause.resume">Resume</button>
+          <button class="btn btn-ghost" id="btn-pause-restart" data-i18n="pause.restart">Restart</button>
+          <button class="btn btn-ghost" id="btn-pause-menu" data-i18n="pause.menu">Main Menu</button>
+        </div>
+      </div>
+
+      <!-- Win overlay (board filled) -->
+      <div class="overlay hidden" id="win-overlay">
+        <div class="overlay-card glass">
+          <h2 class="win-title" data-i18n="win.title">You Win!</h2>
+          <p class="muted" data-i18n="win.sub">You filled the entire board. Incredible.</p>
+        </div>
+      </div>
+
+      <!-- Score popup layer (floating "+10" text etc.) -->
+      <div class="popup-layer" id="popup-layer"></div>
+    </main>
+
+    <!-- ---------- Mobile touch controls ---------- -->
+    <div class="touch-controls hidden" id="touch-controls" aria-hidden="false">
+      <button class="touch-btn touch-up" id="touch-up" aria-label="Move up">▲</button>
+      <button class="touch-btn touch-left" id="touch-left" aria-label="Move left">◀</button>
+      <button class="touch-btn touch-down" id="touch-down" aria-label="Move down">▼</button>
+      <button class="touch-btn touch-right" id="touch-right" aria-label="Move right">▶</button>
+    </div>
+
+    <!-- ======================================================
+         MAIN MENU
+    ======================================================= -->
+    <section class="screen" id="screen-start">
+      <div class="panel glass menu-panel">
+        <div class="brand-block">
+          <h1 class="logo">
+            <span class="logo-neon">Snake</span> Master
+          </h1>
+          <p class="tagline" data-i18n="menu.tagline">A modern take on the classic. Eat, grow, don't bite yourself.</p>
+          <p class="dev-credit" data-i18n="menu.credit">Created by Arihant</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="difficulty-select" data-i18n="menu.difficulty">Difficulty</label>
+          <div class="segmented" id="difficulty-select" role="radiogroup" aria-label="Select difficulty">
+            <button class="segment" data-difficulty="easy" role="radio" aria-checked="false" data-i18n="difficulty.easy">Easy</button>
+            <button class="segment active" data-difficulty="medium" role="radio" aria-checked="true" data-i18n="difficulty.medium">Medium</button>
+            <button class="segment" data-difficulty="hard" role="radio" aria-checked="false" data-i18n="difficulty.hard">Hard</button>
+          </div>
+        </div>
+
+        <div class="menu-buttons">
+          <button class="btn btn-primary btn-lg btn-glow" id="btn-start"><span data-i18n="menu.start">Start Game</span> <span class="key-hint">Enter</span></button>
+          <button class="btn btn-secondary btn-lg hidden" id="btn-continue"><span data-i18n="menu.continue">Continue</span></button>
+          <button class="btn btn-menu" id="btn-open-settings" data-i18n="menu.settings">Settings</button>
+          <button class="btn btn-menu" id="btn-open-stats" data-i18n="menu.stats">Statistics</button>
+          <button class="btn btn-menu" id="btn-open-achievements" data-i18n="menu.achievements">Achievements</button>
+          <button class="btn btn-menu btn-exit" id="btn-exit" data-i18n="menu.exit">Exit</button>
+        </div>
+
+        <div class="controls-hint">
+          <h3 data-i18n="menu.controlsTitle">Controls</h3>
+          <ul>
+            <li><kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> — <span data-i18n="menu.move">Move</span></li>
+            <li><kbd>P</kbd> — <span data-i18n="pause.title">Pause</span> &nbsp; <kbd>R</kbd> — <span data-i18n="pause.restart">Restart</span> &nbsp; <kbd>Enter</kbd> — <span data-i18n="menu.start">Start</span></li>
+            <li data-i18n="menu.swipeHint">Swipe on mobile to steer</li>
+          </ul>
+        </div>
+
+        <footer class="app-footer">
+          <span data-i18n="menu.copyright">© 2026 Arihant. All Rights Reserved.</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         EXIT SCREEN
+    ======================================================= -->
+    <section class="screen hidden" id="screen-exit">
+      <div class="panel glass">
+        <h1 data-i18n="exit.title">Thanks for playing!</h1>
+        <p class="muted" data-i18n="exit.sub">You can safely close this tab now, or jump back in.</p>
+        <div class="start-actions">
+          <button class="btn btn-primary" id="btn-exit-back" data-i18n="exit.back">Back to Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         GAME OVER SCREEN
+    ======================================================= -->
+    <section class="screen hidden" id="screen-gameover">
+      <div class="panel glass">
+        <h1 class="gameover-title" data-i18n="gameover.title">Game Over</h1>
+        <p class="gameover-sub" id="gameover-reason">You ran into yourself.</p>
+
+        <div class="result-grid">
+          <div class="result-stat">
+            <span class="result-label" data-i18n="hud.score">Score</span>
+            <span class="result-value" id="final-score">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="gameover.highscore">High Score</span>
+            <span class="result-value" id="final-highscore">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="hud.length">Length</span>
+            <span class="result-value" id="final-length">1</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="hud.time">Time</span>
+            <span class="result-value" id="final-time">00:00</span>
+          </div>
+        </div>
+
+        <p class="new-record hidden" id="new-record-badge" data-i18n="gameover.newRecord">🏆 New High Score!</p>
+
+        <div class="start-actions">
+          <button class="btn btn-primary btn-lg" id="btn-play-again"><span data-i18n="gameover.playAgain">Play Again</span> <span class="key-hint">R</span></button>
+          <button class="btn btn-ghost" id="btn-gameover-menu" data-i18n="pause.menu">Main Menu</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SETTINGS SCREEN
+    ======================================================= -->
+    <section class="screen hidden" id="screen-settings">
+      <div class="panel glass">
+        <h1 data-i18n="menu.settings">Settings</h1>
+
+        <div class="field">
+          <label class="field-label" data-i18n="settings.musicVolume">Music Volume</label>
+          <input type="range" min="0" max="100" value="60" class="slider" id="slider-music" />
+        </div>
+        <div class="field">
+          <label class="field-label" data-i18n="settings.soundVolume">Sound Volume</label>
+          <input type="range" min="0" max="100" value="70" class="slider" id="slider-sound" />
+        </div>
+
+        <div class="setting-row">
+          <span data-i18n="settings.grid">Show Grid</span>
+          <button class="toggle" id="toggle-grid" role="switch" aria-checked="true"><span class="toggle-dot"></span></button>
+        </div>
+        <div class="setting-row">
+          <span data-i18n="settings.particles">Background Particles</span>
+          <button class="toggle" id="toggle-particles" role="switch" aria-checked="true"><span class="toggle-dot"></span></button>
+        </div>
+        <div class="setting-row">
+          <span data-i18n="settings.fps">Show FPS Counter</span>
+          <button class="toggle" id="toggle-fps" role="switch" aria-checked="false"><span class="toggle-dot"></span></button>
+        </div>
+        <div class="setting-row">
+          <span data-i18n="settings.fullscreen">Fullscreen</span>
+          <button class="btn btn-ghost btn-sm" id="btn-toggle-fullscreen" data-i18n="settings.toggle">Toggle</button>
+        </div>
+
+        <div class="field">
+          <label class="field-label" data-i18n="settings.theme">Theme</label>
+          <div class="segmented segmented-grid" id="theme-select" role="radiogroup" aria-label="Select theme">
+            <button class="segment active" data-theme="dark" role="radio" aria-checked="true" data-i18n="theme.dark">Dark</button>
+            <button class="segment" data-theme="light" role="radio" aria-checked="false" data-i18n="theme.light">Light</button>
+            <button class="segment" data-theme="neon" role="radio" aria-checked="false" data-i18n="theme.neon">Neon</button>
+            <button class="segment" data-theme="cyberpunk" role="radio" aria-checked="false" data-i18n="theme.cyberpunk">Cyberpunk</button>
+            <button class="segment" data-theme="ocean" role="radio" aria-checked="false" data-i18n="theme.ocean">Ocean</button>
+            <button class="segment" data-theme="forest" role="radio" aria-checked="false" data-i18n="theme.forest">Forest</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" data-i18n="settings.language">Language</label>
+          <div class="segmented" id="language-select" role="radiogroup" aria-label="Select language">
+            <button class="segment active" data-lang="en" role="radio" aria-checked="true">English</button>
+            <button class="segment" data-lang="es" role="radio" aria-checked="false">Español</button>
+            <button class="segment" data-lang="hi" role="radio" aria-checked="false">हिंदी</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" data-i18n="settings.difficulty">Default Difficulty</label>
+          <div class="segmented" id="settings-difficulty-select" role="radiogroup" aria-label="Select default difficulty">
+            <button class="segment" data-difficulty="easy" role="radio" aria-checked="false" data-i18n="difficulty.easy">Easy</button>
+            <button class="segment active" data-difficulty="medium" role="radio" aria-checked="true" data-i18n="difficulty.medium">Medium</button>
+            <button class="segment" data-difficulty="hard" role="radio" aria-checked="false" data-i18n="difficulty.hard">Hard</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" data-i18n="settings.skin">Snake Skin</label>
+          <div class="skin-grid" id="skin-select"><!-- populated by JS --></div>
+        </div>
+
+        <button class="btn btn-danger" id="btn-reset-highscore" data-i18n="settings.resetHighscore">Reset High Score</button>
+        <button class="btn btn-danger" id="btn-reset-progress" data-i18n="settings.resetProgress">Reset All Progress</button>
+
+        <div class="start-actions">
+          <button class="btn btn-primary" id="btn-settings-back" data-i18n="settings.back">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         STATISTICS SCREEN
+    ======================================================= -->
+    <section class="screen hidden" id="screen-stats">
+      <div class="panel glass">
+        <h1 data-i18n="menu.stats">Statistics</h1>
+        <div class="result-grid stats-grid">
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.gamesPlayed">Games Played</span>
+            <span class="result-value" id="stat-games">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.gamesWon">Games Won</span>
+            <span class="result-value" id="stat-wins">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="gameover.highscore">High Score</span>
+            <span class="result-value" id="stat-highscore">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.avgScore">Average Score</span>
+            <span class="result-value" id="stat-avgscore">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.foodEaten">Total Food Eaten</span>
+            <span class="result-value" id="stat-food">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.powerups">Power-Ups Collected</span>
+            <span class="result-value" id="stat-powerups">0</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.bestTime">Best Game Time</span>
+            <span class="result-value" id="stat-besttime">00:00</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.playTime">Total Play Time</span>
+            <span class="result-value" id="stat-playtime">00:00</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-label" data-i18n="stats.longest">Longest Snake</span>
+            <span class="result-value" id="stat-longest">1</span>
+          </div>
+        </div>
+        <div class="start-actions">
+          <button class="btn btn-primary" id="btn-stats-back" data-i18n="settings.back">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         ACHIEVEMENTS SCREEN
+    ======================================================= -->
+    <section class="screen hidden" id="screen-achievements">
+      <div class="panel glass">
+        <h1 data-i18n="menu.achievements">Achievements</h1>
+        <p class="muted" id="achievement-progress">0 / 0 unlocked</p>
+        <ul class="achievement-list" id="achievement-list"><!-- populated by JS --></ul>
+        <div class="start-actions">
+          <button class="btn btn-primary" id="btn-achievements-back" data-i18n="settings.back">Back</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Achievement unlock toast -->
+    <div class="toast hidden" id="achievement-toast">
+      <span class="toast-icon">🏆</span>
+      <div>
+        <div class="toast-title" data-i18n="toast.unlocked">Achievement Unlocked</div>
+        <div class="toast-body" id="achievement-toast-text">—</div>
+      </div>
+    </div>
+
+    <!-- Power-up pickup toast -->
+    <div class="toast toast-powerup hidden" id="powerup-toast">
+      <span class="toast-icon" id="powerup-toast-icon">⚡</span>
+      <div>
+        <div class="toast-title" data-i18n="toast.powerup">Power-Up!</div>
+        <div class="toast-body" id="powerup-toast-text">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================================
+       AUDIO PLACEHOLDERS
+       These point at files that may not exist. The sound
+       module in script.js wraps every play() call in a
+       try/catch so the game works perfectly with silence
+       if the files are missing. Drop real files at these
+       paths (same names) to add audio.
+  ======================================================= -->
+  <audio id="sfx-eat" src="sounds/eat.mp3" preload="none"></audio>
+  <audio id="sfx-gameover" src="sounds/gameover.mp3" preload="none"></audio>
+  <audio id="sfx-click" src="sounds/click.mp3" preload="none"></audio>
+  <audio id="sfx-music" src="sounds/music.mp3" preload="none" loop></audio>
+  <audio id="sfx-achievement" src="sounds/achievement.mp3" preload="none"></audio>
+  <audio id="sfx-pause" src="sounds/pause.mp3" preload="none"></audio>
+  <audio id="sfx-powerup" src="sounds/powerup.mp3" preload="none"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
