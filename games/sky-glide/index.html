@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Sky Glide — An Anvora Games Original</title>
+<meta name="description" content="Sky Glide: Fly. Dodge. Survive. An original arcade flying game by Arihant for Anvora Games.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="game-wrapper">
+
+  <!-- ============ HUD (visible only during gameplay) ============ -->
+  <div id="hud" class="hidden">
+    <div class="hud-left">
+      <span class="hud-plane-icon" aria-hidden="true">✈️</span>
+      <div>
+        <div class="hud-score" id="hud-score">0</div>
+        <div class="hud-best">BEST <span id="hud-best">0</span></div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button id="fps-badge" class="fps-badge hidden" aria-hidden="true">60 FPS</button>
+      <button id="pause-btn" class="icon-btn" aria-label="Pause game">
+        <svg viewBox="0 0 24 24" width="22" height="22"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ GAME CANVAS ============ -->
+  <canvas id="game-canvas" aria-label="Sky Glide game area"></canvas>
+
+  <!-- ============ MAIN MENU ============ -->
+  <section id="screen-menu" class="screen" role="dialog" aria-label="Main Menu">
+    <div class="menu-card">
+      <div class="logo-plane" aria-hidden="true">✈️</div>
+      <h1 class="game-title">SKY GLIDE</h1>
+      <p class="game-tagline">Fly. Dodge. Survive.</p>
+      <p class="game-hint">Tap, Click, or Press SPACE to Fly</p>
+
+      <div class="menu-buttons">
+        <button class="btn btn-primary" id="btn-play">PLAY</button>
+        <button class="btn btn-secondary" id="btn-howto">HOW TO PLAY</button>
+        <button class="btn btn-secondary" id="btn-hangar">HANGAR</button>
+        <button class="btn btn-secondary" id="btn-achievements">ACHIEVEMENTS</button>
+        <button class="btn btn-secondary" id="btn-settings">SETTINGS</button>
+        <button class="btn btn-secondary" id="btn-about">ABOUT</button>
+      </div>
+
+      <div class="menu-footer">
+        <p>Developed by <strong>Arihant</strong></p>
+        <p class="dim">An Anvora Games Original</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO PLAY ============ -->
+  <section id="screen-howto" class="screen hidden" role="dialog" aria-label="How to play">
+    <div class="menu-card">
+      <h2 class="panel-title">HOW TO PLAY</h2>
+      <ul class="howto-list">
+        <li><span class="howto-icon">👆</span> Tap, click, or press <strong>SPACE</strong> to boost the airplane upward.</li>
+        <li><span class="howto-icon">🚧</span> Dodge obstacles.</li>
+        <li><span class="howto-icon">⭐</span> Collect stars.</li>
+        <li><span class="howto-icon">⏱️</span> Survive as long as possible.</li>
+        <li><span class="howto-icon">🏆</span> Beat your high score.</li>
+      </ul>
+      <button class="btn btn-primary" id="btn-howto-back">BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ HANGAR (skin selection) ============ -->
+  <section id="screen-hangar" class="screen hidden" role="dialog" aria-label="Hangar - choose your airplane">
+    <div class="menu-card wide">
+      <h2 class="panel-title">HANGAR</h2>
+      <p class="panel-sub">Unlock new planes by reaching score milestones.</p>
+      <div id="skin-grid" class="skin-grid"></div>
+      <button class="btn btn-primary" id="btn-hangar-back">BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ ACHIEVEMENTS ============ -->
+  <section id="screen-achievements" class="screen hidden" role="dialog" aria-label="Achievements">
+    <div class="menu-card wide">
+      <h2 class="panel-title">ACHIEVEMENTS</h2>
+      <div id="achievements-list" class="achievements-list"></div>
+      <button class="btn btn-primary" id="btn-achievements-back">BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ SETTINGS ============ -->
+  <section id="screen-settings" class="screen hidden" role="dialog" aria-label="Settings">
+    <div class="menu-card">
+      <h2 class="panel-title">SETTINGS</h2>
+
+      <div class="setting-row">
+        <span>Sound</span>
+        <button class="toggle" id="toggle-sound" data-on="true">ON</button>
+      </div>
+      <div class="setting-row">
+        <span>Music</span>
+        <button class="toggle" id="toggle-music" data-on="true">ON</button>
+      </div>
+      <div class="setting-row">
+        <span>Vibration</span>
+        <button class="toggle" id="toggle-vibration" data-on="true">ON</button>
+      </div>
+      <div class="setting-row">
+        <span>Quality</span>
+        <div class="segmented" id="segmented-quality">
+          <button data-value="low">LOW</button>
+          <button data-value="medium">MED</button>
+          <button data-value="high" class="active">HIGH</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <span>Show FPS</span>
+        <button class="toggle" id="toggle-fps" data-on="false">OFF</button>
+      </div>
+
+      <button class="btn btn-danger" id="btn-reset">RESET PROGRESS</button>
+      <button class="btn btn-primary" id="btn-settings-back">BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="screen-about" class="screen hidden" role="dialog" aria-label="About">
+    <div class="menu-card">
+      <h2 class="panel-title">SKY GLIDE</h2>
+      <p class="about-quote">"An original arcade flying experience created for Anvora Games."</p>
+      <div class="about-grid">
+        <div><span>Developer</span><strong>Arihant</strong></div>
+        <div><span>Studio</span><strong>Anvora Games</strong></div>
+        <div><span>Genre</span><strong>Arcade / Casual</strong></div>
+        <div><span>Platform</span><strong>Web Browser</strong></div>
+        <div><span>Version</span><strong>1.0.0</strong></div>
+      </div>
+      <h3 class="about-subtitle">ABOUT THE DEVELOPER</h3>
+      <p class="about-text">Sky Glide was created by Arihant as an original browser game for Anvora Games.</p>
+      <button class="btn btn-primary" id="btn-about-back">BACK</button>
+    </div>
+  </section>
+
+  <!-- ============ PAUSE OVERLAY ============ -->
+  <section id="screen-pause" class="screen hidden" role="dialog" aria-label="Paused">
+    <div class="menu-card">
+      <h2 class="panel-title">PAUSED</h2>
+      <div class="menu-buttons">
+        <button class="btn btn-primary" id="btn-resume">RESUME</button>
+        <button class="btn btn-secondary" id="btn-restart-pause">RESTART</button>
+        <button class="btn btn-secondary" id="btn-menu-pause">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAME OVER ============ -->
+  <section id="screen-gameover" class="screen hidden" role="dialog" aria-label="Game Over">
+    <div class="menu-card">
+      <h2 class="panel-title gameover-title">GAME OVER</h2>
+      <div class="gameover-stats">
+        <div class="stat-row"><span>Score</span><strong id="go-score">0</strong></div>
+        <div class="stat-row"><span>Best</span><strong id="go-best">0</strong></div>
+      </div>
+      <p id="go-message" class="go-message"></p>
+      <div id="go-unlock" class="go-unlock hidden"></div>
+      <div class="menu-buttons">
+        <button class="btn btn-primary" id="btn-play-again">PLAY AGAIN</button>
+        <button class="btn btn-secondary" id="btn-menu-gameover">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Achievement toast ============ -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ============ Mobile tap layer (covers canvas during play) ============ -->
+  <div id="tap-layer" class="hidden" aria-hidden="true"></div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
