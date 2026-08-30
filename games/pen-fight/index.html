@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>PEN FIGHT — AnvoraGames</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ================= MAIN MENU ================= -->
+  <section id="screen-menu" class="screen active">
+    <div class="menu-wrap">
+      <div class="logo">
+        <h1 class="title">PEN<span>FIGHT</span></h1>
+        <div class="title-sub">flick &middot; knock &middot; win</div>
+      </div>
+      <div class="coin-pill" id="coin-display">🪙 <span id="coin-count">0</span></div>
+      <nav class="menu-list">
+        <button class="menu-btn primary" data-nav="play">▶ PLAY</button>
+        <button class="menu-btn" data-nav="pens">✒ PENS</button>
+        <button class="menu-btn" data-nav="match">▤ MATCH</button>
+        <button class="menu-btn" data-nav="settings">⚙ SETTINGS</button>
+      </nav>
+      <footer class="credit">
+        PEN FIGHT<br/>
+        Developed by <strong>Arihant</strong><br/>
+        AnvoraGames
+      </footer>
+    </div>
+  </section>
+
+  <!-- ================= DIFFICULTY / QUICK MATCH ================= -->
+  <section id="screen-play" class="screen">
+    <div class="panel-wrap">
+      <h2 class="panel-title">CHOOSE OPPONENT</h2>
+      <p class="panel-sub">Best of <span id="play-format-label">3</span> &middot; pick a difficulty</p>
+      <div class="diff-grid">
+        <button class="diff-btn" data-diff="easy">
+          <span class="diff-name">EASY</span>
+          <span class="diff-desc">Loose aim, forgiving</span>
+        </button>
+        <button class="diff-btn" data-diff="medium">
+          <span class="diff-name">MEDIUM</span>
+          <span class="diff-desc">Solid, occasional misses</span>
+        </button>
+        <button class="diff-btn" data-diff="hard">
+          <span class="diff-name">HARD</span>
+          <span class="diff-desc">Sharp angles, real threat</span>
+        </button>
+      </div>
+      <button class="menu-btn ghost" data-nav="menu">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ================= PENS ================= -->
+  <section id="screen-pens" class="screen">
+    <div class="panel-wrap">
+      <h2 class="panel-title">PENS</h2>
+      <p class="panel-sub small-note">Realistic school &amp; office pens. Original AnvoraGames designs — not affiliated with any pen brand.</p>
+      <div class="coin-pill small" id="coin-display-2">🪙 <span id="coin-count-2">0</span></div>
+      <div class="pen-grid" id="pen-grid"></div>
+      <button class="menu-btn ghost" data-nav="menu">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ================= MATCH SETTINGS ================= -->
+  <section id="screen-match" class="screen">
+    <div class="panel-wrap">
+      <h2 class="panel-title">MATCH</h2>
+      <p class="panel-sub">Match format</p>
+      <div class="diff-grid two-col">
+        <button class="diff-btn" data-format="3">
+          <span class="diff-name">BEST OF 3</span>
+          <span class="diff-desc">First to 2 round wins</span>
+        </button>
+        <button class="diff-btn" data-format="5">
+          <span class="diff-name">BEST OF 5</span>
+          <span class="diff-desc">First to 3 round wins</span>
+        </button>
+      </div>
+      <p class="panel-sub">Desk</p>
+      <div class="pen-grid" id="desk-grid"></div>
+      <button class="menu-btn ghost" data-nav="menu">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ================= SETTINGS ================= -->
+  <section id="screen-settings" class="screen">
+    <div class="panel-wrap">
+      <h2 class="panel-title">SETTINGS</h2>
+      <div class="settings-row">
+        <span>Sound</span>
+        <button class="toggle-btn" id="toggle-sound">ON</button>
+      </div>
+      <div class="settings-row">
+        <span>Aim Guide</span>
+        <button class="toggle-btn" id="toggle-aimguide">ON</button>
+      </div>
+      <div class="settings-row">
+        <span>First-Shot Rule</span>
+        <button class="toggle-btn" id="toggle-firstshot">ON</button>
+      </div>
+      <p class="settings-hint">First-Shot Rule: your opening flick of a round can't knock the opponent out — it just breaks the formation, like a real break shot.</p>
+      <div class="settings-row">
+        <span>Reset Progress</span>
+        <button class="toggle-btn danger" id="reset-progress">RESET</button>
+      </div>
+      <button class="menu-btn ghost" data-nav="menu">◀ BACK</button>
+    </div>
+  </section>
+
+  <!-- ================= TUTORIAL OVERLAY ================= -->
+  <section id="screen-tutorial" class="screen">
+    <div class="tut-wrap">
+      <div class="tut-card" id="tut-card">
+        <div class="tut-step-num">1</div>
+        <h3>AIM</h3>
+        <p>Touch and hold your pen, then pull backward in the direction you want to shoot from.</p>
+      </div>
+      <button class="menu-btn primary" id="tut-next">NEXT</button>
+      <button class="menu-btn ghost" id="tut-skip">SKIP</button>
+    </div>
+  </section>
+
+  <!-- ================= GAME ================= -->
+  <section id="screen-game" class="screen">
+    <div id="game-wrap">
+      <canvas id="game-canvas"></canvas>
+
+      <div id="hud-top">
+        <div class="hud-score ai-score">
+          <span class="hud-label">AI</span>
+          <span class="hud-value" id="ai-score">0</span>
+        </div>
+        <div class="hud-round">
+          <span id="round-label">ROUND 1</span>
+          <span id="turn-label">YOUR TURN</span>
+        </div>
+        <div class="hud-right">
+          <div class="hud-score player-score">
+            <span class="hud-label">YOU</span>
+            <span class="hud-value" id="player-score">0</span>
+          </div>
+          <div id="hud-controls">
+            <button id="btn-pause" title="Pause (ESC)">❚❚</button>
+            <button id="btn-mute" title="Mute (M)">🔊</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="power-meter-wrap">
+        <div id="power-meter-track">
+          <div id="power-meter-fill"></div>
+        </div>
+        <div id="power-meter-label">POWER</div>
+      </div>
+
+      <div id="banner"><span id="banner-text"></span></div>
+    </div>
+
+    <!-- Pause overlay -->
+    <div id="overlay-pause" class="overlay hidden">
+      <div class="overlay-card">
+        <h2>PAUSED</h2>
+        <button class="menu-btn primary" id="resume-btn">RESUME</button>
+        <button class="menu-btn" id="restart-btn">RESTART ROUND (R)</button>
+        <button class="menu-btn ghost" id="quit-btn">MAIN MENU</button>
+      </div>
+    </div>
+
+    <!-- Round end overlay -->
+    <div id="overlay-round" class="overlay hidden">
+      <div class="overlay-card">
+        <h2 id="round-result-text">ROUND WON!</h2>
+        <p id="round-score-text">1 — 0</p>
+      </div>
+    </div>
+
+    <!-- Match end overlay -->
+    <div id="overlay-match" class="overlay hidden">
+      <div class="overlay-card">
+        <h2 id="match-result-text">YOU WIN!</h2>
+        <p id="match-coins-text">+50 coins</p>
+        <button class="menu-btn primary" id="play-again-btn">PLAY AGAIN</button>
+        <button class="menu-btn ghost" id="main-menu-btn">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script src="game.js"></script>
+</body>
+</html>
