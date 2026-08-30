@@ -1,0 +1,261 @@
+/* ============================================================
+   VOIDRIFT - style.css
+   Dark sci-fi FPS UI theme. Handles menus, HUD, mobile controls,
+   and responsive landscape layout for phones/tablets.
+   ============================================================ */
+
+:root{
+  --accent: #ff2e4d;
+  --accent2: #21e6ff;
+  --dark: #05060a;
+  --panel: rgba(10,12,20,0.85);
+  --health: #ff3b4e;
+  --armor: #21e6ff;
+  --text: #dfe6ee;
+}
+
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+html, body{
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: #000; color: var(--text);
+  font-family: 'Segoe UI', Consolas, monospace, sans-serif;
+  overflow: hidden; overscroll-behavior: none;
+  touch-action: none;
+}
+
+#game-container{ position: fixed; inset: 0; }
+#game-canvas{ display:block; width:100%; height:100%; }
+
+.hidden{ display: none !important; }
+
+/* ---------------- Loading Screen ---------------- */
+#loading-screen{
+  position: fixed; inset: 0; background: var(--dark);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index: 500;
+}
+.logo-glitch{
+  font-size: 3.5rem; font-weight: 900; letter-spacing: 0.4rem;
+  color: var(--accent); text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent2);
+  animation: flicker 2.5s infinite;
+}
+@keyframes flicker{
+  0%,19%,21%,23%,25%,54%,56%,100%{ opacity:1; }
+  20%,24%,55%{ opacity:0.4; }
+}
+.loading-bar-track{
+  width: 320px; max-width: 70vw; height: 6px; background: #1a1c24;
+  margin-top: 24px; border-radius: 4px; overflow: hidden;
+  border: 1px solid var(--accent2);
+}
+#loading-bar-fill{ width:0%; height:100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.2s; }
+#loading-text{ margin-top: 14px; font-size: 0.8rem; letter-spacing: 0.2rem; color: var(--accent2); }
+
+/* ---------------- Generic Screens / Menus ---------------- */
+.screen{
+  position: fixed; inset: 0; z-index: 300;
+  display:flex; flex-direction: column; align-items:center; justify-content:center;
+  background: radial-gradient(ellipse at center, rgba(20,10,20,0.95) 0%, rgba(0,0,0,0.98) 80%);
+  text-align:center;
+}
+.menu-bg-glow{
+  position:absolute; inset:0; pointer-events:none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.02) 3px);
+}
+.game-title{
+  font-size: 5rem; font-weight: 900; letter-spacing: 0.6rem; margin: 0;
+  color: var(--accent);
+  text-shadow: 0 0 30px var(--accent), 0 0 60px rgba(255,46,77,0.5);
+}
+.game-subtitle{ color: var(--accent2); letter-spacing: 0.4rem; margin-top: 4px; font-size: 0.9rem; }
+
+.menu-buttons{ display:flex; flex-direction: column; gap: 12px; margin-top: 30px; width: 280px; }
+.menu-btn{
+  padding: 14px 20px; background: rgba(255,46,77,0.08); color: var(--text);
+  border: 1px solid var(--accent); border-radius: 2px; font-size: 1rem; letter-spacing: 0.15rem;
+  cursor: pointer; transition: all 0.15s; font-weight: 700;
+}
+.menu-btn:hover, .menu-btn:active{ background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
+
+.difficulty-row{ margin-top: 22px; font-size: 0.85rem; letter-spacing: 0.1rem; }
+.difficulty-row select{ margin-left: 8px; }
+
+.credits{
+  position: absolute; bottom: 22px; font-size: 0.8rem; letter-spacing: 0.1rem;
+  color: #8a93a3;
+}
+
+select, input[type=range]{
+  background:#111420; color: var(--text); border:1px solid var(--accent2); padding: 4px 8px;
+}
+
+#settings-menu{ overflow-y:auto; padding: 20px 0; }
+#settings-menu h2, #achievements-menu h2, #pause-menu h2{
+  color: var(--accent2); letter-spacing: 0.3rem; text-shadow: 0 0 12px var(--accent2);
+}
+.controls-heading{
+  color: var(--accent); letter-spacing: 0.25rem; font-size: 0.9rem; margin: 18px 0 10px;
+}
+#controls-list{
+  display:flex; gap: 28px; width: 420px; max-width: 88vw; justify-content:center;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(33,230,255,0.3);
+  padding: 12px 18px; border-radius: 4px;
+}
+.controls-col{ flex:1; }
+.ctrl-row{
+  display:flex; justify-content:space-between; gap:10px; font-size:0.75rem;
+  padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ctrl-row span:last-child{ color: var(--accent2); font-weight:700; letter-spacing:0.05rem; }
+.setting-row{
+  display:flex; align-items:center; justify-content: space-between;
+  width: 320px; max-width: 80vw; margin: 10px 0; font-size: 0.85rem;
+}
+.setting-row input[type=range]{ width: 150px; }
+
+#achievements-list{ width: 340px; max-width: 85vw; max-height: 50vh; overflow-y:auto; text-align:left; margin: 16px 0; }
+.achievement-item{
+  padding: 8px 12px; margin: 6px 0; border-left: 3px solid var(--accent2);
+  background: rgba(33,230,255,0.06); font-size: 0.8rem;
+}
+.achievement-item.locked{ opacity: 0.35; border-left-color: #555; }
+
+.gameover-title{ font-size: 3rem; color: var(--accent); text-shadow: 0 0 30px var(--accent); letter-spacing: 0.3rem; }
+.complete-title{ font-size: 2.6rem; color: var(--accent2); text-shadow: 0 0 30px var(--accent2); letter-spacing: 0.3rem; }
+
+/* ---------------- HUD ---------------- */
+#hud{ position: fixed; inset: 0; z-index: 100; pointer-events: none; font-size: 14px; }
+
+#crosshair{
+  position:absolute; top:50%; left:50%; width: 20px; height:20px; transform: translate(-50%,-50%);
+}
+.ch-line{ position:absolute; background: var(--accent2); box-shadow: 0 0 4px var(--accent2); }
+.ch-top{ top:0; left:9px; width:2px; height:6px; }
+.ch-bottom{ bottom:0; left:9px; width:2px; height:6px; }
+.ch-left{ left:0; top:9px; width:6px; height:2px; }
+.ch-right{ right:0; top:9px; width:6px; height:2px; }
+#hitmarker{
+  position:absolute; top:-10px; left:-10px; width:40px; height:40px; opacity:0;
+  background: conic-gradient(from 0deg, transparent 0deg 80deg, var(--accent) 80deg 100deg, transparent 100deg 180deg, var(--accent) 180deg 200deg, transparent 200deg 280deg, var(--accent) 280deg 300deg, transparent 300deg 360deg);
+  border-radius: 4px;
+}
+#hitmarker.show{ animation: hitflash 0.18s ease-out; }
+@keyframes hitflash{ 0%{opacity:1; transform: scale(1.3);} 100%{opacity:0; transform: scale(1);} }
+
+#vignette-damage, #vignette-lowhealth{
+  position:absolute; inset:0; pointer-events:none; opacity:0; transition: opacity 0.3s;
+}
+#vignette-damage{ background: radial-gradient(ellipse at center, transparent 40%, rgba(255,0,20,0.55) 100%); }
+#vignette-lowhealth{ background: radial-gradient(ellipse at center, transparent 30%, rgba(120,0,0,0.5) 100%); animation: pulse-red 1.6s infinite; }
+@keyframes pulse-red{ 0%,100%{ opacity:0.15;} 50%{ opacity:0.5;} }
+
+#hud-top-left{ position:absolute; top:14px; left:16px; font-size:0.75rem; letter-spacing:0.1rem; color:var(--accent2); text-shadow:0 0 6px #000; }
+#score-display{ margin-top:4px; color:#fff; }
+#hud-top-right{ position:absolute; top:14px; right:16px; font-size:0.75rem; color:#7fffb0; text-align:right; }
+#difficulty-label{ margin-top:4px; letter-spacing:0.1rem; font-weight:700; color:var(--accent2); }
+
+#minimap-wrap{
+  position:absolute; top:44px; right:16px; width:140px; height:140px;
+  border:1px solid var(--accent2); border-radius:50%; overflow:hidden; background: rgba(0,0,0,0.5);
+  box-shadow: 0 0 12px rgba(33,230,255,0.4);
+}
+
+#toast-container{
+  position:absolute; top:80px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.toast{
+  padding:6px 16px; background: rgba(10,10,15,0.85); border:1px solid var(--accent2);
+  font-size:0.75rem; letter-spacing:0.1rem; color:#fff; animation: toast-in 0.3s ease-out, toast-out 0.4s ease-in 2.6s forwards;
+}
+@keyframes toast-in{ from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+@keyframes toast-out{ to{opacity:0; transform:translateY(-10px);} }
+
+#hud-bottom{
+  position:absolute; bottom:14px; left:0; right:0;
+  display:flex; align-items:flex-end; justify-content:space-between; padding: 0 18px;
+}
+#hud-bars{ display:flex; flex-direction:column; gap:6px; min-width: 220px; }
+.bar-row{ display:flex; align-items:center; gap:8px; }
+.bar-icon{ width:16px; text-align:center; color:var(--accent2); }
+.bar-track{ width:180px; height:12px; background: rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); }
+.bar-fill{ height:100%; width:100%; transition: width 0.2s; }
+.bar-fill.health{ background: linear-gradient(90deg, #8a0014, var(--health)); }
+.bar-fill.armor{ background: linear-gradient(90deg, #005e6e, var(--armor)); }
+.bar-val{ font-size:0.75rem; width:30px; }
+
+#weapon-hud{ display:flex; align-items:center; gap:10px; background: var(--panel); padding:8px 14px; border:1px solid var(--accent); border-radius:4px; }
+#weapon-icon{ font-weight:900; font-size:0.9rem; color:var(--accent); border:1px solid var(--accent); padding:6px 8px; border-radius:3px; }
+#weapon-name{ font-size:0.75rem; letter-spacing:0.1rem; color:#fff; }
+#ammo-count{ font-size:1.1rem; font-weight:700; }
+
+/* ---------------- Mobile Controls ---------------- */
+#mobile-controls{ position:fixed; inset:0; z-index:150; pointer-events:none; }
+#joystick-zone{
+  /* Left half of the screen only - must NOT overlap #look-zone or
+     touches meant for the joystick get intercepted by the look area. */
+  position:absolute; left:0; top:0; width:45%; height:100%;
+  pointer-events:auto; touch-action:none;
+}
+#joystick-base{
+  position:absolute; width:110px; height:110px; border-radius:50%;
+  background: rgba(255,255,255,0.06); border:2px solid rgba(33,230,255,0.5);
+  left:40px; bottom:40px;
+}
+#joystick-knob{
+  position:absolute; width:50px; height:50px; border-radius:50%;
+  background: rgba(33,230,255,0.5); border:1px solid var(--accent2);
+  left:30px; top:30px; pointer-events:none;
+}
+#look-zone{
+  /* Right half of the screen only - drag here to aim/look. Buttons
+     render on top of this (later in DOM) and stop propagation so
+     they don't also rotate the camera when tapped. */
+  position:absolute; left:45%; top:0; width:55%; height:100%;
+  pointer-events:auto; touch-action:none;
+}
+#mobile-buttons{
+  position:absolute; right:14px; bottom:20px; width:220px; height:220px;
+  pointer-events:none;
+}
+.mob-btn{
+  position:absolute; width:64px; height:64px; border-radius:50%;
+  background: rgba(255,46,77,0.15); border:2px solid var(--accent);
+  color:#fff; font-size:0.65rem; font-weight:700; letter-spacing:0.05rem;
+  pointer-events:auto; touch-action:none;
+}
+.fire-btn{ width:84px; height:84px; right:0; bottom:0; background: rgba(255,46,77,0.35); font-size:0.8rem; }
+#btn-fire{ position:absolute; right:0; bottom:0; }
+#btn-aim{ position:absolute; right:100px; bottom:10px; }
+#btn-jump{ position:absolute; right:0; bottom:120px; }
+#btn-reload{ position:absolute; right:100px; bottom:110px; }
+#btn-sprint{ position:absolute; right:150px; bottom:60px; width:54px; height:54px; font-size:0.55rem;}
+
+#weapon-switch-mobile{
+  position:absolute; left:50%; top:10px; transform:translateX(-50%);
+  display:flex; gap:8px; pointer-events:auto;
+}
+.wswitch-btn{
+  width:36px; height:36px; border-radius:4px; background: rgba(0,0,0,0.4);
+  border:1px solid var(--accent2); color:#fff; font-weight:700;
+}
+
+/* ---------------- Orientation / Tap overlays ---------------- */
+#orientation-overlay, #tap-to-start{
+  position:fixed; inset:0; z-index:600; background:#000;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff; text-align:center; padding: 20px;
+}
+.rotate-icon{ font-size:4rem; color:var(--accent2); animation: spin 2s linear infinite; }
+@keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+#tap-to-start p{ font-size:1.2rem; letter-spacing:0.2rem; color:var(--accent2); animation: pulse-red 1.5s infinite; }
+
+/* ---------------- Responsive: mobile landscape fill ---------------- */
+@media (max-width: 900px){
+  .game-title{ font-size: 3rem; }
+  .menu-buttons{ width: 220px; }
+  #hud-bars{ min-width: 160px; }
+  .bar-track{ width: 120px; }
+  #minimap-wrap{ width: 100px; height: 100px; }
+}
