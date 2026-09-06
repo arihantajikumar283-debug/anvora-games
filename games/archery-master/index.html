@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Archery Master — Anvora Games</title>
+<style>
+  :root{
+    --gold: #d9a441;
+    --gold-bright: #f4c665;
+    --terracotta: #c1592f;
+    --stone: #8a7b6c;
+    --stone-dark: #4a4038;
+    --ink: #241a12;
+    --cream: #f6ecd6;
+    --sky-top: #4fa8d8;
+    --sky-bottom: #ffe2a8;
+    --ok: #6fbf73;
+    --danger: #d9534f;
+    --font-display: 'Yatra One','Georgia',serif;
+    --font-body: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  }
+  @font-face{
+    font-family:'Yatra One';
+    src: local('Yatra One');
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%; overflow:hidden;
+    background:#000; font-family:var(--font-body); color:var(--cream);
+    overscroll-behavior:none; touch-action:none;
+    -webkit-user-select:none; user-select:none;
+  }
+  #app{position:fixed; inset:0; width:100%; height:100%;}
+  #gameCanvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none;}
+
+  /* ---------- Shared overlay panel look ---------- */
+  .panel{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(217,164,65,0.18), transparent 60%),
+      linear-gradient(180deg, rgba(20,14,8,0.92), rgba(10,7,4,0.97));
+    z-index:20; padding:16px; text-align:center;
+    backdrop-filter: blur(2px);
+    overflow-y:auto;
+  }
+  .hidden{display:none !important;}
+
+  .frame-border{
+    position:relative;
+    border:2px solid var(--gold);
+    border-radius:14px;
+    padding:28px 32px;
+    background:linear-gradient(180deg, rgba(74,64,56,0.55), rgba(36,26,18,0.75));
+    box-shadow: 0 0 0 6px rgba(217,164,65,0.08), 0 20px 60px rgba(0,0,0,0.6);
+    max-width:520px; width:100%;
+    max-height:100%;
+    margin:auto;
+  }
+  .corner{position:absolute; width:16px; height:16px; border:2px solid var(--gold-bright);}
+  .corner.tl{top:-2px; left:-2px; border-right:none; border-bottom:none;}
+  .corner.tr{top:-2px; right:-2px; border-left:none; border-bottom:none;}
+  .corner.bl{bottom:-2px; left:-2px; border-right:none; border-top:none;}
+  .corner.br{bottom:-2px; right:-2px; border-left:none; border-top:none;}
+
+  .brand-eyebrow{
+    letter-spacing:5px; font-size:11px; color:var(--gold-bright); text-transform:uppercase; margin-bottom:6px; opacity:0.85;
+  }
+  h1.title{
+    font-family:var(--font-display); font-size:clamp(38px,8vw,64px); margin:0 0 4px 0;
+    color:var(--gold-bright);
+    text-shadow: 0 0 20px rgba(244,198,101,0.5), 0 3px 0 rgba(0,0,0,0.6);
+    letter-spacing:2px;
+  }
+  .subtitle{
+    font-size:13px; letter-spacing:6px; color:var(--terracotta); text-transform:uppercase; margin-bottom:26px; font-weight:bold;
+  }
+  .menu-btn{
+    display:block; width:100%; margin:9px 0; padding:14px 20px;
+    background:linear-gradient(180deg, rgba(217,164,65,0.16), rgba(193,89,47,0.12));
+    border:1.5px solid var(--gold); color:var(--cream);
+    font-family:var(--font-body); font-size:16px; font-weight:bold; letter-spacing:2px;
+    border-radius:8px; cursor:pointer; text-transform:uppercase;
+    transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
+  }
+  .menu-btn:hover, .menu-btn:active{
+    background:linear-gradient(180deg, rgba(244,198,101,0.32), rgba(193,89,47,0.22));
+    transform:translateY(-1px);
+    box-shadow:0 4px 18px rgba(217,164,65,0.25);
+  }
+  .menu-btn.secondary{
+    border-color:rgba(217,164,65,0.4); font-size:13px; opacity:0.85; padding:10px 16px;
+  }
+  .menu-btn.small{padding:9px 14px; font-size:12px;}
+  .menu-footer{
+    margin-top:22px; font-size:11px; letter-spacing:1.5px; color:rgba(246,236,214,0.55); line-height:1.6;
+  }
+  .menu-footer b{color:var(--gold-bright);}
+
+  .howto-text{
+    max-height:min(46vh, 340px); overflow-y:auto; overscroll-behavior:contain;
+    margin:6px 0 4px; padding-right:6px;
+  }
+  .howto-text p{
+    font-size:13px; line-height:1.55; color:var(--cream); margin:0 0 12px 0; letter-spacing:0.2px;
+  }
+  .howto-text b{color:var(--gold-bright);}
+  .howto-text::-webkit-scrollbar{width:6px;}
+  .howto-text::-webkit-scrollbar-thumb{background:rgba(217,164,65,0.4); border-radius:4px;}
+
+  /* ---------- Difficulty chips ---------- */
+  .diff-row{display:flex; gap:8px; justify-content:center; margin:14px 0 18px; flex-wrap:wrap;}
+  .diff-chip{
+    padding:8px 14px; border-radius:20px; border:1.5px solid rgba(217,164,65,0.5);
+    font-size:12px; letter-spacing:1px; cursor:pointer; text-transform:uppercase; font-weight:bold;
+    background:rgba(0,0,0,0.25); color:var(--cream);
+  }
+  .diff-chip.active{background:var(--gold); color:#241a12; border-color:var(--gold-bright);}
+
+  /* ---------- Level select ---------- */
+  .level-grid{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:16px 0; width:100%;
+  }
+  .level-tile{
+    aspect-ratio:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border-radius:10px; border:1.5px solid rgba(217,164,65,0.45); background:rgba(0,0,0,0.3);
+    cursor:pointer; font-weight:bold; font-size:18px; color:var(--cream);
+  }
+  .level-tile .star{font-size:10px; color:var(--gold-bright); margin-top:2px;}
+  .level-tile.locked{opacity:0.35; cursor:not-allowed;}
+  .level-tile.unlocked:hover{background:rgba(217,164,65,0.2); transform:translateY(-2px);}
+
+  /* ---------- Settings ---------- */
+  .setting-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px; margin:12px 0;
+    font-size:13px; letter-spacing:1px; text-transform:uppercase;
+  }
+  .setting-row .opts{display:flex; gap:6px;}
+  .toggle-btn{
+    padding:7px 14px; border-radius:6px; border:1.5px solid rgba(217,164,65,0.5); background:rgba(0,0,0,0.25);
+    color:var(--cream); font-size:12px; cursor:pointer; font-weight:bold;
+  }
+  .toggle-btn.active{background:var(--gold); color:#241a12;}
+  input[type=range]{width:140px; accent-color:var(--gold);}
+
+  /* ---------- HUD ---------- */
+  #hud{position:absolute; inset:0; z-index:10; pointer-events:none; font-family:var(--font-body);}
+  .hud-top{
+    position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:flex-start;
+    padding:10px 14px; gap:10px;
+  }
+  .hud-pill{
+    background:rgba(20,14,8,0.62); border:1px solid rgba(217,164,65,0.5); border-radius:9px;
+    padding:6px 12px; backdrop-filter:blur(3px); min-width:64px; text-align:center;
+  }
+  .hud-pill .label{font-size:9px; letter-spacing:1.5px; color:var(--gold-bright); text-transform:uppercase; opacity:0.85;}
+  .hud-pill .value{font-size:19px; font-weight:bold; color:var(--cream); line-height:1.15;}
+  .hud-left{display:flex; gap:8px; flex-wrap:wrap; max-width:40%;}
+  .hud-right{display:flex; gap:8px; flex-direction:column; align-items:flex-end; margin-top:46px;}
+  #comboTag{
+    position:absolute; top:78px; left:50%; transform:translateX(-50%) scale(0.85); opacity:0;
+    font-family:var(--font-display); font-size:26px; color:var(--gold-bright);
+    text-shadow:0 0 16px rgba(244,198,101,0.8); transition:opacity .15s, transform .15s; pointer-events:none;
+  }
+  #comboTag.show{opacity:1; transform:translateX(-50%) scale(1);}
+  #objective{
+    position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    background:rgba(20,14,8,0.55); border:1px solid rgba(217,164,65,0.4); border-radius:20px;
+    padding:5px 16px; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-bright);
+  }
+  #windBadge{display:flex; align-items:center; gap:6px; justify-content:center;}
+  #windArrow{display:inline-block; transition:transform .3s;}
+
+  #crosshair{
+    position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px;
+    pointer-events:none; z-index:9;
+  }
+  #crosshair svg{width:100%; height:100%; opacity:0.85;}
+  #drawPowerWrap{
+    position:absolute; bottom:110px; left:50%; transform:translateX(-50%); width:min(340px,70vw);
+    height:8px; background:rgba(0,0,0,0.4); border:1px solid rgba(217,164,65,0.5); border-radius:6px; overflow:hidden;
+    opacity:0; transition:opacity .15s; pointer-events:none;
+  }
+  #drawPowerWrap.show{opacity:1;}
+  #drawPowerFill{height:100%; width:0%; background:linear-gradient(90deg,var(--gold),var(--terracotta)); transition:width .03s linear;}
+
+  .hud-bottom-hint{
+    position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-size:11px; letter-spacing:1.5px;
+    color:rgba(246,236,214,0.7); text-transform:uppercase; text-align:center; pointer-events:none;
+  }
+  #pauseBtn{
+    position:absolute; top:10px; right:10px; pointer-events:auto; width:38px; height:38px; border-radius:9px;
+    background:rgba(20,14,8,0.62); border:1px solid rgba(217,164,65,0.5); color:var(--cream); font-size:16px; cursor:pointer;
+    z-index:2;
+  }
+  #mobileShootBtn{
+    position:absolute; bottom:26px; right:22px; pointer-events:auto; width:84px; height:84px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(244,198,101,0.95), rgba(193,89,47,0.9));
+    border:3px solid var(--gold-bright); color:#241a12; font-family:var(--font-body); font-weight:bold;
+    font-size:14px; letter-spacing:1px; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,0.45);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  #mobileShootBtn:active, #mobileShootBtn.charging{
+    transform:scale(0.93); box-shadow:0 3px 10px rgba(0,0,0,0.5), 0 0 0 8px rgba(244,198,101,0.18);
+  }
+
+  .float-score{
+    position:absolute; font-family:var(--font-display); font-weight:bold; pointer-events:none;
+    text-shadow:0 2px 6px rgba(0,0,0,0.8); z-index:15; white-space:nowrap;
+    animation:floatUp 1s ease-out forwards;
+  }
+  @keyframes floatUp{
+    0%{transform:translate(-50%,0) scale(0.6); opacity:0;}
+    15%{transform:translate(-50%,-10px) scale(1.15); opacity:1;}
+    100%{transform:translate(-50%,-70px) scale(1); opacity:0;}
+  }
+
+  #loading{
+    position:absolute; inset:0; z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:#161009; gap:14px;
+  }
+  #loading .bow-spin{font-size:44px; animation:spin 1.4s linear infinite;}
+  @keyframes spin{100%{transform:rotate(360deg);}}
+  #loading .ltxt{letter-spacing:3px; font-size:12px; color:var(--gold-bright); text-transform:uppercase;}
+
+  .rotate-hint{
+    position:absolute; inset:0; z-index:50; background:#0c0904; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:14px; text-align:center; padding:20px;
+  }
+  .rotate-hint .icon{font-size:48px; animation:rot 1.6s ease-in-out infinite;}
+  @keyframes rot{0%,100%{transform:rotate(0deg);}50%{transform:rotate(90deg);}}
+
+  #mobileFireHint{
+    position:absolute; bottom:70px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:rgba(246,236,214,0.6); letter-spacing:1px; pointer-events:none;
+  }
+
+  .stat-row{display:flex; justify-content:space-between; font-size:13px; margin:6px 0; letter-spacing:1px;}
+  .stat-row span:last-child{color:var(--gold-bright); font-weight:bold;}
+  .big-score{font-family:var(--font-display); font-size:48px; color:var(--gold-bright); margin:6px 0; text-shadow:0 0 20px rgba(244,198,101,0.5);}
+
+  @media (max-width:640px){
+    .frame-border{padding:20px 16px;}
+    .level-grid{grid-template-columns:repeat(5,1fr); gap:7px;}
+    .hud-pill{padding:5px 8px;}
+    .hud-pill .value{font-size:15px;}
+    .hud-pill .label{font-size:8px;}
+  }
+  /* Landscape phones are wide but short — the width-based rule above never fires there,
+     so this height-based query keeps the HUD from crowding the centered objective pill. */
+  @media (max-height:500px) and (orientation:landscape){
+    .hud-pill{padding:4px 7px;}
+    .hud-pill .value{font-size:13px;}
+    .hud-pill .label{font-size:7px; letter-spacing:1px;}
+    .hud-left{max-width:27%; gap:5px;}
+    .hud-right{margin-top:40px; gap:5px; max-width:20%;}
+    #objective{font-size:9px; padding:4px 8px; max-width:34vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    #pauseBtn{width:32px; height:32px; font-size:13px;}
+    #mobileShootBtn{width:64px; height:64px; font-size:11px; bottom:14px; right:14px;}
+    .hud-bottom-hint{bottom:8px; font-size:9px;}
+    #windBadge{bottom:8px;}
+  }
+
+  /* Short / landscape phone screens: compact the menus so nothing is clipped */
+  @media (max-height:480px){
+    .panel{padding:8px;}
+    .frame-border{padding:12px 20px;}
+    .brand-eyebrow{font-size:9px; margin-bottom:2px;}
+    h1.title{font-size:clamp(22px,6vw,32px); margin:0 0 2px 0;}
+    .subtitle{font-size:10px; letter-spacing:3px; margin-bottom:10px;}
+    .menu-btn{margin:5px 0; padding:9px 16px; font-size:13px;}
+    .menu-footer{margin-top:10px; font-size:9px; line-height:1.4;}
+    .diff-row{margin:8px 0 10px;}
+    .diff-chip{padding:5px 10px; font-size:10px;}
+    .level-grid{gap:5px; margin:8px 0;}
+    .level-tile{border-radius:6px;}
+    .level-tile div{font-size:14px;}
+    .setting-row{margin:7px 0; font-size:11px;}
+    .big-score{font-size:30px; margin:2px 0;}
+    .stat-row{font-size:11px; margin:3px 0;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="bow-spin">🏹</div>
+    <div class="ltxt">Preparing the archery range…</div>
+  </div>
+
+  <!-- Rotate device hint -->
+  <div class="rotate-hint hidden" id="rotateHint">
+    <div class="icon">📱</div>
+    <div style="font-size:15px; letter-spacing:1px;">Rotate your device to landscape<br>for the best archery experience</div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="objective">Hit the target</div>
+    <button id="pauseBtn">⏸</button>
+    <div class="hud-top">
+      <div class="hud-left">
+        <div class="hud-pill"><div class="label">Score</div><div class="value" id="hudScore">0</div></div>
+        <div class="hud-pill"><div class="label">Level</div><div class="value" id="hudLevel">1</div></div>
+        <div class="hud-pill"><div class="label">Round</div><div class="value" id="hudRound">1/1</div></div>
+        <div class="hud-pill"><div class="label">Arrows</div><div class="value" id="hudArrows">6</div></div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-pill"><div class="label">Best</div><div class="value" id="hudBest">0</div></div>
+        <div class="hud-pill"><div class="label">Difficulty</div><div class="value" id="hudDiff">Normal</div></div>
+        <div class="hud-pill"><div class="label">Time</div><div class="value" id="hudTimer">--</div></div>
+        <div class="hud-pill"><div class="label">Accuracy</div><div class="value" id="hudAccuracy">0%</div></div>
+      </div>
+    </div>
+    <div id="comboTag">COMBO x2</div>
+    <div id="drawPowerWrap"><div id="drawPowerFill"></div></div>
+    <div id="crosshair">
+      <svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="#f4c665" stroke-width="1.4"/><line x1="13" y1="0" x2="13" y2="7" stroke="#f4c665" stroke-width="1.4"/><line x1="13" y1="19" x2="13" y2="26" stroke="#f4c665" stroke-width="1.4"/><line x1="0" y1="13" x2="7" y2="13" stroke="#f4c665" stroke-width="1.4"/><line x1="19" y1="13" x2="26" y2="13" stroke="#f4c665" stroke-width="1.4"/></svg>
+    </div>
+    <div class="hud-bottom-hint" id="controlHint">Click &amp; drag to draw the bow — release to shoot</div>
+    <div class="hud-pill" id="windBadge" style="position:absolute; bottom:16px; left:16px;">
+      <div class="label">Wind</div>
+      <div class="value"><span id="windArrow">➤</span> <span id="windSpeed">0</span> m/s</div>
+    </div>
+    <button id="mobileShootBtn" class="hidden">SHOOT</button>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div class="panel" id="mainMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow">Anvora Games presents</div>
+      <h1 class="title">ARCHERY MASTER</h1>
+      <div class="subtitle">Master the Aim</div>
+      <button class="menu-btn" id="btnPlay">▶ Play</button>
+      <button class="menu-btn" id="btnLevelSelect">🎯 Level Select</button>
+      <button class="menu-btn" id="btnPractice">🏋 Practice</button>
+      <button class="menu-btn" id="btnHowToPlay">❔ How to Play</button>
+      <button class="menu-btn" id="btnSettings">⚙ Settings</button>
+      <div class="menu-footer">High Score: <b id="menuHighScore">0</b><br>ANVORA GAMES · Developed by <b>Arihant</b></div>
+    </div>
+  </div>
+
+  <!-- LEVEL SELECT -->
+  <div class="panel hidden" id="levelSelectMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow">Choose your challenge</div>
+      <h1 class="title" style="font-size:32px;">Level Select</h1>
+      <div class="diff-row" id="diffRowLevel"></div>
+      <div class="level-grid" id="levelGrid"></div>
+      <button class="menu-btn secondary" id="btnLevelBack">← Back</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel hidden" id="settingsMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow">Configure</div>
+      <h1 class="title" style="font-size:32px;">Settings</h1>
+      <div class="setting-row"><span>Sound</span><div class="opts"><button class="toggle-btn" data-set="sound" data-val="on">On</button><button class="toggle-btn" data-set="sound" data-val="off">Off</button></div></div>
+      <div class="setting-row"><span>Music</span><div class="opts"><button class="toggle-btn" data-set="music" data-val="on">On</button><button class="toggle-btn" data-set="music" data-val="off">Off</button></div></div>
+      <div class="setting-row"><span>Graphics</span><div class="opts"><button class="toggle-btn" data-set="quality" data-val="low">Low</button><button class="toggle-btn" data-set="quality" data-val="medium">Med</button><button class="toggle-btn" data-set="quality" data-val="high">High</button></div></div>
+      <div class="setting-row"><span>Sensitivity</span><input type="range" id="sensSlider" min="30" max="200" value="100"></div>
+      <div class="setting-row"><span>Fullscreen</span><button class="toggle-btn" id="btnFullscreen">Toggle</button></div>
+      <button class="menu-btn secondary" id="btnSettingsBack" style="margin-top:14px;">← Back</button>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div class="panel hidden" id="howToPlayMenu">
+    <div class="frame-border" style="max-width:560px; text-align:left;">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow" style="text-align:center;">Get ready, archer</div>
+      <h1 class="title" style="font-size:32px; text-align:center;">How to Play</h1>
+      <div class="howto-text">
+        <p><b>Aim:</b> move your mouse (or drag your finger) to aim the bow. The crosshair shows where you're pointing.</p>
+        <p><b>Draw &amp; shoot — PC:</b> click and hold to draw the bow, then release to fire. Hold longer for more power.</p>
+        <p><b>Draw &amp; shoot — Mobile:</b> touch and drag anywhere to aim and draw, then lift your finger to shoot — or use the large SHOOT button in the corner.</p>
+        <p><b>Scoring:</b> hit the bullseye for the highest score. Inner rings score less the farther out you hit. Chain hits without missing to build a combo multiplier.</p>
+        <p><b>Wind &amp; moving targets:</b> later levels add wind (aim slightly against it) and targets that move — time your shot as they cross.</p>
+        <p><b>Difficulty:</b> Easy gives you big, forgiving targets. Nightmare demands precise, well-timed shots against small, fast, wind-blown targets.</p>
+      </div>
+      <button class="menu-btn secondary" id="btnHowToPlayBack" style="margin-top:14px;">← Back</button>
+    </div>
+  </div>
+
+  <!-- PRE-GAME (difficulty pick for Play) -->
+  <div class="panel hidden" id="preGameMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow">Select difficulty</div>
+      <h1 class="title" style="font-size:32px;">Ready, Archer?</h1>
+      <div class="diff-row" id="diffRowPlay"></div>
+      <button class="menu-btn" id="btnStartRun">Begin Journey</button>
+      <button class="menu-btn secondary" id="btnPreGameBack">← Back</button>
+    </div>
+  </div>
+
+  <!-- PAUSE -->
+  <div class="panel hidden" id="pauseMenu">
+    <div class="frame-border">
+      <h1 class="title" style="font-size:30px;">Paused</h1>
+      <button class="menu-btn" id="btnResume">▶ Resume</button>
+      <button class="menu-btn secondary" id="btnRestartLevel">↻ Restart Level</button>
+      <button class="menu-btn secondary" id="btnQuitToMenu">🏠 Main Menu</button>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE -->
+  <div class="panel hidden" id="levelCompleteMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow" id="lcTitle">Level Complete!</div>
+      <div class="big-score" id="lcScore">0</div>
+      <div class="stat-row"><span>Accuracy</span><span id="lcAccuracy">0%</span></div>
+      <div class="stat-row"><span>Best Combo</span><span id="lcCombo">0</span></div>
+      <div class="stat-row"><span>Stars</span><span id="lcStars">☆☆☆</span></div>
+      <button class="menu-btn" id="btnNextLevel">Next Level →</button>
+      <button class="menu-btn secondary" id="btnReplayLevel">↻ Replay</button>
+      <button class="menu-btn secondary" id="btnLcMenu">🏠 Main Menu</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div class="panel hidden" id="gameOverMenu">
+    <div class="frame-border">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <div class="brand-eyebrow">Out of arrows</div>
+      <h1 class="title" style="font-size:34px;">Not Quite</h1>
+      <div class="big-score" id="goScore">0</div>
+      <div class="stat-row"><span>Accuracy</span><span id="goAccuracy">0%</span></div>
+      <button class="menu-btn" id="btnGoRetry">↻ Retry</button>
+      <button class="menu-btn secondary" id="btnGoMenu">🏠 Main Menu</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ================= THREE.JS (classic global build — NOT an ES module) =================
+     IMPORTANT: this must stay a plain <script> (no type="module" / import maps). Chrome
+     blocks ES module imports from loading over the file:// protocol, which is exactly what
+     caused the game to hang forever on the loading screen when opened by double-clicking
+     index.html instead of through a web server. Classic scripts have no such restriction
+     and work identically over file:// and http(s)://. -->
+<script src="./three.min.js"></script>
+<script src="./game.js"></script>
+</body>
+</html>
