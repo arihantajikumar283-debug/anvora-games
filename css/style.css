@@ -1691,3 +1691,9 @@ html[data-theme="light"] .field textarea {
     min-height: 200px;
   }
 }
+/* Hide category boxes on mobile only */
+@media (max-width: 768px) {
+  .cat-grid {
+    display: none !important;
+  }
+}
