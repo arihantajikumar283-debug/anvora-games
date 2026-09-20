@@ -175,6 +175,26 @@
   select.q-select{background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:var(--fs-sm);}
   ::-webkit-scrollbar{width:6px;}
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
+
+  /* Landscape-only gate: shown over EVERYTHING (menus, HUD, gameplay —
+     whatever is currently up) whenever a touch device is held in portrait.
+     Independent of the normal screen state machine on purpose, since it
+     has to be able to appear no matter which screen is active. */
+  #screen-rotate{
+    position:fixed;inset:0;z-index:9999;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    background:var(--bg-deep);
+    padding:calc(var(--safe-t) + var(--pad)) calc(var(--safe-r) + var(--pad)) calc(var(--safe-b) + var(--pad)) calc(var(--safe-l) + var(--pad));
+    pointer-events:auto;
+    text-align:center;
+  }
+  #screen-rotate .rot-icon{font-size:clamp(40px,12vmin,90px);animation:rotatePrompt 1.6s ease-in-out infinite;}
+  #screen-rotate .rot-title{font-size:var(--fs-lg);color:var(--amber);font-weight:800;letter-spacing:1px;}
+  #screen-rotate .rot-sub{font-size:var(--fs-md);color:var(--text-dim);max-width:70vw;}
+  @keyframes rotatePrompt{
+    0%,100%{ transform:rotate(0deg); }
+    50%{ transform:rotate(-90deg); }
+  }
   @keyframes heroBounce{
     0%,100%{ transform:translateY(0) rotate(0deg); }
     30%{ transform:translateY(-6%) rotate(-3deg); }
@@ -336,6 +356,12 @@
   </div>
 </div>
 
+<div id="screen-rotate" class="hidden">
+  <div class="rot-icon">📱</div>
+  <div class="rot-title">ROTATE YOUR DEVICE</div>
+  <div class="rot-sub">Human Siege plays best in landscape — turn your device sideways to continue.</div>
+</div>
+
 <script>
 (function(){
 "use strict";
@@ -483,6 +509,24 @@ const canvas = document.getElementById('game');
 const ctx2d = canvas.getContext('2d');
 let dpr = Math.min(window.devicePixelRatio||1, 2);
 
+function isTouchDevice(){
+  return ('ontouchstart' in window) || (navigator.maxTouchPoints||0) > 0;
+}
+// Landscape gate: on a touch device held in portrait, cover the whole
+// screen with a "rotate your device" message — no matter which game
+// screen (menu, story, playing, paused, victory...) is currently up,
+// since this sits above the normal screen state machine entirely.
+// World/level state underneath is left completely untouched; only the
+// per-frame *update* is paused (see loop()) so nothing progresses while
+// the player can't see or touch the game.
+let orientationGateActive = false;
+function updateOrientationGate(){
+  const portrait = window.innerHeight > window.innerWidth;
+  orientationGateActive = isTouchDevice() && portrait;
+  const overlay = document.getElementById('screen-rotate');
+  if(overlay) overlay.classList.toggle('hidden', !orientationGateActive);
+}
+
 function resizeCanvas(){
   dpr = Math.min(window.devicePixelRatio||1, 2);
   // visualViewport is more accurate than innerWidth/innerHeight on mobile
@@ -495,12 +539,16 @@ function resizeCanvas(){
   canvas.height = Math.max(1, Math.floor(h*dpr));
   canvas.style.width = w+'px';
   canvas.style.height = h+'px';
+  updateOrientationGate();
 }
 window.addEventListener('resize', resizeCanvas);
 window.addEventListener('orientationchange', resizeCanvas);
 if(window.visualViewport){
   window.visualViewport.addEventListener('resize', resizeCanvas);
   window.visualViewport.addEventListener('scroll', resizeCanvas);
+}
+if(window.screen && window.screen.orientation){
+  window.screen.orientation.addEventListener('change', resizeCanvas);
 }
 resizeCanvas();
 // Fallback poller: some browsers don't fire resize on page-zoom changes.
@@ -513,25 +561,35 @@ setInterval(()=>{
   }
 }, 400);
 
-/* ============================== FULLSCREEN (mobile only) ============================== */
-// Requesting fullscreen must happen inside a real user-gesture handler (a
-// click listener counts) — never called automatically on load. Gated to
-// touch devices only, so the desktop experience is left untouched. Every
-// path is wrapped so an unsupported/blocked/rejected request can never
-// break the game — worst case it silently stays in the normal viewport.
-function isTouchDevice(){
-  return ('ontouchstart' in window) || (navigator.maxTouchPoints||0) > 0;
+/* ============================== FULLSCREEN + LANDSCAPE LOCK (mobile only) ============================== */
+// Requesting fullscreen/orientation-lock must happen inside a real
+// user-gesture handler (a click listener counts) — never called
+// automatically on load. Gated to touch devices only, so desktop is
+// untouched. Every path is wrapped so an unsupported/blocked/rejected
+// request can never break the game — worst case the rotate-prompt overlay
+// above is the fallback, and the game still fills the full viewport.
+function tryLockLandscape(){
+  try{
+    if(screen.orientation && screen.orientation.lock){
+      const p = screen.orientation.lock('landscape');
+      if(p && typeof p.catch === 'function') p.catch(()=>{});
+    }
+  }catch(e){ /* not supported (e.g. iOS Safari) — rotate-prompt overlay covers this */ }
 }
 function tryEnterFullscreen(){
   try{
     if(!isTouchDevice()) return;
-    if(document.fullscreenElement || document.webkitFullscreenElement) return;
+    if(document.fullscreenElement || document.webkitFullscreenElement){ tryLockLandscape(); return; }
     const el = document.documentElement;
     const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
-    if(!req) return; // not supported (e.g. iPhone Safari) — game already fills the viewport anyway
+    if(!req){ tryLockLandscape(); return; } // no fullscreen support — still attempt the lock on its own
     const result = req.call(el);
-    if(result && typeof result.catch === 'function') result.catch(()=>{});
-  }catch(e){ /* fullscreen is a nice-to-have, never let it interrupt play */ }
+    if(result && typeof result.then === 'function'){
+      result.then(tryLockLandscape).catch(()=>{ tryLockLandscape(); });
+    } else {
+      tryLockLandscape();
+    }
+  }catch(e){ /* fullscreen/lock are nice-to-haves, never let them interrupt play */ }
 }
 // A fullscreen enter/exit changes the visible viewport size, so just
 // re-run the normal resize pipeline — no special-case layout needed.
@@ -1734,6 +1792,9 @@ function loop(ts){
   const dt = Math.min(0.033, (ts-(Game.lastTime||ts))/1000);
   Game.lastTime = ts;
   gTime = ts/1000;
+  if(orientationGateActive){
+    return; // rotate-prompt overlay is covering the whole screen — nothing to update or draw
+  }
   if(Game.state==='playing'){
     updateBlocks(dt);
     updateProjectiles(dt);
@@ -1869,7 +1930,7 @@ function showDefeat(){
 /* ============================== BUTTON WIRING ============================== */
 function on(id, fn){ document.getElementById(id).addEventListener('click', (e)=>{ AudioMgr.SFX.click(); fn(e); }); }
 
-on('btnPlay', ()=>{ const n = nextUnplayedLevel(); startLevelFlow(n); });
+on('btnPlay', ()=>{ tryEnterFullscreen(); const n = nextUnplayedLevel(); startLevelFlow(n); });
 on('btnLevels', ()=> go('levels'));
 on('btnHow', ()=> go('how'));
 on('btnSettings', ()=> go('settings'));
