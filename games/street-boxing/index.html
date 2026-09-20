@@ -59,7 +59,7 @@ html,body{
 }
 .screen.active{display:flex;}
 .scrollpane{width:100%;height:100%;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:calc(16px + var(--safe-t)) 10px calc(16px + var(--safe-b));}
-
+ 
 /* ---------- Title Screen ---------- */
 #screen-title{background:radial-gradient(ellipse at center, #241a1a 0%, #0a0708 70%, #000 100%);}
 .ring-glow{position:absolute;inset:0;pointer-events:none;
@@ -90,7 +90,7 @@ html,body{
   width:clamp(36px,8vmin,46px);height:clamp(36px,8vmin,46px);border-radius:50%;
   background:var(--panel);border:2px solid rgba(255,255,255,0.15);color:#fff;font-size:clamp(14px,3vmin,20px);
   display:flex;align-items:center;justify-content:center;cursor:pointer;}
-
+ 
 /* ---------- Generic sub-screen ---------- */
 .subscreen-header{text-align:center;margin:6px 0 10px;z-index:2;padding:0 10px;}
 .subscreen-header h2{font-size:clamp(22px,6vmin,38px);margin:0;letter-spacing:2px;text-transform:uppercase;color:#fff;text-shadow:0 0 12px rgba(255,80,50,0.6);}
@@ -111,7 +111,7 @@ html,body{
 .diff-card p{font-size:clamp(9px,2vmin,11px);color:var(--dim);margin:6px 0 0;}
 .confirm-row{display:flex;gap:12px;margin-top:16px;z-index:2;flex-wrap:wrap;justify-content:center;padding-bottom:6px;}
 .confirm-row .btn{width:clamp(120px,32vmin,160px);padding:13px 8px;font-size:clamp(12px,2.6vmin,14px);}
-
+ 
 /* ---------- Fight Screen: flex column so controls never cover the arena ---------- */
 #screen-fight{padding:0;background:#000;}
 #fight-container{position:relative;width:100%;height:100%;display:flex;flex-direction:column;background:#000;}
@@ -137,10 +137,10 @@ html,body{
 .pip.won{background:#7CFC00;}
 .hud-topright{display:flex;gap:6px;margin-top:2px;justify-content:flex-end;}
 .icon-btn{width:clamp(30px,7vmin,40px);height:clamp(30px,7vmin,40px);border-radius:8px;background:rgba(0,0,0,0.55);border:2px solid rgba(255,255,255,0.3);color:#fff;font-size:clamp(12px,2.6vmin,16px);cursor:pointer;display:flex;align-items:center;justify-content:center;pointer-events:auto;}
-
+ 
 #canvas-wrap{flex:1 1 auto;position:relative;min-height:0;overflow:hidden;}
 #game-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;}
-
+ 
 .overlay-text-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;z-index:15;}
 .big-text{font-size:clamp(30px,10vmin,84px);font-weight:900;color:#fff;letter-spacing:3px;text-transform:uppercase;text-shadow:0 0 20px rgba(255,60,60,0.9),3px 3px 0 #000;opacity:0;transform:scale(0.7);}
 .big-text.show{animation:popText 0.5s ease forwards;}
@@ -148,18 +148,18 @@ html,body{
 .sub-text{font-size:clamp(12px,3vmin,20px);color:var(--gold);margin-top:6px;letter-spacing:2px;text-transform:uppercase;opacity:0;}
 .sub-text.show{animation:fadeIn .4s ease .2s forwards;}
 @keyframes fadeIn{to{opacity:1;}}
-
+ 
 #round-result-panel, #final-panel-inline{position:absolute;inset:0;z-index:16;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(0,0,0,0.72);pointer-events:none;}
 #round-result-panel.show{display:flex;pointer-events:auto;}
 .result-card{background:var(--panel);border:2px solid rgba(255,255,255,0.15);border-radius:16px;padding:22px 28px;text-align:center;max-width:88vw;}
 .result-card h2{margin:0 0 8px;font-size:clamp(20px,5vmin,32px);color:#fff;text-transform:uppercase;letter-spacing:2px;}
 .result-card p{margin:0;color:var(--dim);font-size:clamp(11px,2.6vmin,14px);letter-spacing:1px;}
-
+ 
 #pause-menu{position:absolute;inset:0;z-index:25;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);}
 #pause-menu.show{display:flex;}
 .pause-card{background:var(--panel);border:2px solid rgba(255,255,255,0.15);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px;width:min(280px,80vw);}
 .pause-card h3{margin:0 0 6px;text-align:center;letter-spacing:2px;text-transform:uppercase;color:#fff;}
-
+ 
 /* ---------- Rotate overlay ---------- */
 #rotate-overlay{position:fixed;inset:0;z-index:200;background:#0a0a0d;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;}
 #rotate-overlay.show{display:flex;}
@@ -167,7 +167,7 @@ html,body{
 @keyframes rotatePulse{0%,100%{transform:rotate(0deg);}50%{transform:rotate(90deg);}}
 #rotate-overlay h2{margin:0 0 8px;letter-spacing:2px;text-transform:uppercase;color:#fff;font-size:clamp(18px,5vmin,26px);}
 #rotate-overlay p{color:var(--dim);font-size:clamp(12px,3vmin,15px);max-width:320px;}
-
+ 
 /* ---------- Controls bar (in normal document flow — cannot ever cover the arena) ---------- */
 #controls-bar{
   flex:0 0 auto;display:none;justify-content:space-between;align-items:flex-end;
@@ -193,9 +193,9 @@ html,body{
 .tc-btn.hook{background:rgba(255,159,67,0.22);border-color:#ff9f43;}
 .tc-btn.upper{background:rgba(255,80,80,0.25);border-color:#ff5050;}
 .tc-btn.block{background:rgba(120,255,140,0.2);border-color:#78ff8c;}
-
+ 
 .controls-hint{position:relative;text-align:center;color:rgba(255,255,255,0.35);font-size:clamp(9px,2vmin,11px);letter-spacing:1px;padding-bottom:6px;z-index:6;}
-
+ 
 /* ---------- How to play modal ---------- */
 #howto-modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;}
 #howto-modal.show{display:flex;}
@@ -204,20 +204,23 @@ html,body{
 .howto-card table{width:100%;border-collapse:collapse;font-size:clamp(11px,2.6vmin,13px);margin-bottom:12px;}
 .howto-card td{padding:4px 6px;border-bottom:1px solid rgba(255,255,255,0.08);}
 .howto-card td:first-child{color:var(--gold);font-weight:700;width:40%;}
-
-/* ---------- PHONE -> portrait -> fullscreen layout tuning ----------
-   Purely cosmetic spacing tweak for narrow portrait phones so HUD text never
-   crowds the edges; it changes no structure, no controls and nothing on
-   desktop/landscape, which keep the existing layout untouched. */
-@media (orientation: portrait) and (max-width: 480px){
+ 
+/* ---------- PHONE/TABLET -> landscape -> fullscreen layout tuning ----------
+   Landscape is now the primary mobile/tablet orientation (see checkOrientation() /
+   orientationBlocked in the script). This is a purely cosmetic spacing tweak so HUD
+   text never crowds the edges on the narrowest landscape phones (short width in
+   landscape); it changes no structure, no controls, and nothing on desktop, which
+   keeps the existing layout untouched. Tablets in landscape are much wider than this
+   threshold and are unaffected. */
+@media (orientation: landscape) and (max-width: 760px){
   .hud-row{gap:4px;}
-  .health-block{width:34%;}
+  .health-block{width:38%;}
 }
 </style>
 </head>
 <body>
 <div id="app">
-
+ 
   <!-- ===================== TITLE SCREEN ===================== -->
   <div id="screen-title" class="screen active">
     <div class="ring-glow"></div>
@@ -235,7 +238,7 @@ html,body{
     </div>
     <div class="credit"><b>Anvora Games</b> &nbsp;|&nbsp; Developed by <b>Arihant</b></div>
   </div>
-
+ 
   <!-- ===================== DIFFICULTY SCREEN ===================== -->
   <div id="screen-difficulty" class="screen">
     <div class="scrollpane">
@@ -247,7 +250,7 @@ html,body{
       </div>
     </div>
   </div>
-
+ 
   <!-- ===================== FIGHTER SELECT ===================== -->
   <div id="screen-fighter" class="screen">
     <div class="scrollpane">
@@ -259,7 +262,7 @@ html,body{
       </div>
     </div>
   </div>
-
+ 
   <!-- ===================== ARENA SELECT ===================== -->
   <div id="screen-arena" class="screen">
     <div class="scrollpane">
@@ -271,11 +274,11 @@ html,body{
       </div>
     </div>
   </div>
-
+ 
   <!-- ===================== FIGHT SCREEN ===================== -->
   <div id="screen-fight" class="screen">
     <div id="fight-container">
-
+ 
       <div id="hud-bar">
         <div class="hud-row">
           <div class="health-block">
@@ -301,22 +304,22 @@ html,body{
           </div>
         </div>
       </div>
-
+ 
       <div id="canvas-wrap">
         <canvas id="game-canvas"></canvas>
-
+ 
         <div class="overlay-text-layer" id="overlay-text-layer">
           <div class="big-text" id="overlay-big"></div>
           <div class="sub-text" id="overlay-sub"></div>
         </div>
-
+ 
         <div id="round-result-panel">
           <div class="result-card">
             <h2 id="result-title">ROUND 1</h2>
             <p id="result-sub">Player Wins the Round</p>
           </div>
         </div>
-
+ 
         <div id="pause-menu">
           <div class="pause-card">
             <h3>Paused</h3>
@@ -326,7 +329,7 @@ html,body{
           </div>
         </div>
       </div>
-
+ 
       <div id="controls-bar">
         <div class="control-cluster left">
           <div class="control-row">
@@ -353,7 +356,7 @@ html,body{
       <div class="controls-hint" id="controls-hint-pc">A/D Move &nbsp;·&nbsp; W Jump &nbsp;·&nbsp; S Crouch &nbsp;·&nbsp; Space Block &nbsp;·&nbsp; J K L I Punches &nbsp;·&nbsp; Left Click = Hook</div>
     </div>
   </div>
-
+ 
   <!-- ===================== FINAL RESULT SCREEN ===================== -->
   <div id="screen-final" class="screen">
     <div class="subscreen-header">
@@ -366,15 +369,15 @@ html,body{
     </div>
     <div class="credit"><b>Anvora Games</b> &nbsp;|&nbsp; Developed by <b>Arihant</b></div>
   </div>
-
+ 
   <button class="mute-btn" id="mute-global-btn">🔊</button>
-
+ 
   <div id="rotate-overlay">
     <div class="icon">📱</div>
-    <h2>Rotate to Portrait</h2>
-    <p>Street Boxing is designed for portrait mode on phones. Please rotate your device to continue.</p>
+    <h2>Rotate to Landscape</h2>
+    <p>Street Boxing plays best in landscape mode. Please rotate your device to continue.</p>
   </div>
-
+ 
   <!-- ===================== HOW TO PLAY MODAL ===================== -->
   <div id="howto-modal">
     <div class="howto-card">
@@ -396,26 +399,26 @@ html,body{
       <button class="btn gold" id="btn-howto-close" style="width:100%;margin-top:6px;">Got it</button>
     </div>
   </div>
-
+ 
 </div>
-
+ 
 <script>
 (function(){
 "use strict";
-
+ 
 /* =========================================================================
    ANVORA GAMES — STREET BOXING
    Original 2D side-view boxing game. All graphics drawn on canvas,
    all sounds synthesized with Web Audio API. No external assets.
    ========================================================================= */
-
+ 
 function clamp(v,min,max){return v<min?min:(v>max?max:v);}
 function rand(min,max){return min+Math.random()*(max-min);}
 function choice(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function lerp(a,b,t){return a+(b-a)*t;}
-
+ 
 var isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints>0;
-
+ 
 /* ---------------------------- Data ---------------------------- */
 var FIGHTERS = [
   {id:'blaze', name:'Blaze Rivera', style:'Speedster', primary:'#e63946', secondary:'#1d3557', skin:'#e0ac69', hair:'#2b1a12',
@@ -435,20 +438,20 @@ var FIGHTERS = [
    build:{heightMul:0.98, shoulderW:33, hipW:18, armThick:14, legThick:15, headR:15, neck:9, hairStyle:'bald', beard:true,
           glove:'#1f7a6c', gloveTrim:'#c9fff2', trunks:'#264653', trunksTrim:'#7fe0cd', boot:'#0e2e28'}}
 ];
-
+ 
 var ARENAS = [
   {id:'downtown', name:'Downtown Arena', sky:['#0f2027','#203a43','#2c5364'], mat:'#17263b', mat2:'#1f3a5a', rope:'#e63946', post:'#cfcfcf', accent:'#ffd60a', crowd:'#0a1420', lights:true},
   {id:'underground', name:'Underground Club', sky:['#210000','#3d0000','#120000'], mat:'#2b0a0a', mat2:'#3d0f0f', rope:'#ff477e', post:'#8a8a8a', accent:'#ff9e00', crowd:'#150404', lights:true},
   {id:'stadium', name:'Championship Stadium', sky:['#5ab4e0','#bfe6f5','#fdf6e3'], mat:'#e8b87a', mat2:'#f0c896', rope:'#264653', post:'#eeeeee', accent:'#e76f51', crowd:'#7fa8c9', lights:false}
 ];
-
+ 
 var DIFFICULTIES = [
   {id:'easy', name:'Easy', icon:'🥊', desc:'Relaxed reactions, few combos.', reactChance:0.10, aggression:0.25, mistake:0.40, speedMul:0.82, decisionInterval:560, staminaMul:0.9},
   {id:'normal', name:'Normal', icon:'🔥', desc:'Balanced offense and defense.', reactChance:0.28, aggression:0.45, mistake:0.18, speedMul:1.0, decisionInterval:380, staminaMul:1.0},
   {id:'hard', name:'Hard', icon:'⚡', desc:'Fast, aggressive and punishing.', reactChance:0.48, aggression:0.62, mistake:0.08, speedMul:1.14, decisionInterval:260, staminaMul:1.1},
   {id:'nightmare', name:'Nightmare', icon:'💀', desc:'Brutal reflexes. No mercy.', reactChance:0.74, aggression:0.82, mistake:0.02, speedMul:1.3, decisionInterval:160, staminaMul:1.25}
 ];
-
+ 
 var ATTACKS = {
   jab:   {name:'Jab',      startup:80,  active:60,  recovery:130, damage:5,  stamina:6,  reach:0.86, knockback:55,  tag:'mid'},
   cross: {name:'Cross',    startup:120, active:80,  recovery:190, damage:9,  stamina:11, reach:0.92, knockback:88,  tag:'mid'},
@@ -458,7 +461,7 @@ var ATTACKS = {
 var ATTACK_ORDER = ['jab','cross','hook','upper'];
 var ROUND_TIME = 60;
 var MAX_KNOCKDOWNS = 3;
-
+ 
 /* ---------------------------- Audio Engine ---------------------------- */
 var Audio1 = (function(){
   var ctx=null, master=null, crowdNode=null, muted=false;
@@ -562,7 +565,7 @@ var Audio1 = (function(){
   return {ensure:ensure,setMuted:setMuted,isMuted:isMuted,punch:punchSound,block:blockSound,whiff:whiffSound,
     knockdown:knockdownSound,bell:bellSound,click:clickSound,jingle:jingle,startCrowd:startCrowd,stopCrowd:stopCrowd};
 })();
-
+ 
 /* ---------------------------- Screen / Navigation ---------------------------- */
 var screens={};
 document.querySelectorAll('.screen').forEach(function(el){ screens[el.id]=el; });
@@ -570,7 +573,7 @@ function showScreen(id){ Object.keys(screens).forEach(function(k){ screens[k].cl
 document.querySelectorAll('[data-nav]').forEach(function(btn){
   btn.addEventListener('click', function(){ Audio1.click(); showScreen(btn.getAttribute('data-nav')); });
 });
-
+ 
 /* ---------------------------- Mute ---------------------------- */
 function updateMuteIcons(){
   var icon = Audio1.isMuted()? '🔇':'🔊';
@@ -580,7 +583,7 @@ function updateMuteIcons(){
 function toggleMute(){ Audio1.ensure(); Audio1.setMuted(!Audio1.isMuted()); updateMuteIcons(); }
 document.getElementById('mute-global-btn').addEventListener('click', toggleMute);
 document.getElementById('mute-fight-btn').addEventListener('click', toggleMute);
-
+ 
 /* ---------------------------- Fullscreen ---------------------------- */
 function tryFullscreen(){
   var el = document.documentElement;
@@ -598,11 +601,15 @@ function tryFullscreen(){
 }
 function lockOrientation(){
   try{
-    if(screen.orientation && screen.orientation.lock){ screen.orientation.lock('portrait').catch(function(){}); }
+    // Street Boxing's primary mobile/tablet orientation is LANDSCAPE. If the browser
+    // doesn't permit a forced lock (many mobile browsers restrict this), this silently
+    // no-ops — the rotate-overlay + orientationBlocked check below is the reliable
+    // fallback that still gets the player into landscape play.
+    if(screen.orientation && screen.orientation.lock){ screen.orientation.lock('landscape').catch(function(){}); }
   }catch(e){}
 }
 document.getElementById('btn-fullscreen').addEventListener('click', function(){ Audio1.click(); tryFullscreen(); });
-
+ 
 /* ---------------------------- Live viewport sync (mobile URL bar / fullscreen / rotation) ----------------------------
    Keeps --vh accurate for the CSS fallback chain and re-measures the canvas + rotate-overlay
    whenever the *actual visible area* changes for any reason. Never touches match/round/
@@ -628,7 +635,7 @@ document.documentElement.style.setProperty('--vh', (window.innerHeight*0.01)+'px
    script (resizeCanvas(); checkOrientation();) already perform that first calculation
    once everything is ready; every event above safely calls syncViewport() only after
    the page has fully loaded. */
-
+ 
 /* ---------------------------- How To Play modal ---------------------------- */
 document.getElementById('btn-howto').addEventListener('click', function(){
   Audio1.ensure(); Audio1.click();
@@ -638,21 +645,23 @@ document.getElementById('btn-howto-close').addEventListener('click', function(){
   Audio1.click();
   document.getElementById('howto-modal').classList.remove('show');
 });
-
-/* ---------------------------- Rotate-to-portrait handling ---------------------------- */
+ 
+/* ---------------------------- Rotate-to-landscape handling ---------------------------- */
 function checkOrientation(){
   var overlay = document.getElementById('rotate-overlay');
-  var landscapeOnTouch = isTouch && window.innerWidth > window.innerHeight;
-  overlay.classList.toggle('show', landscapeOnTouch);
-  return landscapeOnTouch;
+  // Street Boxing's primary mobile/tablet orientation is now LANDSCAPE, so the overlay
+  // (and the gameplay block below) triggers when a touch device is held in PORTRAIT.
+  var portraitOnTouch = isTouch && window.innerHeight > window.innerWidth;
+  overlay.classList.toggle('show', portraitOnTouch);
+  return portraitOnTouch;
 }
 window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', function(){ setTimeout(checkOrientation,150); });
 checkOrientation();
-
+ 
 /* ---------------------------- Selection state ---------------------------- */
 var selection = { difficulty:null, fighter:null, arena:null };
-
+ 
 /* ---------------------------- Original 2D boxer sprite renderer ----------------------------
    Every fighter is drawn procedurally from their own "build" descriptor (body proportions,
    hairstyle, gloves, trunks, skin tone) so each of the four boxers reads as a clearly
@@ -731,7 +740,7 @@ function drawHead(ctx, cx, cy, r, def, OL, LW){
   ctx.fillStyle='#5a2a20';
   ctx.fillRect(cx+r*0.26, cy+r*0.42, r*0.42, r*0.09); // mouth
 }
-
+ 
 /* Draws one fully-posed boxer. x,y = feet position (world/local space), facing = 1 or -1,
    scale = world scale factor to use, def = a FIGHTERS[] entry, pose = {
      crouch, crouchAmt, bob, legSwing, punchType, punchProgress, blocking, flash, lean, recoil
@@ -741,40 +750,40 @@ function renderBoxer(ctx, x, y, facing, scale, def, pose){
   var b = def.build;
   var s = scale*(b.heightMul||1);
   var OL='#1a120d', LW=1.3*scale;
-
+ 
   ctx.save();
   ctx.translate(x,y);
   ctx.scale(facing,1);
   if(pose.recoil) ctx.translate(-pose.recoil,0);
   if(pose.lean) ctx.rotate(pose.lean);
-
+ 
   var crouchT = (pose.crouchAmt!==undefined)? pose.crouchAmt : (pose.crouch?0:1);
   var legLen = lerp(24*s,44*s,crouchT);
   var torsoH = lerp(28*s,40*s,crouchT);
   var hipW=b.hipW*s, shoulderW=b.shoulderW*s, armThick=b.armThick*s, legThick=b.legThick*s, headR=b.headR*s, neck=b.neck*s;
   var bob = pose.bob||0;
   var legSwing = pose.legSwing||0;
-
+ 
   var punchType = pose.punchType, prog = pose.punchProgress||0;
   if(punchType==='upper'){ var kneeDip=(1-prog)*6*s; legLen=Math.max(10*s,legLen-kneeDip); }
-
+ 
   var hipY=-legLen, shoulderY=hipY-torsoH, headCY=shoulderY-neck-headR;
   var torsoLean = (punchType==='cross')? prog*3*s : 0;
-
+ 
   // back leg + boot
   var backLegX=-hipW*0.55-legThick*0.5+legSwing*0.3;
   outlinedRect(ctx, backLegX, hipY+bob, legThick, legLen, shadeColor(b.trunks,-0.22), OL, LW);
   outlinedRect(ctx, backLegX-2*s, hipY+legLen-7*s+bob, legThick+4*s, 9*s, b.boot, OL, LW);
-
+ 
   // hips / trunks band
   outlinedRect(ctx, -hipW, hipY-8*s+bob, hipW*2, 12*s, b.trunks, OL, LW);
   ctx.fillStyle=b.trunksTrim; ctx.fillRect(-hipW, hipY-8*s+bob, hipW*2, 3*s);
-
+ 
   // front leg + boot
   var frontLegX=hipW*0.55-legThick*0.5-legSwing*0.3;
   outlinedRect(ctx, frontLegX, hipY+bob, legThick, legLen, shadeColor(b.trunks,0.06), OL, LW);
   outlinedRect(ctx, frontLegX-2*s, hipY+legLen-7*s+bob, legThick+4*s, 9*s, b.boot, OL, LW);
-
+ 
   // torso with simple muscle shading
   outlinedRect(ctx, -shoulderW*0.5+torsoLean, shoulderY+bob, shoulderW, torsoH, def.skin, OL, LW);
   ctx.fillStyle=shadeColor(def.skin,0.16);
@@ -784,23 +793,23 @@ function renderBoxer(ctx, x, y, facing, scale, def, pose){
   ctx.fillRect(-shoulderW*0.22+torsoLean, shoulderY+torsoH*0.58+bob, shoulderW*0.44, torsoH*0.36);
   ctx.fillStyle=def.primary;
   ctx.fillRect(-shoulderW*0.5+torsoLean, shoulderY+bob, shoulderW, torsoH*0.18);
-
+ 
   // rear arm, tucked in guard near the body
   var backArmX=-shoulderW*0.42+torsoLean;
   outlinedRect(ctx, backArmX-armThick*0.5, shoulderY+torsoH*0.12+bob, armThick, armThick*2.6, shadeColor(def.skin,-0.05), OL, LW);
   outlinedCircle(ctx, backArmX, shoulderY+torsoH*0.12+armThick*2.6+bob, armThick*0.6, b.glove, OL, LW);
-
+ 
   // neck + head
   outlinedRect(ctx, -neck*0.5+torsoLean, shoulderY-neck+bob, neck, neck+2*s, shadeColor(def.skin,-0.06), OL, LW);
   drawHead(ctx, torsoLean, headCY+bob, headR, def, OL, LW);
-
+ 
   // front (active/punching) arm
   var reach=6*s, angle=0, originY=shoulderY+torsoH*0.15+bob;
   if(punchType==='jab'){ reach=6*s+20*s*prog; }
   else if(punchType==='cross'){ reach=6*s+30*s*prog; }
   else if(punchType==='hook'){ reach=8*s+22*s*prog; angle=prog*1.0; }
   else if(punchType==='upper'){ reach=6*s+16*s*prog; angle=-1.05; originY=lerp(hipY-2*s+bob, shoulderY-8*s+bob, prog); }
-
+ 
   if(pose.blocking && !punchType){
     var gox=shoulderW*0.42+torsoLean, goy=headCY+bob+headR*0.3;
     ctx.save(); ctx.translate(gox,goy); ctx.rotate(-0.6);
@@ -819,7 +828,7 @@ function renderBoxer(ctx, x, y, facing, scale, def, pose){
     ctx.beginPath(); ctx.arc(fx-armThick*0.2, fy-armThick*0.2, armThick*0.28,0,Math.PI*2); ctx.fill();
     ctx.globalAlpha=1;
   }
-
+ 
   if(pose.flash>0){
     ctx.globalAlpha=pose.flash*0.5;
     ctx.fillStyle='#ff3b3b';
@@ -828,7 +837,7 @@ function renderBoxer(ctx, x, y, facing, scale, def, pose){
   }
   ctx.restore();
 }
-
+ 
 function buildFighterThumb(canvas, f){
   var ctx=canvas.getContext('2d'); var w=canvas.width,h=canvas.height;
   ctx.clearRect(0,0,w,h);
@@ -844,7 +853,7 @@ function buildArenaThumb(canvas,a){
   for(var i=0;i<3;i++){ ctx.beginPath(); ctx.moveTo(6,h*0.32+i*10); ctx.lineTo(w-6,h*0.32+i*10); ctx.stroke(); }
   ctx.fillStyle=a.post; ctx.fillRect(4,h*0.28,5,h*0.42); ctx.fillRect(w-9,h*0.28,5,h*0.42);
 }
-
+ 
 (function(){
   var grid=document.getElementById('difficulty-grid');
   DIFFICULTIES.forEach(function(d){
@@ -864,7 +873,7 @@ document.getElementById('btn-diff-next').addEventListener('click', function(){
   if(!selection.difficulty) return;
   Audio1.click(); showScreen('screen-fighter');
 });
-
+ 
 (function(){
   var grid=document.getElementById('fighter-grid');
   function statRow(label,val){
@@ -894,7 +903,7 @@ document.getElementById('btn-fighter-next').addEventListener('click', function()
   if(!selection.fighter) return;
   Audio1.click(); showScreen('screen-arena');
 });
-
+ 
 (function(){
   var grid=document.getElementById('arena-grid');
   ARENAS.forEach(function(a){
@@ -918,7 +927,7 @@ document.getElementById('btn-arena-next').addEventListener('click', function(){
   if(!selection.arena) return;
   Audio1.click(); startMatch();
 });
-
+ 
 document.getElementById('btn-play').addEventListener('click', function(){
   Audio1.ensure(); Audio1.click();
   tryFullscreen();
@@ -929,35 +938,72 @@ document.getElementById('btn-play').addEventListener('click', function(){
   document.getElementById('btn-arena-next').disabled=true;
   showScreen('screen-difficulty');
 });
-
+ 
 /* ---------------------------- Canvas & world ---------------------------- */
 var canvas=document.getElementById('game-canvas');
 var ctx2d=canvas.getContext('2d');
 var canvasWrap=document.getElementById('canvas-wrap');
 var W=960,H=540,SCALE=1,GROUND_Y=460,RING_LEFT=100,RING_RIGHT=860;
-
+ 
 function resizeCanvas(){
   var rect=canvasWrap.getBoundingClientRect();
   var dpr=Math.min(window.devicePixelRatio||1,2);
-  W=Math.max(240,Math.round(rect.width));
-  H=Math.max(180,Math.round(rect.height));
-  canvas.width=Math.round(W*dpr); canvas.height=Math.round(H*dpr);
+  var newW=Math.max(240,Math.round(rect.width));
+  var newH=Math.max(180,Math.round(rect.height));
+ 
+  // The backing pixel buffer is kept crisp even for a devicePixelRatio-only change
+  // (this never affects gameplay coordinates, only render sharpness).
+  canvas.width=Math.round(newW*dpr); canvas.height=Math.round(newH*dpr);
   ctx2d.setTransform(dpr,0,0,dpr,0,0);
+ 
+  // If the CSS-pixel size hasn't actually changed — which is exactly what a spurious
+  // layout pass (e.g. one triggered by taking a screenshot) produces — skip all
+  // world/camera recalculation entirely. Nothing gameplay-related is touched.
+  if(newW===W && newH===H) return;
+ 
+  // FIX: previously RING_LEFT/RING_RIGHT/GROUND_Y were recomputed from the new size and
+  // then the fighters' *old* absolute pixel x/y were force-clamped into those new bounds —
+  // that clamp is what caused a visible "snap together" on any resize (including trivial,
+  // spurious ones). Instead, capture each fighter's position as a FRACTION of the ring
+  // (their true, stable, screen-size-independent "world" position) before the bounds
+  // change, then re-apply that exact same fraction to the new bounds afterward. This is
+  // the camera/view adapting to the new screen size — the fighters' logical position and
+  // their distance from each other never changes; only where that position lands in
+  // pixels does, which is precisely what "adjust camera framing, don't move the fighters"
+  // means in practice for a canvas-rendered game.
+  var oldRingLeft=RING_LEFT, oldRingRight=RING_RIGHT, oldGroundY=GROUND_Y;
+  var oldSpan = oldRingRight-oldRingLeft;
+  var carry = fighters ? fighters.map(function(f){
+    return {
+      xFrac: oldSpan>0 ? (f.x-oldRingLeft)/oldSpan : 0.5, // fixed relative ring position
+      groundOffset: oldGroundY - f.y                       // preserves height off the ground (e.g. mid-jump)
+    };
+  }) : null;
+ 
+  W=newW; H=newH;
   SCALE = clamp(H/480, 0.55, 1.6);
   GROUND_Y = H - 60*SCALE;
   RING_LEFT = W*0.08;
   RING_RIGHT = W*0.92;
-  if(fighters){
-    fighters.forEach(function(f){ f.x=clamp(f.x,RING_LEFT+f.width(),RING_RIGHT-f.width()); f.y=GROUND_Y; });
+ 
+  if(fighters && carry){
+    var newSpan = RING_RIGHT-RING_LEFT;
+    fighters.forEach(function(f,i){
+      f.x = RING_LEFT + carry[i].xFrac*newSpan;
+      // Safety net only (keeps fighters inside the ring in extreme cases) — this is no
+      // longer what determines their position on an ordinary resize, the fraction above is.
+      f.x = clamp(f.x, RING_LEFT+f.width()*0.5, RING_RIGHT-f.width()*0.5);
+      f.y = GROUND_Y - carry[i].groundOffset;
+    });
   }
 }
 window.addEventListener('resize', resizeCanvas);
 window.addEventListener('orientationchange', function(){ setTimeout(resizeCanvas,200); });
-
+ 
 /* ---------------------------- Input ---------------------------- */
 var keys={};
 var touchState={left:false,right:false,jump:false,crouch:false,block:false,jab:false,cross:false,hook:false,upper:false};
-
+ 
 window.addEventListener('keydown', function(e){
   var k=e.key.toLowerCase(); if(k===' ') k='space';
   keys[k]=true;
@@ -967,7 +1013,7 @@ window.addEventListener('keydown', function(e){
   }
 });
 window.addEventListener('keyup', function(e){ var k=e.key.toLowerCase(); if(k===' ') k='space'; keys[k]=false; });
-
+ 
 function bindTouchBtn(id,prop){
   var el=document.getElementById(id); if(!el) return;
   function on(e){ e.preventDefault(); touchState[prop]=true; el.classList.add('active-touch'); Audio1.ensure(); }
@@ -980,14 +1026,14 @@ function bindTouchBtn(id,prop){
   el.addEventListener('contextmenu', function(e){e.preventDefault();});
 }
 ['left','right','jump','crouch','block','jab','cross','hook','upper'].forEach(function(p){ bindTouchBtn('tc-'+p,p); });
-
+ 
 if(isTouch){
   document.getElementById('controls-bar').classList.add('show');
   document.getElementById('controls-hint-pc').style.display='none';
 } else {
   document.getElementById('controls-bar').classList.remove('show');
 }
-
+ 
 /* ---------------------------- Mouse punch control: LEFT CLICK = HOOK ----------------------------
    Additive input only — every keyboard mapping (J/K/L/I, A/D/W/S, Space) is untouched.
    Reuses the exact existing Hook attack (Fighter.prototype.startAttack('hook')): same
@@ -1006,7 +1052,7 @@ canvasWrap.addEventListener('mousedown', function(e){
   var player=fighters[0];
   if(!player.isAI && !player.isBlocking){ player.startAttack('hook'); }
 });
-
+ 
 document.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
 document.addEventListener('gesturestart', function(e){ e.preventDefault(); });
 var lastTouchEnd=0;
@@ -1015,7 +1061,7 @@ document.addEventListener('touchend', function(e){
   if(now-lastTouchEnd<=300){ e.preventDefault(); }
   lastTouchEnd=now;
 }, {passive:false});
-
+ 
 function inputPressed(name){
   switch(name){
     case 'left': return keys['a']||touchState.left;
@@ -1030,7 +1076,7 @@ function inputPressed(name){
   }
   return false;
 }
-
+ 
 /* ---------------------------- Fighter class ---------------------------- */
 function Fighter(def,isAI,side){
   this.def=def; this.isAI=isAI; this.side=side;
@@ -1057,7 +1103,7 @@ Fighter.prototype.currentHeight=function(){
 Fighter.prototype.center=function(){ return {x:this.x, y:this.y-this.currentHeight()/2}; };
 Fighter.prototype.isDown=function(){ return this.action==='knockdown'||this.action==='recover'||this.action==='ko'; };
 Fighter.prototype.canAct=function(){ return !this.action; };
-
+ 
 Fighter.prototype.startAttack=function(key){
   var def=ATTACKS[key];
   if(!def) return false;
@@ -1072,24 +1118,24 @@ Fighter.prototype.applyHit=function(attacker,def){
   var damage=def.damage*(attacker.def.power||1);
   var knockback=def.knockback;
   var blocked=false, guardBreak=false, whiffed=false;
-
+ 
   if(this.stance==='crouch' && def.tag==='high' && !this.isDown()){ whiffed=true; }
   else if(this.isBlocking && !this.isDown()){
     blocked=true; damage*=0.15; knockback*=0.3;
     this.stamina-=def.damage*0.4;
     if(this.stamina<=0){ this.stamina=0; guardBreak=true; blocked=false; damage=def.damage*(attacker.def.power||1); knockback=def.knockback; }
   }
-
+ 
   damage = damage/(this.def.defense||1);
-
+ 
   if(whiffed){ Audio1.whiff(); return {result:'whiff'}; }
-
+ 
   this.health=clamp(this.health-damage,0,this.maxHealth);
   this.vx = -attacker.facing*knockback*SCALE;
   this.flashTimer=180;
-
+ 
   if(blocked){ Audio1.block(); } else { Audio1.punch(clamp(damage/15,0.3,1.5)); }
-
+ 
   // STATE MACHINE — a punch may only ever lead to one of three outcomes:
   //   KO         -> only when health has actually reached 0
   //   KNOCKDOWN  -> only when the attack that landed is explicitly flagged def.knockdown===true
@@ -1113,30 +1159,30 @@ Fighter.prototype.applyHit=function(attacker,def){
     this.hitstunMax=this.actionTimer;
   }
   this.actionHasHit=false;
-
+ 
   var result = this.health<=0? 'ko' : (blocked? 'blocked' : (guardBreak? 'guardbreak':'hit'));
   return {result:result, damage:damage};
 };
-
+ 
 /* ---------------------------- Match / Game State ---------------------------- */
 var fighters=null, arena=null, difficulty=null;
 var match={ round:1, timer:ROUND_TIME, phase:'idle', suddenDeath:false, playerWonMatch:null };
 var paused=false, orientationBlocked=false;
 var particles=[]; var shakeTime=0, shakeMag=0;
 var lastFrameTime=0, rafId=null;
-
+ 
 function startMatch(){
   arena=selection.arena; difficulty=selection.difficulty;
   var pf=selection.fighter;
   var oppPool = FIGHTERS.filter(function(f){ return f.id!==pf.id; });
   var of=choice(oppPool);
-
+ 
   var player=new Fighter(pf,false,'left');
   var opp=new Fighter(of,true,'right');
   fighters=[player,opp];
-
+ 
   match.round=1; match.suddenDeath=false; match.playerWonMatch=null;
-
+ 
   showScreen('screen-fight');
   resizeCanvas();
   setupRoundPositions();
@@ -1147,7 +1193,7 @@ function startMatch(){
   startRoundIntro();
   if(!rafId){ lastFrameTime=performance.now(); rafId=requestAnimationFrame(loop); }
 }
-
+ 
 function buildPips(){
   var pl=document.getElementById('hud-pips-player'); pl.innerHTML='';
   for(var i=0;i<2;i++){ var d=document.createElement('div'); d.className='pip'; pl.appendChild(d); }
@@ -1156,7 +1202,7 @@ function updatePips(){
   var pl=document.getElementById('hud-pips-player').children;
   for(var i=0;i<pl.length;i++){ pl[i].classList.toggle('won', i<fighters[0].roundsWon); }
 }
-
+ 
 function setupRoundPositions(){
   fighters[0].x = RING_LEFT + (RING_RIGHT-RING_LEFT)*0.28;
   fighters[1].x = RING_LEFT + (RING_RIGHT-RING_LEFT)*0.72;
@@ -1170,7 +1216,7 @@ function setupRoundPositions(){
   fighters[0].facing=1; fighters[1].facing=-1;
   match.timer=ROUND_TIME; match.suddenDeath=false;
 }
-
+ 
 function startRoundIntro(){
   match.phase='intro';
   document.getElementById('hud-round-label').textContent='ROUND '+match.round;
@@ -1187,7 +1233,7 @@ function startRoundIntro(){
     match.phase='fighting';
   },1900);
 }
-
+ 
 function showOverlayText(big,sub,duration){
   var bigEl=document.getElementById('overlay-big'), subEl=document.getElementById('overlay-sub');
   bigEl.textContent=big; subEl.textContent=sub;
@@ -1197,13 +1243,13 @@ function showOverlayText(big,sub,duration){
   clearTimeout(showOverlayText._t);
   showOverlayText._t=setTimeout(function(){ bigEl.classList.remove('show'); subEl.classList.remove('show'); }, duration);
 }
-
+ 
 /* ---------------------------- AI ---------------------------- */
 function updateAI(ai,player,dt,diff){
   ai.aiTimer -= dt;
   var dx=player.x-ai.x, dist=Math.abs(dx);
   var reach = ai.width()*0.9 + 60*SCALE;
-
+ 
   if(player.action && ATTACKS[player.action] && player.actionPhase==='startup' && ai.canAct() && dist<reach*1.4){
     ai.aiReactCooldown -= dt;
     if(ai.aiReactCooldown<=0 && Math.random()<diff.reactChance){
@@ -1211,7 +1257,7 @@ function updateAI(ai,player,dt,diff){
       ai.aiReactCooldown = 400;
     }
   }
-
+ 
   if(ai.aiTimer<=0){
     ai.aiTimer = diff.decisionInterval + rand(-60,60);
     ai.aiIntent.moveDir=0; ai.aiIntent.crouch=false; ai.aiIntent.attack=null;
@@ -1231,7 +1277,7 @@ function updateAI(ai,player,dt,diff){
     }
     ai.isBlocking=false;
   }
-
+ 
   if(ai.canAct()){
     if(ai.aiIntent.attack){ ai.startAttack(ai.aiIntent.attack); ai.aiIntent.attack=null; }
     else if(ai.aiIntent.crouch){ ai.stance='crouch'; }
@@ -1239,7 +1285,7 @@ function updateAI(ai,player,dt,diff){
   }
   if(ai.action){ ai.moveDirIntent=0; }
 }
-
+ 
 /* ---------------------------- Update ---------------------------- */
 function updateFighterPhysics(f,dt){
   var speed = 190*SCALE*f.speedMul*(difficulty && f.isAI? difficulty.speedMul:1);
@@ -1249,7 +1295,7 @@ function updateFighterPhysics(f,dt){
   var moveDir=0;
   if(f.isAI){ moveDir=f.moveDirIntent||0; }
   else { if(inputPressed('left')) moveDir-=1; if(inputPressed('right')) moveDir+=1; }
-
+ 
   if(f.action){
     f.actionTimer -= dt;
     var def=ATTACKS[f.action];
@@ -1267,35 +1313,35 @@ function updateFighterPhysics(f,dt){
       /* stays until round ends */
     }
   }
-
+ 
   var idleForInputs = !f.action;
   if(idleForInputs){ f.isBlocking = wantBlock && f.stance!=='jump'; }
   else if(f.action==='hitstun'||f.action==='knockdown'||f.action==='recover'||f.action==='ko'){ f.isBlocking=false; }
-
+ 
   if(idleForInputs && !f.isBlocking){
     if(wantJump && f.stance!=='jump' && f.grounded){ f.stance='jump'; f.vy=-430*SCALE; f.grounded=false; }
     else if(f.stance!=='jump'){ f.stance = wantCrouch? 'crouch':'stand'; }
     if(f.stance==='stand'){ f.vx=moveDir*speed; if(moveDir!==0) f.walkCycle += dt*0.012*Math.abs(f.vx)/(60*SCALE); }
     else if(f.stance==='crouch'){ f.vx=0; }
   } else if(idleForInputs && f.isBlocking){ f.vx*=0.7; }
-
+ 
   if(f.stance==='jump' || !f.grounded){ f.vy += 1500*SCALE*(dt/1000); }
   f.x += f.vx*(dt/1000); f.y += f.vy*(dt/1000);
   if(f.y>=GROUND_Y){ f.y=GROUND_Y; if(f.stance==='jump'){ f.stance='stand'; } f.vy=0; f.grounded=true; }
-
+ 
   if(f.action || (!moveDir && f.stance==='stand')){ f.vx *= (f.action? 0.90:0.75); }
   f.x = clamp(f.x, RING_LEFT+f.width()*0.6, RING_RIGHT-f.width()*0.6);
   if(f.flashTimer>0) f.flashTimer -= dt;
-
+ 
   if(!f.action && !f.isBlocking){ f.stamina = clamp(f.stamina + dt*0.028*f.def.speed*(difficulty?difficulty.staminaMul:1), 0, f.maxStamina); }
   else if(f.isBlocking){ f.stamina = clamp(f.stamina + dt*0.008, 0, f.maxStamina); }
 }
-
+ 
 function tryStartPlayerAttack(f){
   if(f.isAI || f.action || f.isBlocking) return;
   ATTACK_ORDER.forEach(function(key){ if(inputPressed(key)){ f.startAttack(key); } });
 }
-
+ 
 function handleHitDetection(a,b){
   if(match.phase!=='fighting') return;
   // A downed/knocked-out/getting-up fighter (STATE: KNOCKDOWN / DOWN / GET_UP) is briefly
@@ -1317,7 +1363,7 @@ function handleHitDetection(a,b){
     }
   }
 }
-
+ 
 function checkKnockdownLimit(winner,loser){
   updateKDStatus();
   if(loser.knockdowns>=MAX_KNOCKDOWNS && match.phase==='fighting'){
@@ -1326,7 +1372,7 @@ function checkKnockdownLimit(winner,loser){
     setTimeout(function(){ finishRound(winner===fighters[0]?'player':'ai', true); },1500);
   }
 }
-
+ 
 function updateKDStatus(){
   if(!fighters) return;
   var pEl=document.getElementById('hud-player-kd'), oEl=document.getElementById('hud-op-kd');
@@ -1338,7 +1384,7 @@ function updateKDStatus(){
   oEl.classList.toggle('warn', o.knockdowns===MAX_KNOCKDOWNS-1);
   oEl.classList.toggle('danger', o.knockdowns>=MAX_KNOCKDOWNS);
 }
-
+ 
 function spawnHitEffect(target,kind){
   var c=target.center();
   var n = kind==='blocked'?4:8;
@@ -1348,28 +1394,28 @@ function spawnHitEffect(target,kind){
   }
   if(kind==='hit'||kind==='guardbreak'){ shakeTime=140; shakeMag=6*SCALE; }
 }
-
+ 
 function onKO(winner,loser){
   match.phase='roundend';
   setTimeout(function(){ showOverlayText('K.O.!','',1300); },200);
   setTimeout(function(){ finishRound(winner===fighters[0]?'player':'ai', true); },1500);
 }
-
+ 
 function finishRound(winnerSide,wasKO){
   if(winnerSide==='player') fighters[0].roundsWon++;
   else if(winnerSide==='ai') fighters[1].roundsWon++;
   updatePips();
-
+ 
   var titleText='ROUND '+match.round;
   var subText;
   if(winnerSide==='draw'){ subText='Draw Round'; }
   else if(winnerSide==='player'){ subText = wasKO? (document.getElementById('hud-player-name').textContent+' wins by KO!') : (document.getElementById('hud-player-name').textContent+' wins the round!'); }
   else { subText = wasKO? (document.getElementById('hud-op-name').textContent+' wins by KO!') : (document.getElementById('hud-op-name').textContent+' wins the round!'); }
-
+ 
   document.getElementById('result-title').textContent=titleText;
   document.getElementById('result-sub').textContent=subText;
   document.getElementById('round-result-panel').classList.add('show');
-
+ 
   setTimeout(function(){
     document.getElementById('round-result-panel').classList.remove('show');
     if(fighters[0].roundsWon>=2 || fighters[1].roundsWon>=2 || match.round>=3){
@@ -1381,7 +1427,7 @@ function finishRound(winnerSide,wasKO){
     }
   }, 2200);
 }
-
+ 
 function endMatch(){
   match.phase='matchend';
   var playerWon = fighters[0].roundsWon > fighters[1].roundsWon;
@@ -1393,7 +1439,7 @@ function endMatch(){
     showScreen('screen-final');
   }, 600);
 }
-
+ 
 /* pause / resume / restart */
 function togglePause(){
   if(match.phase!=='fighting' && match.phase!=='intro') return;
@@ -1413,14 +1459,14 @@ document.getElementById('btn-pause-mainmenu').addEventListener('click', function
 document.getElementById('btn-rematch').addEventListener('click', function(){ Audio1.click(); startMatch(); });
 document.getElementById('btn-mainmenu').addEventListener('click', function(){ Audio1.click(); goToMainMenu(); });
 function goToMainMenu(){ Audio1.stopCrowd(); match.phase='idle'; fighters=null; showScreen('screen-title'); }
-
+ 
 /* ---------------------------- Rendering ---------------------------- */
 function drawArenaBg(){
   var a=arena;
   var g=ctx2d.createLinearGradient(0,0,0,H);
   g.addColorStop(0,a.sky[0]); g.addColorStop(0.55,a.sky[1]); g.addColorStop(1,a.sky[2]);
   ctx2d.fillStyle=g; ctx2d.fillRect(0,0,W,H);
-
+ 
   if(a.lights){
     for(var i=0;i<4;i++){
       var lx=W*(0.12+i*0.26);
@@ -1432,7 +1478,7 @@ function drawArenaBg(){
       ctx2d.fillStyle='#222'; ctx2d.fillRect(lx-8*SCALE,10*SCALE,16*SCALE,10*SCALE);
     }
   }
-
+ 
   ctx2d.save();
   ctx2d.fillStyle=a.accent; ctx2d.globalAlpha=0.9;
   ctx2d.fillRect(W*0.24,H*0.03,W*0.52,22*SCALE);
@@ -1440,7 +1486,7 @@ function drawArenaBg(){
   ctx2d.font='bold '+(13*SCALE)+'px Arial'; ctx2d.textAlign='center';
   ctx2d.fillText('ANVORA GAMES', W*0.5, H*0.03+16*SCALE);
   ctx2d.restore();
-
+ 
   ctx2d.fillStyle=a.crowd; ctx2d.fillRect(0,H*0.12,W,H*0.16);
   ctx2d.save(); ctx2d.globalAlpha=0.55;
   for(var r=0;r<3;r++){
@@ -1452,44 +1498,44 @@ function drawArenaBg(){
     }
   }
   ctx2d.restore();
-
+ 
   var matTop=H*0.36;
   ctx2d.fillStyle=a.mat; ctx2d.fillRect(0,matTop,W,H-matTop);
   ctx2d.save(); ctx2d.globalAlpha=0.5; ctx2d.fillStyle=a.mat2;
   for(var s=0;s<12;s++){ ctx2d.fillRect(s*(W/12),matTop,W/24,H-matTop); }
   ctx2d.restore();
-
+ 
   ctx2d.fillStyle='rgba(0,0,0,0.25)'; ctx2d.fillRect(0,matTop,W,6*SCALE);
-
+ 
   ctx2d.fillStyle=a.post;
   ctx2d.fillRect(RING_LEFT-14*SCALE,matTop-90*SCALE,12*SCALE,100*SCALE);
   ctx2d.fillRect(RING_RIGHT+2*SCALE,matTop-90*SCALE,12*SCALE,100*SCALE);
-
+ 
   ctx2d.strokeStyle=a.rope; ctx2d.lineWidth=4*SCALE;
   for(var rp=0;rp<3;rp++){
     var ry=matTop-20*SCALE-rp*24*SCALE;
     ctx2d.beginPath(); ctx2d.moveTo(RING_LEFT-8*SCALE,ry); ctx2d.lineTo(RING_RIGHT+8*SCALE,ry); ctx2d.stroke();
   }
-
+ 
   ctx2d.strokeStyle='rgba(0,0,0,0.35)'; ctx2d.lineWidth=2*SCALE;
   ctx2d.beginPath(); ctx2d.moveTo(0,GROUND_Y+2*SCALE); ctx2d.lineTo(W,GROUND_Y+2*SCALE); ctx2d.stroke();
 }
-
+ 
 function drawFighter(f){
   var w=f.width();
   ctx2d.save();
   ctx2d.globalAlpha=0.35; ctx2d.fillStyle='#000';
   ctx2d.beginPath(); ctx2d.ellipse(f.x,GROUND_Y+4*SCALE,w*0.55,7*SCALE,0,0,Math.PI*2); ctx2d.fill();
   ctx2d.globalAlpha=1;
-
+ 
   if(f.action==='knockdown'||f.action==='ko'){ drawKnockdown(f); ctx2d.restore(); return; }
   if(f.action==='recover'){ drawGettingUp(f); ctx2d.restore(); return; }
-
+ 
   var crouch = f.stance==='crouch';
   var bob=0;
   if(f.stance==='stand' && Math.abs(f.vx)>5 && !f.action){ bob=Math.sin(f.walkCycle*10)*3*SCALE; }
   var legSwing=(f.stance==='stand' && Math.abs(f.vx)>5)? Math.sin(f.walkCycle*10)*8*SCALE:0;
-
+ 
   var attackDef=ATTACKS[f.action];
   var punchProgress=0;
   if(attackDef){
@@ -1497,7 +1543,7 @@ function drawFighter(f){
     else if(f.actionPhase==='active'){ punchProgress=0.4+(1-(f.actionTimer/attackDef.active))*0.6; }
     else if(f.actionPhase==='recovery'){ var t=1-(f.actionTimer/attackDef.recovery); punchProgress=Math.max(0,1-t); }
   }
-
+ 
   // HIT_REACTION recoil: a normal hit makes the fighter flinch/lean back briefly and stays
   // fully standing the whole time — visually distinct from the KNOCKDOWN fall pose below.
   var lean=0, recoil=0;
@@ -1506,7 +1552,7 @@ function drawFighter(f){
     lean = -0.16*tt;
     recoil = tt*4*SCALE;
   }
-
+ 
   renderBoxer(ctx2d, f.x, f.y, f.facing, SCALE, f.def, {
     crouch:crouch, bob:bob, legSwing:legSwing,
     punchType: attackDef? f.action : null,
@@ -1515,10 +1561,10 @@ function drawFighter(f){
     flash: f.flashTimer>0? clamp(f.flashTimer/180,0,1):0,
     lean:lean, recoil:recoil
   });
-
+ 
   ctx2d.restore();
 }
-
+ 
 function drawKnockdown(f){
   var b=f.def.build, s=SCALE*(b.heightMul||1);
   var OL='#1a120d', LW=1.3*SCALE;
@@ -1548,7 +1594,7 @@ function drawGettingUp(f){
   });
   ctx2d.restore();
 }
-
+ 
 function drawParticles(dt){
   ctx2d.save();
   for(var i=particles.length-1;i>=0;i--){
@@ -1561,7 +1607,7 @@ function drawParticles(dt){
   }
   ctx2d.restore(); ctx2d.globalAlpha=1;
 }
-
+ 
 /* ---------------------------- Main Loop ---------------------------- */
 function updateHUD(){
   if(!fighters) return;
@@ -1579,28 +1625,31 @@ function updateHUD(){
   document.getElementById('hud-timer').textContent=Math.max(0,Math.ceil(match.timer));
   document.getElementById('hud-round-label').textContent='ROUND '+match.round+(match.suddenDeath?' - SUDDEN DEATH':'');
 }
-
+ 
 function loop(now){
   rafId=requestAnimationFrame(loop);
   var dt=now-lastFrameTime;
   if(dt>50) dt=50;
   lastFrameTime=now;
-
-  orientationBlocked = isTouch && window.innerWidth>window.innerHeight;
+ 
+  // Gameplay pauses while a touch device is held in portrait — landscape is the
+  // required play orientation now; the rotate-overlay (checkOrientation) shows the
+  // matching "Rotate to Landscape" prompt at the same time.
+  orientationBlocked = isTouch && window.innerHeight>window.innerWidth;
   if(orientationBlocked) return;
-
+ 
   if(!fighters || !screens['screen-fight'].classList.contains('active')) return;
   if(paused) return;
-
+ 
   var player=fighters[0], opp=fighters[1];
-
+ 
   if(match.phase==='fighting'){
     tryStartPlayerAttack(player);
     updateAI(opp,player,dt,difficulty);
-
+ 
     updateFighterPhysics(player,dt);
     updateFighterPhysics(opp,dt);
-
+ 
     var minGap=(player.width()+opp.width())*0.42;
     var gap=opp.x-player.x;
     if(Math.abs(gap)<minGap){
@@ -1609,21 +1658,21 @@ function loop(now){
       player.x=clamp(player.x,RING_LEFT+player.width()*0.6,RING_RIGHT-player.width()*0.6);
       opp.x=clamp(opp.x,RING_LEFT+opp.width()*0.6,RING_RIGHT-opp.width()*0.6);
     }
-
+ 
     if(!player.action) player.facing=(opp.x>=player.x)?1:-1;
     if(!opp.action) opp.facing=(player.x>=opp.x)?1:-1;
-
+ 
     handleHitDetection(player,opp);
     handleHitDetection(opp,player);
-
+ 
     if(match.phase==='fighting'){
       match.timer -= dt/1000;
       if(match.timer<=0){ match.timer=0; resolveTimeUp(); }
     }
   }
-
+ 
   updateHUD();
-
+ 
   ctx2d.save();
   if(shakeTime>0){
     shakeTime-=dt;
@@ -1636,7 +1685,7 @@ function loop(now){
   drawParticles(dt);
   ctx2d.restore();
 }
-
+ 
 function resolveTimeUp(){
   var p=fighters[0], o=fighters[1];
   if(!match.suddenDeath && Math.abs(p.health-o.health)<0.01){
@@ -1649,7 +1698,7 @@ function resolveTimeUp(){
   else winner = Math.random()<0.5?'player':'ai';
   finishRound(winner,false);
 }
-
+ 
 var origHandleHitDetection = handleHitDetection;
 handleHitDetection = function(a,b){
   var beforeHealth=b.health;
@@ -1659,17 +1708,18 @@ handleHitDetection = function(a,b){
     finishRound(a===fighters[0]?'player':'ai', false);
   }
 };
-
+ 
 /* ---------------------------- init ---------------------------- */
 resizeCanvas();
 updateMuteIcons();
 checkOrientation();
-
+ 
 ['touchstart','mousedown','keydown'].forEach(function(evt){
   window.addEventListener(evt, function once(){ Audio1.ensure(); }, {once:true});
 });
-
+ 
 })();
 </script>
 </body>
 </html>
+ 
