@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>VOIDRIFT</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="logo-glitch">VOIDRIFT</div>
+    <div class="loading-bar-track"><div id="loading-bar-fill"></div></div>
+    <div id="loading-text">INITIALIZING CORE...</div>
+  </div>
+
+  <!-- ===================== MAIN MENU ===================== -->
+  <div id="main-menu" class="screen hidden">
+    <div class="menu-bg-glow"></div>
+    <h1 class="game-title">VOIDRIFT</h1>
+    <p class="game-subtitle">ANCIENT STONE. BURIED FIRE.</p>
+    <div class="menu-buttons">
+      <button id="btn-start" class="menu-btn">START GAME</button>
+      <button id="btn-continue" class="menu-btn">CONTINUE</button>
+      <button id="btn-settings" class="menu-btn">SETTINGS</button>
+      <button id="btn-achievements" class="menu-btn">ACHIEVEMENTS</button>
+    </div>
+    <div class="difficulty-row">
+      <span>DIFFICULTY:</span>
+      <select id="difficulty-select">
+        <option value="easy">EASY</option>
+        <option value="normal" selected>NORMAL</option>
+        <option value="hard">HARD</option>
+        <option value="nightmare">NIGHTMARE</option>
+      </select>
+    </div>
+    <div class="credits">Developed by Arihant - AnvoraGames</div>
+  </div>
+
+  <!-- ===================== SETTINGS MENU ===================== -->
+  <div id="settings-menu" class="screen hidden">
+    <h2>SETTINGS</h2>
+    <div class="setting-row">
+      <label>Mouse / Look Sensitivity</label>
+      <input type="range" id="sens-slider" min="1" max="20" value="8" />
+    </div>
+    <div class="setting-row">
+      <label>Music Volume</label>
+      <input type="range" id="music-slider" min="0" max="100" value="40" />
+    </div>
+    <div class="setting-row">
+      <label>SFX Volume</label>
+      <input type="range" id="sfx-slider" min="0" max="100" value="80" />
+    </div>
+    <div class="setting-row">
+      <label>Graphics Quality</label>
+      <select id="quality-select">
+        <option value="auto" selected>AUTO DETECT</option>
+        <option value="low">LOW</option>
+        <option value="medium">MEDIUM</option>
+        <option value="high">HIGH</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Invert Look Y</label>
+      <input type="checkbox" id="invert-checkbox" />
+    </div>
+
+    <h3 class="controls-heading">CONTROLS</h3>
+    <div id="controls-list">
+      <div class="controls-col">
+        <div class="ctrl-row"><span>Move</span><span>W A S D</span></div>
+        <div class="ctrl-row"><span>Look / Aim</span><span>Mouse</span></div>
+        <div class="ctrl-row"><span>Fire</span><span>Left Click</span></div>
+        <div class="ctrl-row"><span>Aim Down Sights</span><span>Right Click</span></div>
+      </div>
+      <div class="controls-col">
+        <div class="ctrl-row"><span>Jump</span><span>Space</span></div>
+        <div class="ctrl-row"><span>Sprint</span><span>Shift</span></div>
+        <div class="ctrl-row"><span>Reload</span><span>R</span></div>
+        <div class="ctrl-row"><span>Switch Weapon</span><span>1-4 / Scroll</span></div>
+        <div class="ctrl-row"><span>Pause</span><span>Esc</span></div>
+      </div>
+    </div>
+
+    <button id="btn-settings-back" class="menu-btn">BACK</button>
+  </div>
+
+  <!-- ===================== ACHIEVEMENTS MENU ===================== -->
+  <div id="achievements-menu" class="screen hidden">
+    <h2>ACHIEVEMENTS</h2>
+    <div id="achievements-list"></div>
+    <button id="btn-achievements-back" class="menu-btn">BACK</button>
+  </div>
+
+  <!-- ===================== GAME CONTAINER ===================== -->
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+  </div>
+
+  <!-- ===================== HUD ===================== -->
+  <div id="hud" class="hidden">
+    <div id="crosshair">
+      <div class="ch-line ch-top"></div>
+      <div class="ch-line ch-bottom"></div>
+      <div class="ch-line ch-left"></div>
+      <div class="ch-line ch-right"></div>
+      <div id="hitmarker"></div>
+    </div>
+
+    <div id="vignette-damage"></div>
+    <div id="vignette-lowhealth"></div>
+
+    <div id="hud-top-left">
+      <div id="objective-text">OBJECTIVE: CLEAR THE TEMPLE AND ACTIVATE THE RIFT</div>
+      <div id="score-display">SCORE: <span id="score-val">0</span></div>
+    </div>
+
+    <div id="hud-top-right">
+      <div id="fps-counter">60 FPS</div>
+      <div id="difficulty-label">NORMAL</div>
+    </div>
+
+    <div id="minimap-wrap">
+      <canvas id="minimap" width="140" height="140"></canvas>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div id="hud-bottom">
+      <div id="hud-bars">
+        <div class="bar-row">
+          <span class="bar-icon">&#10084;</span>
+          <div class="bar-track"><div id="health-fill" class="bar-fill health"></div></div>
+          <span id="health-val" class="bar-val">100</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-icon">&#9633;</span>
+          <div class="bar-track"><div id="armor-fill" class="bar-fill armor"></div></div>
+          <span id="armor-val" class="bar-val">50</span>
+        </div>
+      </div>
+
+      <div id="weapon-hud">
+        <div id="weapon-icon">PST</div>
+        <div id="weapon-info">
+          <div id="weapon-name">PISTOL</div>
+          <div id="ammo-count"><span id="ammo-mag">12</span> / <span id="ammo-reserve">48</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MOBILE CONTROLS ===================== -->
+  <div id="mobile-controls" class="hidden">
+    <div id="joystick-zone">
+      <div id="joystick-base">
+        <div id="joystick-knob"></div>
+      </div>
+    </div>
+
+    <div id="look-zone"></div>
+
+    <div id="mobile-buttons">
+      <button id="btn-jump" class="mob-btn">JUMP</button>
+      <button id="btn-sprint" class="mob-btn">SPRINT</button>
+      <button id="btn-reload" class="mob-btn">RELOAD</button>
+      <button id="btn-aim" class="mob-btn">AIM</button>
+      <button id="btn-fire" class="mob-btn fire-btn">FIRE</button>
+    </div>
+
+    <div id="weapon-switch-mobile">
+      <button class="wswitch-btn" data-weapon="pistol">1</button>
+      <button class="wswitch-btn" data-weapon="shotgun">2</button>
+      <button class="wswitch-btn" data-weapon="rifle">3</button>
+      <button class="wswitch-btn" data-weapon="plasma">4</button>
+    </div>
+  </div>
+
+  <!-- ===================== PAUSE MENU ===================== -->
+  <div id="pause-menu" class="screen hidden">
+    <h2>PAUSED</h2>
+    <div class="menu-buttons">
+      <button id="btn-resume" class="menu-btn">RESUME</button>
+      <button id="btn-pause-settings" class="menu-btn">SETTINGS</button>
+      <button id="btn-quit" class="menu-btn">QUIT TO MENU</button>
+    </div>
+  </div>
+
+  <!-- ===================== GAME OVER / LEVEL COMPLETE ===================== -->
+  <div id="gameover-screen" class="screen hidden">
+    <h2 class="gameover-title">YOU DIED</h2>
+    <p id="gameover-score">SCORE: 0</p>
+    <div class="menu-buttons">
+      <button id="btn-respawn" class="menu-btn">RESPAWN AT CHECKPOINT</button>
+      <button id="btn-gameover-menu" class="menu-btn">MAIN MENU</button>
+    </div>
+  </div>
+
+  <div id="levelcomplete-screen" class="screen hidden">
+    <h2 class="complete-title">RUINS CLEARED</h2>
+    <p id="complete-score">SCORE: 0</p>
+    <div class="menu-buttons">
+      <button id="btn-next-level" class="menu-btn">DESCEND FURTHER</button>
+      <button id="btn-complete-menu" class="menu-btn">MAIN MENU</button>
+    </div>
+  </div>
+
+  <!-- ===================== ORIENTATION LOCK OVERLAY ===================== -->
+  <div id="orientation-overlay" class="hidden">
+    <div class="rotate-icon">&#8635;</div>
+    <p>ROTATE YOUR DEVICE TO LANDSCAPE MODE</p>
+  </div>
+
+  <!-- ===================== MOBILE START OVERLAY (tap to begin, unlocks audio) ===================== -->
+  <div id="tap-to-start" class="hidden">
+    <p>TAP TO ENTER VOIDRIFT</p>
+  </div>
+
+  <!-- ===================== SCRIPTS ===================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="audio.js"></script>
+  <script src="weapons.js"></script>
+  <script src="player.js"></script>
+  <script src="enemy.js"></script>
+  <script src="ui.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
