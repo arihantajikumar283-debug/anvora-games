@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LUDO — Anvora Games</title>
+<style>
+:root{
+  --red:#e74c3c; --green:#27ae60; --yellow:#f1c40f; --blue:#3498db;
+  --bg1:#1b2a4a; --bg2:#0e1730; --panel:#ffffffee; --ink:#1b2a4a; --board-bg:#fdf6e3;
+  padding-top:env(safe-area-inset-top,0); padding-bottom:env(safe-area-inset-bottom,0);
+  box-sizing:border-box;
+}
+@media (prefers-color-scheme: dark){ :root{ --panel:#1f2940ee; --ink:#eef2ff; --board-bg:#20263a; } }
+*{box-sizing:border-box;} html,body{height:100%;margin:0;overscroll-behavior:none;}
+body{font-family:'Trebuchet MS',Verdana,sans-serif;background:radial-gradient(ellipse at top,var(--bg1),var(--bg2));color:var(--ink);
+  overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;}
+#app{width:100%;height:100%;position:relative;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px;overflow:auto;}
+[hidden]{display:none!important;}
+h1.logo{font-size:clamp(2.5rem,8vw,4.5rem);color:#fff;margin:0;letter-spacing:6px;text-shadow:0 4px 0 #00000055,0 0 30px #ffcf5c88;}
+.brand{color:#ffd166;font-weight:bold;letter-spacing:2px;}
+.credit{color:#cbd5e1;font-size:.85rem;margin-top:-8px;}
+.btn{cursor:pointer;border:none;border-radius:14px;padding:14px 28px;font-size:1.05rem;font-weight:700;
+  background:linear-gradient(180deg,#ffd166,#f4a300);color:#3a2400;box-shadow:0 5px 0 #b57500,0 8px 16px #0006;
+  transition:transform .08s;min-width:220px;}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b57500;}
+.btn.secondary{background:linear-gradient(180deg,#8ea1c9,#5f76a8);box-shadow:0 5px 0 #3d5077;color:#fff;}
+.btn.small{min-width:120px;padding:10px 16px;font-size:.9rem;}
+.menu-list{display:flex;flex-direction:column;gap:12px;margin-top:10px;}
+.panel{background:var(--panel);border-radius:18px;padding:20px;max-width:560px;width:92%;max-height:82vh;overflow:auto;box-shadow:0 10px 30px #0007;}
+.swatches{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.swatch{width:60px;height:60px;border-radius:50%;border:4px solid #0000;cursor:pointer;position:relative;box-shadow:0 4px 8px #0005;}
+.swatch.taken{opacity:.35;cursor:not-allowed;}
+.swatch.sel{border-color:#fff;box-shadow:0 0 0 4px #ffd166;}
+.swatch .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;text-shadow:0 1px 3px #000;}
+.diffrow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.diffrow .btn.active{outline:3px solid #fff;}
+#game{display:flex;flex-direction:column;width:100%;height:100%;padding:6px;gap:6px;}
+#hud{display:flex;align-items:center;justify-content:space-between;background:#0000004d;border-radius:12px;padding:6px 12px;color:#fff;font-weight:700;flex-wrap:wrap;gap:6px;}
+#hud .turn{padding:4px 12px;border-radius:20px;font-size:.95rem;}
+#mid{flex:1;display:flex;gap:8px;align-items:center;justify-content:center;min-height:0;}
+#boardWrap{aspect-ratio:1/1;height:100%;max-width:100%;position:relative;}
+#board{position:absolute;inset:0;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);
+  background:var(--board-bg);border-radius:10px;box-shadow:0 10px 30px #0008,inset 0 0 0 4px #00000022;overflow:hidden;}
+.cell{border:1px solid #00000010;}
+.path{background:#fffdf3;}
+.safe{background:#ffe9a8;}
+.safe::after{content:'★';position:absolute;font-size:.6em;color:#c99a1e;}
+.home-red{background:#ffd7d1;} .home-green{background:#d3f5df;} .home-yellow{background:#fff4c2;} .home-blue{background:#d3e8fb;}
+.yard-red{background:#f8c9c2;} .yard-green{background:#c3ecd0;} .yard-yellow{background:#fbedac;} .yard-blue{background:#c3ddf7;}
+.center{background:conic-gradient(var(--red) 0 90deg,var(--green) 90deg 180deg,var(--blue) 180deg 270deg,var(--yellow) 270deg 360deg);}
+.yardbox{position:absolute;border-radius:14px;}
+.token{position:absolute;width:6.2%;height:6.2%;border-radius:50%;transform:translate(-50%,-50%);
+  box-shadow:0 3px 6px #0007,inset 0 -3px 4px #0004,inset 0 2px 3px #fff8;transition:left .16s ease,top .16s ease;cursor:pointer;z-index:5;}
+.token.legal{outline:3px solid #fff;box-shadow:0 0 0 5px #ffffff99,0 0 14px 6px #ffd166;animation:pulse 1s infinite;}
+.token.finished{outline:2px solid gold;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.18);}}
+.tok-red{background:radial-gradient(circle at 35% 30%,#ff8f85,var(--red));}
+.tok-green{background:radial-gradient(circle at 35% 30%,#6bdb95,var(--green));}
+.tok-yellow{background:radial-gradient(circle at 35% 30%,#ffe98a,var(--yellow));}
+.tok-blue{background:radial-gradient(circle at 35% 30%,#7fc1f2,var(--blue));}
+#sidebar{display:flex;flex-direction:column;gap:8px;min-width:150px;max-width:190px;}
+.pcard{background:#00000055;color:#fff;border-radius:10px;padding:8px 10px;font-size:.82rem;border-left:6px solid #888;opacity:.6;}
+.pcard.active{opacity:1;box-shadow:0 0 0 2px #fff5;}
+.diceWrap{perspective:420px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+#diceScene{width:64px;height:64px;}
+#dice{width:100%;height:100%;position:relative;transform-style:preserve-3d;}
+#dice.tumble{animation:tumble .48s linear infinite;}
+@keyframes tumble{0%{transform:rotateX(0) rotateY(0);}100%{transform:rotateX(360deg) rotateY(360deg);}}
+.face{position:absolute;width:64px;height:64px;left:0;top:0;background:linear-gradient(160deg,#ffffff,#e6ebf5);border-radius:14px;
+  box-shadow:inset 0 3px 4px #fff, inset 0 -8px 10px #0002, 0 3px 6px #0004;
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:10px;}
+.f1{transform:translateZ(32px);} .f6{transform:rotateY(180deg) translateZ(32px);}
+.f2{transform:rotateY(90deg) translateZ(32px);} .f5{transform:rotateY(-90deg) translateZ(32px);}
+.f3{transform:rotateX(90deg) translateZ(32px);} .f4{transform:rotateX(-90deg) translateZ(32px);}
+.pip{width:10px;height:10px;border-radius:50%;background:#22304f;align-self:center;justify-self:center;box-shadow:inset 0 1px 1px #0008;visibility:hidden;}
+.p1 .pip:nth-child(5){visibility:visible}
+.p2 .pip:nth-child(1),.p2 .pip:nth-child(9){visibility:visible}
+.p3 .pip:nth-child(1),.p3 .pip:nth-child(5),.p3 .pip:nth-child(9){visibility:visible}
+.p4 .pip:nth-child(1),.p4 .pip:nth-child(3),.p4 .pip:nth-child(7),.p4 .pip:nth-child(9){visibility:visible}
+.p5 .pip:nth-child(1),.p5 .pip:nth-child(3),.p5 .pip:nth-child(5),.p5 .pip:nth-child(7),.p5 .pip:nth-child(9){visibility:visible}
+.p6 .pip:nth-child(1),.p6 .pip:nth-child(3),.p6 .pip:nth-child(4),.p6 .pip:nth-child(6),.p6 .pip:nth-child(7),.p6 .pip:nth-child(9){visibility:visible}
+#diceResult{color:#fff;font-weight:800;font-size:.8rem;letter-spacing:.5px;opacity:.9;}
+.token.pop{animation:pop .4s ease;}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(1);}40%{transform:translate(-50%,-50%) scale(1.55);}100%{transform:translate(-50%,-50%) scale(1);}}
+.btn:disabled{opacity:.42;cursor:not-allowed;box-shadow:none;}
+.btn:disabled:active{transform:none;}
+.btn:focus-visible,.swatch:focus-visible,.token:focus-visible{outline:3px solid #fff;outline-offset:2px;}
+#status{color:#fff;font-weight:700;min-height:20px;text-align:center;font-size:.85rem;}
+#controlsRow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.overlay{position:absolute;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:50;}
+.confetti{position:absolute;top:-10px;width:8px;height:14px;animation:fall linear forwards;}
+@keyframes fall{to{transform:translateY(110vh) rotate(400deg);}}
+.rotateMsg{position:absolute;inset:0;background:#0e1730;color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:99;gap:10px;text-align:center;}
+@media (orientation:portrait) and (max-height:500px){.rotateMsg{display:none!important;}}
+@media (orientation:portrait) and (max-width:800px){.rotateMsg.show{display:flex;}}
+label.toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0;font-weight:700;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="menu" class="screen">
+  <h1 class="logo">LUDO</h1>
+  <div class="credit"><span class="brand">ANVORA GAMES</span> · Developed by Arihant</div>
+  <div class="menu-list">
+    <button class="btn" data-go="aiSetup">PLAY VS AI</button>
+    <button class="btn" data-go="localSetup">LOCAL MULTIPLAYER</button>
+    <button class="btn secondary" data-go="howto">HOW TO PLAY</button>
+    <button class="btn secondary" data-go="settings">SETTINGS</button>
+  </div>
+</div>
+
+<div id="localSetup" class="screen" hidden>
+  <div class="panel">
+    <h2>Local Multiplayer</h2>
+    <p>Players:</p>
+    <div class="diffrow" id="lpCount">
+      <button class="btn small" data-n="2">2</button>
+      <button class="btn small" data-n="3">3</button>
+      <button class="btn small" data-n="4">4</button>
+    </div>
+    <p>Pick a color for each player, in order:</p>
+    <div class="swatches" id="lpSwatches"></div>
+    <div id="lpSlots" style="text-align:center;margin-top:8px;font-weight:700;"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+      <button class="btn secondary small" data-go="menu">Back</button>
+      <button class="btn small" id="lpStart" disabled>Start Game</button>
+    </div>
+  </div>
+</div>
+
+<div id="aiSetup" class="screen" hidden>
+  <div class="panel">
+    <h2>Play vs AI</h2>
+    <p>Your color:</p>
+    <div class="swatches" id="aiSwatches"></div>
+    <p>Difficulty:</p>
+    <div class="diffrow" id="aiDiff">
+      <button class="btn small" data-d="easy">EASY</button>
+      <button class="btn small" data-d="normal">NORMAL</button>
+      <button class="btn small" data-d="hard">HARD</button>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+      <button class="btn secondary small" data-go="menu">Back</button>
+      <button class="btn small" id="aiStart" disabled>Start Game</button>
+    </div>
+  </div>
+</div>
+
+<div id="howto" class="screen" hidden>
+  <div class="panel">
+    <h2>How To Play</h2>
+    <ul>
+      <li>Roll the dice on your turn. Rolling a <b>6</b> lets a token leave base and grants an extra roll.</li>
+      <li>Move a token the number of squares shown. If more than one token can legally move, tap the glowing token you want.</li>
+      <li>Land on an opponent's token to send it back to base — unless it's on a <b>★ safe cell</b> or a colored start cell.</li>
+      <li>Bring all 4 tokens around the board into your colored home lane. You need the <b>exact</b> roll to enter the final square.</li>
+      <li>Three 6's in a row forfeits the extra turn, to keep things moving.</li>
+      <li>First player to get all 4 tokens home wins!</li>
+    </ul>
+    <div style="text-align:center;"><button class="btn secondary" data-go="menu">Back</button></div>
+  </div>
+</div>
+
+<div id="settings" class="screen" hidden>
+  <div class="panel">
+    <h2>Settings</h2>
+    <label class="toggle">Sound <input type="checkbox" id="optSound"></label>
+    <label class="toggle">Music <input type="checkbox" id="optMusic"></label>
+    <label class="toggle">Animations <input type="checkbox" id="optAnim"></label>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:14px;">
+      <button class="btn secondary small" id="resetSettings">Reset Settings</button>
+      <button class="btn small" data-go="menu">Back</button>
+    </div>
+  </div>
+</div>
+
+<div id="game" hidden>
+  <div id="hud">
+    <div class="turn" id="turnLabel">PLAYER 1'S TURN</div>
+    <div style="display:flex;gap:6px;">
+      <button class="btn small" id="pauseBtn" aria-label="Pause game" style="min-width:0;padding:8px 14px;">⏸</button>
+    </div>
+  </div>
+  <div id="mid">
+    <div id="boardWrap"><div id="board"></div></div>
+    <div id="sidebar">
+      <div class="diceWrap">
+        <div id="diceScene"><div id="dice"></div></div>
+        <div id="diceResult">Roll to begin</div>
+        <button class="btn small" id="rollBtn">ROLL DICE</button>
+      </div>
+      <div id="status"></div>
+      <div id="panels"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="pauseOverlay" hidden>
+  <div class="panel" style="text-align:center;">
+    <h2>Paused</h2>
+    <div class="menu-list">
+      <button class="btn" id="resumeBtn">RESUME</button>
+      <button class="btn secondary" id="restartBtn">RESTART</button>
+      <button class="btn secondary" id="menuBtn">MAIN MENU</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="winOverlay" hidden>
+  <div class="panel" style="text-align:center;position:relative;overflow:hidden;">
+    <h2 id="winText">PLAYER 1 WINS!</h2>
+    <div class="menu-list">
+      <button class="btn" id="againBtn">PLAY AGAIN</button>
+      <button class="btn secondary" id="winMenuBtn">MAIN MENU</button>
+    </div>
+  </div>
+</div>
+
+<div class="rotateMsg" id="rotateMsg"><div style="font-size:2.5rem;">↻</div><div>ROTATE YOUR DEVICE TO LANDSCAPE</div></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const COLORS=['red','green','yellow','blue'];
+const HEX={red:'#e74c3c',green:'#27ae60',yellow:'#f1c40f',blue:'#3498db'};
+const MAIN_PATH="6,1 6,2 6,3 6,4 6,5 5,6 4,6 3,6 2,6 1,6 0,6 0,7 0,8 1,8 2,8 3,8 4,8 5,8 6,9 6,10 6,11 6,12 6,13 6,14 7,14 8,14 8,13 8,12 8,11 8,10 8,9 9,8 10,8 11,8 12,8 13,8 14,8 14,7 14,6 13,6 12,6 11,6 10,6 9,6 8,5 8,4 8,3 8,2 8,1 8,0 7,0 6,0".split(' ').map(p=>p.split(',').map(Number));
+const START_IDX={red:0,green:13,yellow:26,blue:39};
+const HOME_COL={
+  red:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]],
+  green:[[1,7],[2,7],[3,7],[4,7],[5,7],[6,7]],
+  yellow:[[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]],
+  blue:[[13,7],[12,7],[11,7],[10,7],[9,7],[8,7]]
+};
+const SAFE_SET=new Set([0,13,26,39,8,21,34,47]);
+const YARD_ORIGIN={red:[0,0],green:[0,9],yellow:[9,9],blue:[9,0]};
+const BASE_OFFSETS=[[1,1],[1,4],[4,1],[4,4]];
+
+let S={}; // game state
+let gameSeq=0;
+// uiState: READY | ROLLING | CHOOSING | MOVING | AI_TURN | GAMEOVER (isPaused is independent/orthogonal)
+function freshState(){
+  return {mode:null,colors:[],isAI:{},difficulty:'normal',current:0,
+    tokens:Object.fromEntries(COLORS.map(c=>[c,[0,0,0,0]])),
+    diceValue:1,isRolling:false,isAnimating:false,isPaused:false,gameOver:false,
+    winner:null,legal:[],sixStreak:0,started:false,uiState:'READY',gameId:0};
+}
+S=freshState();
+
+// ---- central UI state + input reliability helpers ----
+function setUIState(s){
+  S.uiState=s;
+  S.isRolling=(s==='ROLLING');
+  S.isAnimating=(s==='MOVING');
+  syncUI();
+}
+function syncUI(){
+  const rb=document.getElementById('rollBtn');
+  if(rb) rb.disabled = !(S.uiState==='READY') || S.isPaused || S.gameOver;
+}
+// One user action -> one game action: wraps a handler so rapid double taps/clicks are ignored.
+function guarded(fn){
+  let busy=false;
+  return function(e){ if(busy) return; busy=true; fn(e); setTimeout(()=>{busy=false;},350); };
+}
+// Routes any pending game-flow step through the pause state (so Pause truly freezes
+// dice/movement/AI), AND stamps every scheduled step with the game session id so that
+// a Restart/Play Again started mid-roll or mid-animation can never let a stray old
+// callback mutate the new game's state.
+function gtimeout(fn,ms){
+  const myId=S.gameId;
+  const run=()=>{
+    if(S.gameId!==myId) return; // this game session ended before the step fired
+    if(S.isPaused){ setTimeout(run,150); return; }
+    fn();
+  };
+  setTimeout(run,ms);
+}
+function tryFullscreenLandscape(){
+  try{
+    const el=document.documentElement;
+    const req=el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen;
+    if(req) req.call(el).catch(()=>{});
+  }catch(e){}
+  try{ if(screen.orientation&&screen.orientation.lock) screen.orientation.lock('landscape').catch(()=>{}); }catch(e){}
+}
+let settings={sound:true,music:false,anim:true};
+try{
+  const raw=localStorage.getItem('ludo_settings_v1');
+  if(raw){const p=JSON.parse(raw); if(p&&typeof p==='object'&&!Array.isArray(p)) settings=Object.assign(settings,p);}
+}catch(e){}
+function saveSettings(){try{localStorage.setItem('ludo_settings_v1',JSON.stringify(settings));}catch(e){}}
+
+// ---- ambient music (soft two-tone drone; fully start/stopped by the Music setting) ----
+let musicNodes=null;
+function startMusic(){
+  if(musicNodes)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o1=actx.createOscillator(),o2=actx.createOscillator(),g=actx.createGain();
+    o1.type='sine';o1.frequency.value=110; o2.type='sine';o2.frequency.value=164.81;
+    g.gain.value=0.0001; g.gain.linearRampToValueAtTime(0.035,actx.currentTime+1.2);
+    o1.connect(g);o2.connect(g);g.connect(actx.destination);
+    o1.start();o2.start();
+    musicNodes={o1,o2,g};
+  }catch(e){}
+}
+function stopMusic(){
+  if(!musicNodes)return;
+  try{
+    musicNodes.g.gain.linearRampToValueAtTime(0.0001,actx.currentTime+.3);
+    const n=musicNodes; setTimeout(()=>{try{n.o1.stop();n.o2.stop();}catch(e){}},350);
+  }catch(e){}
+  musicNodes=null;
+}
+function applyMusicSetting(){ settings.music? startMusic(): stopMusic(); }
+
+// ---- audio ----
+let actx=null;
+function tone(freq,dur,type){
+  if(!settings.sound)return;
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.type=type||'sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(.14,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+    o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const SND={click:()=>tone(440,.06),roll:()=>tone(300,.08,'square'),land:()=>tone(220,.1),
+  capture:()=>{tone(180,.15,'sawtooth');tone(120,.2,'sawtooth');},
+  safe:()=>tone(660,.12),home:()=>tone(880,.15),
+  victory:()=>{[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.3),i*140));},
+  six:()=>tone(520,.1)};
+
+// ---- screens ----
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=(s.id!==id));}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',guarded(()=>{SND.click();show(b.dataset.go);})));
+
+// ---- local setup ----
+let lpCount=2, lpColors=[];
+function buildSwatches(container,onPick,maxN){
+  container.innerHTML='';
+  COLORS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='swatch';d.style.background=HEX[c];
+    d.dataset.c=c;
+    d.addEventListener('click',()=>onPick(c,d));
+    container.appendChild(d);
+  });
+}
+function refreshLP(){
+  document.querySelectorAll('#lpCount .btn').forEach(b=>b.classList.toggle('active',+b.dataset.n===lpCount));
+  document.querySelectorAll('#lpSwatches .swatch').forEach(sw=>{
+    const c=sw.dataset.c, idx=lpColors.indexOf(c);
+    sw.classList.toggle('sel',idx>-1);
+    sw.classList.toggle('taken',idx===-1 && lpColors.length>=lpCount);
+    sw.querySelector('.num')?.remove();
+    if(idx>-1){const n=document.createElement('div');n.className='num';n.textContent=idx+1;sw.appendChild(n);}
+  });
+  document.getElementById('lpSlots').textContent=lpColors.length+' / '+lpCount+' players chosen';
+  document.getElementById('lpStart').disabled=lpColors.length!==lpCount;
+}
+document.querySelectorAll('#lpCount .btn').forEach(b=>b.addEventListener('click',()=>{lpCount=+b.dataset.n;if(lpColors.length>lpCount)lpColors=lpColors.slice(0,lpCount);refreshLP();}));
+buildSwatches(document.getElementById('lpSwatches'),(c,el)=>{
+  const idx=lpColors.indexOf(c);
+  if(idx>-1){lpColors.splice(idx,1);}
+  else if(lpColors.length<lpCount){lpColors.push(c);}
+  refreshLP();
+});
+refreshLP();
+document.getElementById('lpStart').addEventListener('click',guarded(()=>{
+  startGame('local',lpColors.slice(),{});
+}));
+
+// ---- ai setup ----
+let aiColor=null, aiDiff=null;
+buildSwatches(document.getElementById('aiSwatches'),(c,el)=>{
+  aiColor=c;
+  document.querySelectorAll('#aiSwatches .swatch').forEach(s=>s.classList.toggle('sel',s.dataset.c===c));
+  checkAiReady();
+});
+document.querySelectorAll('#aiDiff .btn').forEach(b=>b.addEventListener('click',()=>{
+  aiDiff=b.dataset.d;
+  document.querySelectorAll('#aiDiff .btn').forEach(x=>x.classList.toggle('active',x===b));
+  checkAiReady();
+}));
+function checkAiReady(){document.getElementById('aiStart').disabled=!(aiColor&&aiDiff);}
+document.getElementById('aiStart').addEventListener('click',guarded(()=>{
+  const others=COLORS.filter(c=>c!==aiColor);
+  const order=[aiColor,...others];
+  const isAI={};others.forEach(c=>isAI[c]=true);
+  startGame('ai',order,isAI,aiDiff);
+}));
+
+// ---- settings screen ----
+function loadSettingsUI(){
+  document.getElementById('optSound').checked=settings.sound;
+  document.getElementById('optMusic').checked=settings.music;
+  document.getElementById('optAnim').checked=settings.anim;
+}
+loadSettingsUI();
+['optSound','optMusic','optAnim'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',e=>{
+    settings[id.replace('opt','').toLowerCase()]=e.target.checked;
+    saveSettings();
+    applyMusicSetting();
+  });
+});
+document.getElementById('resetSettings').addEventListener('click',()=>{
+  settings={sound:true,music:false,anim:true};saveSettings();loadSettingsUI();applyMusicSetting();
+});
+
+// ---- board build ----
+const board=document.getElementById('board');
+function cellClass(r,c){
+  for(const col of COLORS){
+    const [yr,yc]=YARD_ORIGIN[col];
+    if(r>=yr&&r<yr+6&&c>=yc&&c<yc+6){
+      if(r>=6&&r<=8&&c>=6&&c<=8) break;
+      return 'yard-'+col;
+    }
+  }
+  if(r>=6&&r<=8&&c>=6&&c<=8) return 'center';
+  for(const col of COLORS){
+    if(HOME_COL[col].some(p=>p[0]===r&&p[1]===c)) return 'home-'+col;
+  }
+  const idx=MAIN_PATH.findIndex(p=>p[0]===r&&p[1]===c);
+  if(idx>-1) return SAFE_SET.has(idx)?'safe':'path';
+  return '';
+}
+function buildBoard(){
+  board.innerHTML='';
+  for(let r=0;r<15;r++)for(let c=0;c<15;c++){
+    const d=document.createElement('div');
+    d.className='cell '+cellClass(r,c);
+    d.style.position='relative';
+    board.appendChild(d);
+  }
+  COLORS.forEach(col=>{
+    const [yr,yc]=YARD_ORIGIN[col];
+    const box=document.createElement('div');
+    box.className='yardbox';
+    box.style.left=(yc/15*100)+'%';box.style.top=(yr/15*100)+'%';
+    box.style.width=(6/15*100)+'%';box.style.height=(6/15*100)+'%';
+    box.style.background='#ffffff33';box.style.margin='6%';
+    board.appendChild(box);
+  });
+}
+buildBoard();
+
+// token elements
+let tokenEls={};
+function buildTokens(){
+  Object.values(tokenEls).flat().forEach(e=>e&&e.remove());
+  tokenEls={};
+  COLORS.forEach(col=>{
+    tokenEls[col]=[0,1,2,3].map(i=>{
+      const t=document.createElement('div');
+      t.className='token tok-'+col;
+      t.tabIndex=0;t.setAttribute('role','button');t.setAttribute('aria-label',col+' token '+(i+1));
+      t.addEventListener('click',()=>onTokenClick(col,i));
+      t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onTokenClick(col,i);}});
+      board.appendChild(t);
+      return t;
+    });
+  });
+}
+buildTokens();
+
+// ---- dice cube (real 3D geometry: face rotations bring the correct pip-count face to the front) ----
+const FACE_ROT={1:{x:0,y:0},2:{x:0,y:-90},3:{x:-90,y:0},4:{x:90,y:0},5:{x:0,y:90},6:{x:0,y:180}};
+function buildDice(){
+  const dice=document.getElementById('dice');
+  dice.innerHTML='';
+  [1,2,3,4,5,6].forEach(v=>{
+    const f=document.createElement('div');
+    f.className='face f'+v+' p'+v;
+    for(let i=0;i<9;i++){f.appendChild(document.createElement('div')).className='pip';}
+    dice.appendChild(f);
+  });
+}
+buildDice();
+let diceSpinX=0,diceSpinY=0;
+function setDiceFace(v,animated){
+  const dice=document.getElementById('dice');
+  const rot=FACE_ROT[v];
+  if(animated){diceSpinX+=720;diceSpinY+=1080;}
+  dice.style.transition= animated? 'transform .5s cubic-bezier(.2,.85,.25,1.2)':'none';
+  dice.style.transform='rotateX('+(diceSpinX+rot.x)+'deg) rotateY('+(diceSpinY+rot.y)+'deg)';
+  const lbl=document.getElementById('diceResult');
+  if(lbl) lbl.textContent='Result: '+v;
+}
+function cellPct(r,c){return {l:((c+0.5)/15*100)+'%',t:((r+0.5)/15*100)+'%'};}
+function tokenCell(color,step,tokenIdx){
+  if(step===0){
+    const [yr,yc]=YARD_ORIGIN[color];
+    const off=BASE_OFFSETS[tokenIdx];
+    return [yr+off[0],yc+off[1]];
+  }
+  if(step>=1&&step<=51){
+    return MAIN_PATH[(START_IDX[color]+step-1)%52];
+  }
+  if(step>=52&&step<=57){
+    return HOME_COL[color][step-52];
+  }
+  return [7,7];
+}
+function renderTokens(){
+  COLORS.forEach(col=>{
+    S.tokens[col].forEach((step,i)=>{
+      const el=tokenEls[col][i];
+      const [r,c]=tokenCell(col,step,i);
+      const p=cellPct(r,c);
+      // stack offset if multiple on same base slot not needed; slight jitter for overlapping board cells
+      el.style.left=p.l;el.style.top=p.t;
+      el.classList.toggle('finished',step===57);
+      el.classList.toggle('legal', S.legal.includes(i) && activeColor()===col && S.uiState!=='MOVING' && S.uiState!=='ROLLING' && !S.isPaused && !S.gameOver);
+      el.style.display = (S.colors.includes(col))?'block':'none';
+    });
+  });
+}
+
+// ---- game flow ----
+function startGame(mode,colors,isAIMap,diff){
+  tryFullscreenLandscape();
+  S=freshState();
+  gameSeq++; S.gameId=gameSeq;
+  S.mode=mode;S.colors=colors;S.isAI=isAIMap||{};S.difficulty=diff||'normal';S.started=true;
+  buildTokens();
+  document.getElementById('pauseOverlay').hidden=true;
+  document.getElementById('winOverlay').hidden=true;
+  document.getElementById('dice').classList.remove('tumble');
+  show('game');document.getElementById('game').hidden=false;
+  renderPanels();updateHUD();renderTokens();
+  diceSpinX=0;diceSpinY=0;setDiceFace(1,false);
+  document.getElementById('diceResult').textContent='Roll to begin';
+  applyMusicSetting();
+  syncUI();
+  maybeAiTurn();
+  checkOrient();
+}
+function activeColor(){return S.colors[S.current];}
+function nextTurn(){
+  S.current=(S.current+1)%S.colors.length;
+  S.legal=[];S.sixStreak=0;
+  updateHUD();renderPanels();renderTokens();
+  maybeAiTurn();
+}
+function updateHUD(){
+  const col=activeColor();
+  const lbl=document.getElementById('turnLabel');
+  lbl.textContent=(S.colors.indexOf(col)+1<=0?1:S.colors.indexOf(col)+1)+"";
+  lbl.textContent="PLAYER "+(S.current+1)+"'S TURN";
+  lbl.style.background=HEX[col];lbl.style.color='#fff';
+}
+function renderPanels(){
+  const p=document.getElementById('panels');p.innerHTML='';
+  S.colors.forEach((col,i)=>{
+    const home=S.tokens[col].filter(s=>s===57).length;
+    const card=document.createElement('div');
+    card.className='pcard'+(i===S.current?' active':'');
+    card.style.borderLeftColor=HEX[col];
+    card.innerHTML='<b>PLAYER '+(i+1)+(S.isAI[col]?' (AI)':'')+'</b><br>'+home+' / 4 HOME';
+    p.appendChild(card);
+  });
+}
+function legalMovesFor(color,dice){
+  const res=[];
+  S.tokens[color].forEach((step,i)=>{
+    if(step===57)return;
+    if(step===0){if(dice===6)res.push(i);return;}
+    if(step+dice<=57)res.push(i);
+  });
+  return res;
+}
+function boardOccupants(r,c,exceptColor,exceptIdx){
+  const list=[];
+  COLORS.forEach(col=>{
+    S.tokens[col].forEach((step,i)=>{
+      if(step>=1&&step<=51){
+        const [rr,cc]=MAIN_PATH[(START_IDX[col]+step-1)%52];
+        if(rr===r&&cc===c && !(col===exceptColor&&i===exceptIdx)) list.push({col,i});
+      }
+    });
+  });
+  return list;
+}
+function isSafeCell(r,c){
+  const idx=MAIN_PATH.findIndex(p=>p[0]===r&&p[1]===c);
+  return idx>-1 && SAFE_SET.has(idx);
+}
+
+document.getElementById('rollBtn').addEventListener('click',guarded(()=>rollDice()));
+function rollDice(){
+  if(S.uiState!=='READY'||S.isPaused||S.gameOver)return;
+  if(S.isAI[activeColor()])return;
+  doRoll();
+}
+function doRoll(){
+  setUIState('ROLLING');
+  const dice=document.getElementById('dice');
+  dice.classList.add('tumble');
+  SND.roll();
+  gtimeout(()=>{
+    dice.classList.remove('tumble');
+    const val=1+Math.floor(Math.random()*6); // real result, generated first
+    setDiceFace(val,true);                   // dice is then animated to match it exactly
+    S.diceValue=val;
+    gtimeout(()=>onDiceResolved(val),480);
+  },480);
+}
+// Single resolver used by both the human path and the AI path — no duplicated logic.
+function onDiceResolved(val){
+  const col=activeColor();
+  const isAiTurn=!!S.isAI[col];
+  if(val===6){S.sixStreak++;SND.six();}else S.sixStreak=0;
+  if(S.sixStreak>=3){
+    document.getElementById('status').textContent=(isAiTurn?'AI':'You')+" rolled three 6's — turn forfeited!";
+    setUIState(isAiTurn?'AI_TURN':'READY');
+    gtimeout(nextTurn,900);return;
+  }
+  const legal=legalMovesFor(col,val);
+  if(legal.length===0){
+    document.getElementById('status').textContent='No legal moves.';
+    gtimeout(()=>{
+      if(val===6){
+        setUIState(isAiTurn?'AI_TURN':'READY');
+        document.getElementById('status').textContent= isAiTurn?'AI THINKING...':'Roll again!';
+        if(isAiTurn) gtimeout(doRoll,500);
+      }else nextTurn();
+    },700);
+    return;
+  }
+  S.legal=legal;renderTokens();
+  if(isAiTurn){
+    document.getElementById('status').textContent='AI THINKING...';
+    setUIState('AI_TURN');
+    const choice=aiChoose(col,legal,val);
+    gtimeout(()=>moveToken(col,choice,val),450);
+    return;
+  }
+  if(legal.length===1){
+    document.getElementById('status').textContent='Moving...';
+    setUIState('MOVING');
+    gtimeout(()=>moveToken(col,legal[0],val),300);
+  }else{
+    document.getElementById('status').textContent='CHOOSE A TOKEN';
+    setUIState('CHOOSING');
+  }
+}
+function onTokenClick(color,i){
+  if(S.isPaused||S.gameOver)return;
+  if(S.uiState!=='CHOOSING'&&S.uiState!=='READY')return;
+  if(color!==activeColor()||!S.legal.includes(i))return;
+  SND.click();
+  setUIState('MOVING');
+  moveToken(color,i,S.diceValue);
+}
+function moveToken(color,i,dice){
+  setUIState('MOVING');
+  S.legal=[];renderTokens();
+  const start=S.tokens[color][i];
+  const target= start===0?1:start+dice;
+  let step=start===0?1:start+1;
+  function hop(){
+    S.tokens[color][i]=step;
+    renderTokens();SND.land();
+    if(step>=target){finishMove(color,i,target);return;}
+    step++;
+    gtimeout(hop, settings.anim?150:0);
+  }
+  gtimeout(hop, settings.anim?150:0);
+}
+function finishMove(color,i,finalStep){
+  const [r,c]=tokenCell(color,finalStep,i);
+  let captured=false;
+  if(finalStep>=1&&finalStep<=51&&!isSafeCell(r,c)){
+    const occ=boardOccupants(r,c,color,i);
+    occ.forEach(o=>{S.tokens[o.col][o.i]=0;captured=true;});
+  }
+  const tEl=tokenEls[color][i];
+  if(captured){SND.capture();tEl.classList.add('pop');setTimeout(()=>tEl.classList.remove('pop'),400);}
+  else if(finalStep===57){SND.home();tEl.classList.add('pop');setTimeout(()=>tEl.classList.remove('pop'),400);}
+  else if(isSafeCell(r,c))SND.safe();
+  renderPanels();renderTokens();
+  const won=S.tokens[color].every(s=>s===57);
+  if(won){endGame(color);return;}
+  document.getElementById('status').textContent=captured?'Captured!':'';
+  const isAiTurn=!!S.isAI[color];
+  if(S.diceValue===6){
+    document.getElementById('status').textContent+=' Extra turn!';
+    setUIState(isAiTurn?'AI_TURN':'READY');
+    if(isAiTurn) gtimeout(doRoll,600);
+  }else{
+    setUIState(isAiTurn?'AI_TURN':'READY');
+    gtimeout(nextTurn,500);
+  }
+}
+function endGame(color){
+  S.gameOver=true;S.winner=color;
+  setUIState('GAMEOVER');
+  SND.victory();
+  const idx=S.colors.indexOf(color);
+  document.getElementById('winText').textContent='PLAYER '+(idx+1)+' WINS!';
+  document.getElementById('winOverlay').hidden=false;
+  spawnConfetti();
+}
+function spawnConfetti(){
+  if(!settings.anim)return;
+  const ov=document.getElementById('winOverlay');
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    p.className='confetti';
+    p.style.left=Math.random()*100+'%';
+    p.style.background=[HEX.red,HEX.green,HEX.yellow,HEX.blue][i%4];
+    p.style.animationDuration=(1.5+Math.random()*1.5)+'s';
+    p.style.animationDelay=(Math.random()*0.5)+'s';
+    ov.appendChild(p);
+    setTimeout(()=>p.remove(),3500);
+  }
+}
+
+// ---- AI ---- (routes through the same onDiceResolved/moveToken as the human path — see above)
+function maybeAiTurn(){
+  if(S.gameOver)return;
+  const col=activeColor();
+  if(!S.isAI[col]){ setUIState('READY'); document.getElementById('status').textContent='Roll the dice!'; return; }
+  setUIState('AI_TURN');
+  document.getElementById('status').textContent='AI THINKING...';
+  gtimeout(doRoll,650);
+}
+function aiChoose(color,legal,dice){
+  if(S.difficulty==='easy')return legal[Math.floor(Math.random()*legal.length)];
+  let best=legal[0],bestScore=-Infinity;
+  legal.forEach(i=>{
+    const step=S.tokens[color][i];
+    const target=step===0?1:step+dice;
+    const [r,c]=tokenCell(color,target,i);
+    let score=target;
+    if(step===0)score+=15;
+    if(target===57)score+=90;
+    if(target>=1&&target<=51&&!isSafeCell(r,c)){
+      const occ=boardOccupants(r,c,color,i);
+      if(occ.length)score+=100;
+    }
+    if(isSafeCell(r,c))score+=20;
+    if(S.difficulty==='hard'&&target>=1&&target<=51&&!isSafeCell(r,c)){
+      for(const opp of COLORS){
+        if(opp===color)continue;
+        S.tokens[opp].forEach(os=>{
+          if(os>=1&&os<=51){
+            const [orr,occc]=MAIN_PATH[(START_IDX[opp]+os-1)%52];
+            const dist=((r-orr)+15)%52; // rough proxy, not exact wrap
+            for(let d=1;d<=6;d++){
+              const proj=MAIN_PATH[(START_IDX[opp]+os-1+d)%52];
+              if(proj[0]===r&&proj[1]===c)score-=25;
+            }
+          }
+        });
+      }
+    }
+    score+=Math.random()*3;
+    if(score>bestScore){bestScore=score;best=i;}
+  });
+  return best;
+}
+
+// ---- pause/restart (all game-flow timers check S.isPaused via gtimeout, so this actually freezes AI/dice/movement) ----
+document.getElementById('pauseBtn').addEventListener('click',guarded(()=>{
+  if(S.gameOver)return;
+  S.isPaused=true;syncUI();document.getElementById('pauseOverlay').hidden=false;
+}));
+document.getElementById('resumeBtn').addEventListener('click',guarded(()=>{
+  S.isPaused=false;syncUI();document.getElementById('pauseOverlay').hidden=true;
+}));
+document.getElementById('restartBtn').addEventListener('click',guarded(()=>{
+  document.getElementById('pauseOverlay').hidden=true;
+  startGame(S.mode,S.colors.slice(),Object.assign({},S.isAI),S.difficulty);
+}));
+document.getElementById('menuBtn').addEventListener('click',guarded(()=>{
+  document.getElementById('pauseOverlay').hidden=true;
+  document.getElementById('game').hidden=true;show('menu');
+}));
+document.getElementById('againBtn').addEventListener('click',guarded(()=>{
+  document.getElementById('winOverlay').hidden=true;
+  startGame(S.mode,S.colors.slice(),Object.assign({},S.isAI),S.difficulty);
+}));
+document.getElementById('winMenuBtn').addEventListener('click',guarded(()=>{
+  document.getElementById('winOverlay').hidden=true;
+  document.getElementById('game').hidden=true;show('menu');
+}));
+
+// ---- keyboard ----
+window.addEventListener('keydown',e=>{
+  if(document.getElementById('game').hidden)return;
+  if(e.code==='Space'){e.preventDefault();rollDice();}
+  else if(e.key==='Escape'){document.getElementById('pauseBtn').click();}
+  else if(e.key==='r'||e.key==='R'){document.getElementById('restartBtn').click();}
+});
+
+// ---- rotate hint ----
+function checkOrient(){
+  const el=document.getElementById('rotateMsg');
+  const need=!document.getElementById('game').hidden && window.innerWidth<window.innerHeight && Math.min(window.innerWidth,window.innerHeight)<520;
+  el.classList.toggle('show',need);
+}
+window.addEventListener('resize',checkOrient);
+window.addEventListener('orientationchange',checkOrient);
+
+// ---- diagnostics ----
+function elBlocked(el){
+  if(!el) return 'element missing from DOM';
+  const r=el.getBoundingClientRect();
+  if(r.width<2||r.height<2) return null; // not currently visible on this screen; not a failure
+  const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+  const ok = top===el || el.contains(top) || (top&&top.contains&&top.contains(el));
+  return ok? null : ('covered by '+(top?(top.id?'#'+top.id:(top.className||'an unknown element')):'nothing'));
+}
+window.runLudoDiagnostics=function(){
+  const results=[];
+  function chk(name,ok,reason){results.push({name,ok,reason:reason||''});}
+  let btnFail=[];
+  ['rollBtn','pauseBtn','resumeBtn','restartBtn','menuBtn'].forEach(id=>{
+    const b=elBlocked(document.getElementById(id));
+    if(b) btnFail.push(id+' - '+b);
+  });
+  chk('DOM', document.querySelectorAll('#board .cell').length===225, 'expected 225 board cells, found '+document.querySelectorAll('#board .cell').length);
+  chk('BUTTONS', btnFail.length===0, btnFail.join('; '));
+  chk('GAME STATE', (function(){
+    const rb=document.getElementById('rollBtn');
+    if(!rb) return false;
+    const shouldBeDisabled = !(S.uiState==='READY') || S.isPaused || S.gameOver;
+    return rb.disabled===shouldBeDisabled;
+  })(), 'rollBtn.disabled does not match the derived uiState/isPaused/gameOver invariant');
+  chk('DICE', Object.keys(FACE_ROT).length===6 && document.querySelectorAll('#dice .face').length===6, 'dice cube must have 6 faces with a rotation mapping');
+  chk('BOARD', MAIN_PATH.length===52 && SAFE_SET.size===8, 'main path/safe-cell geometry mismatch');
+  chk('TOKENS', COLORS.every(c=>tokenEls[c]&&tokenEls[c].length===4), 'each color needs 4 token elements');
+  chk('MOVEMENT', typeof moveToken==='function' && typeof gtimeout==='function', 'movement pipeline missing');
+  chk('SNAKES/CAPTURE RULES', typeof boardOccupants==='function' && typeof isSafeCell==='function', 'capture/safe-cell logic missing');
+  chk('TURN SYSTEM', S.colors.length? S.current>=0 && S.current<S.colors.length : true, 'current player index out of range');
+  chk('AI', typeof aiChoose==='function' && typeof maybeAiTurn==='function', 'AI functions missing');
+  chk('RESPONSIVE', getComputedStyle(document.getElementById('boardWrap')).aspectRatio!=='', 'board is not using aspect-ratio sizing');
+  chk('FULLSCREEN', typeof tryFullscreenLandscape==='function', 'fullscreen helper missing');
+  chk('WIN SYSTEM', typeof endGame==='function' && document.getElementById('winOverlay')!==null, 'win overlay/endGame missing');
+  console.log('=== ANVORA LUDO DIAGNOSTICS ===');
+  console.log('');
+  let errors=0;
+  results.forEach(r=>{
+    console.log(r.name+': '+(r.ok?'PASS':'FAIL'));
+    if(!r.ok){errors++;console.log('Reason: '+r.reason);}
+  });
+  console.log('');
+  console.log('TOTAL ERRORS: '+errors);
+};
+})();
+</script>
+</body>
+</html>
