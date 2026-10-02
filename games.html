@@ -788,12 +788,31 @@
 
       <script src="js/script.js"></script>
       <script>
-        // highlight "All Games" chip active by default
-        document.addEventListener('DOMContentLoaded', () => {
-          const chips = document.querySelectorAll('[data-filter-chip]');
-          chips.forEach(c => c.classList.toggle('active', c.dataset.filterChip === 'all'));
-        });
-      </script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Highlight "All Games" chip active by default
+    const chips = document.querySelectorAll('[data-filter-chip]');
+    chips.forEach(c =>
+      c.classList.toggle('active', c.dataset.filterChip === 'all')
+    );
+
+    // Shuffle games every time the Games page is opened
+    const gameGrid = document.querySelector('[data-game-grid]');
+
+    if (gameGrid) {
+      const games = Array.from(gameGrid.querySelectorAll('.game-card'));
+
+      for (let i = games.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        gameGrid.appendChild(games[j]);
+
+        games.splice(j, 1);
+      }
+    }
+
+  });
+</script>
 </body>
 
 </html>
