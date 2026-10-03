@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1b1838">
+<title>Word Wizard — Anvora Games</title>
+<style>
+:root{--bg:#1b1838;--bg2:#2a2557;--panel:#f7efd8;--ink:#2b2140;--gold:#f0b72f;--teal:#1f9d8f;--plum:#6b3fa0;--ok:#1f8f4e;--bad:#c23b3b;--line:#d9c9a0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);overscroll-behavior:none}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);
+background:radial-gradient(circle at 15% 20%,#ffffff22 0 1.5px,transparent 2px) 0 0/90px 90px,radial-gradient(circle at 70% 60%,#ffffff1a 0 1.5px,transparent 2px) 0 0/130px 130px,linear-gradient(180deg,var(--bg2),var(--bg))}
+button{font:inherit;color:inherit;touch-action:manipulation;cursor:pointer;user-select:none;-webkit-user-select:none}
+button:focus-visible{outline:4px solid #fff;outline-offset:2px;box-shadow:0 0 0 7px var(--plum)}
+#app{height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;color:#fff;min-height:52px}
+.hud{display:flex;gap:8px;align-items:center;font-weight:700;font-size:clamp(14px,3.6vw,18px)}
+.pill{background:#ffffff1f;border:2px solid #ffffff44;border-radius:99px;padding:4px 12px}
+.tool{background:#ffffff1f;border:2px solid #ffffff55;color:#fff;border-radius:10px;min-height:40px;padding:4px 12px;font-weight:700;font-size:14px}
+.tool:active{transform:scale(.95)}
+main{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 12px}
+.screen{width:100%;max-width:880px;max-height:100%;overflow:auto;background:var(--panel);border:4px solid var(--gold);border-radius:20px;padding:clamp(12px,3vh,28px) clamp(14px,3vw,32px);box-shadow:0 6px 0 #0004;animation:in .25s ease-out}
+.screen[hidden]{display:none}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+h1,h2{font-family:"Palatino Linotype",Palatino,Georgia,serif;margin:0;text-align:center;line-height:1.1}
+h1{font-size:clamp(34px,9vw,64px);letter-spacing:1px;color:var(--plum)}
+h2{font-size:clamp(24px,6vw,36px);color:var(--plum)}
+.tag{text-align:center;font-style:italic;font-size:clamp(16px,4vw,22px);margin:6px 0 14px}
+.hat{width:64px;height:64px;margin:0 auto 6px;position:relative}
+.hat i{position:absolute;display:block}
+.hat .cone{left:14px;top:0;width:36px;height:42px;background:var(--plum);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.hat .brim{left:4px;top:38px;width:56px;height:10px;background:var(--plum);border-radius:6px}
+.hat .band{left:19px;top:30px;width:26px;height:6px;background:var(--gold)}
+.hat .star{left:24px;top:14px;width:16px;height:16px;background:var(--gold);clip-path:polygon(50% 0,62% 36%,100% 38%,70% 60%,80% 100%,50% 76%,20% 100%,30% 60%,0 38%,38% 36%)}
+.hat .wand{left:48px;top:44px;width:5px;height:20px;background:var(--ink);transform:rotate(35deg);border-radius:3px}
+.stack{display:flex;flex-direction:column;gap:12px;align-items:center}
+.btn{width:min(100%,360px);min-height:56px;border:0;border-radius:14px;background:var(--plum);color:#fff;font-size:clamp(18px,4.5vw,22px);font-weight:800;box-shadow:0 5px 0 #3f2468;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #3f2468}
+.btn.alt{background:var(--teal);box-shadow:0 5px 0 #136b61}
+.btn.alt:active{box-shadow:0 1px 0 #136b61}
+.btn small{display:block;font-weight:500;font-size:13px;opacity:.9}
+.how{max-width:560px;margin:12px auto;padding-left:1.2em;font-size:clamp(15px,3.8vw,18px);line-height:1.5}
+.q-type{display:inline-block;background:var(--teal);color:#fff;border-radius:8px;padding:2px 10px;font-weight:700;font-size:13px}
+.q-text{font-family:"Palatino Linotype",Palatino,Georgia,serif;font-weight:700;font-size:clamp(20px,5vw,30px);line-height:1.25;margin:8px 0 12px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ans{display:flex;align-items:center;gap:10px;text-align:left;min-height:clamp(56px,11vh,84px);padding:8px 12px;background:#fff;border:3px solid var(--line);border-radius:14px;font-size:clamp(16px,4vw,22px);font-weight:600;transition:transform .08s,background .15s}
+.ans b{flex:none;width:2em;height:2em;display:grid;place-items:center;border-radius:50%;background:var(--bg2);color:#fff;font-size:.85em}
+.ans:active:not(:disabled){transform:scale(.97)}
+.ans:disabled{cursor:default;color:var(--ink);opacity:1}
+.ans.correct{background:#d4f3df;border-color:var(--ok)}
+.ans.correct b{background:var(--ok)}
+.ans.wrong{background:#fbdcdc;border-color:var(--bad);animation:shake .3s}
+.ans.wrong b{background:var(--bad)}
+.ans.dim{opacity:.55}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.fb{display:flex;align-items:center;gap:10px;margin-top:12px;min-height:60px}
+.fb p{flex:1;margin:0;font-size:clamp(14px,3.6vw,18px);line-height:1.3}
+.fb strong{display:block;font-size:1.15em}
+.fb .btn{width:auto;min-width:120px;padding:0 20px;flex:none}
+.fb.ok strong{color:var(--ok)}.fb.no strong{color:var(--bad)}
+.big{font-family:Georgia,serif;font-size:clamp(40px,12vw,72px);font-weight:800;text-align:center;color:var(--ink);margin:6px 0}
+.msg{text-align:center;font-size:clamp(16px,4vw,20px);margin:0 0 14px}
+footer{text-align:center;color:#fff9;font-size:12px;padding:6px 8px 8px}
+@media (max-width:480px) and (orientation:portrait){.answers{grid-template-columns:1fr}.ans{min-height:58px}.fb{flex-direction:column;align-items:stretch}.fb .btn{width:100%}}
+@media (max-height:520px){header{min-height:42px;padding:4px 12px}.tool{min-height:34px}.hat{display:none}.screen{padding:8px 16px;border-width:3px}.tag{margin:2px 0 8px}.q-text{margin:4px 0 8px}.fb{margin-top:8px;min-height:50px}.btn{min-height:46px}footer{padding:2px}.stack{gap:8px}.how{margin:6px auto}}
+@media (min-width:900px) and (min-height:700px){.screen{padding:36px 40px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+ <header>
+  <div class="hud" id="hud" hidden><span class="pill" id="hudScore">Score: 0</span><span class="pill" id="hudQ">1 / 10</span></div>
+  <div class="hud" id="hudSpacer"></div>
+  <div class="hud"><button class="tool" id="soundBtn" aria-pressed="true">SOUND: ON</button><button class="tool" id="fsBtn">FULLSCREEN</button></div>
+ </header>
+ <main>
+  <section class="screen" id="menu">
+   <div class="hat" aria-hidden="true"><i class="cone"></i><i class="band"></i><i class="brim"></i><i class="star"></i><i class="wand"></i></div>
+   <h1>WORD WIZARD</h1><p class="tag">Learn words. Master English.</p>
+   <div class="stack"><button class="btn" id="playBtn">PLAY</button><button class="btn alt" id="howBtn">HOW TO PLAY</button></div>
+  </section>
+  <section class="screen" id="how" hidden>
+   <h2>How to Play</h2>
+   <ol class="how">
+    <li>Pick a level: Easy, Medium or Hard.</li>
+    <li>Read the question and tap the best answer (A, B, C or D).</li>
+    <li>You see right away if you were correct. Read the tip, then press NEXT.</li>
+    <li>Each correct answer is worth 10 points. A round has 10 questions.</li>
+    <li>On a computer, press A, B, C, D (or 1–4) to answer and Enter to continue.</li>
+   </ol>
+   <div class="stack"><button class="btn" data-go="menu">BACK</button></div>
+  </section>
+  <section class="screen" id="levels" hidden>
+   <h2>Choose a Level</h2><p class="tag">10 questions per round</p>
+   <div class="stack">
+    <button class="btn alt" data-level="easy">EASY<small>Everyday words</small></button>
+    <button class="btn" data-level="medium">MEDIUM<small>Stronger vocabulary</small></button>
+    <button class="btn" data-level="hard" style="background:#a0392f;box-shadow:0 5px 0 #6d221b">HARD<small>Challenging words</small></button>
+    <button class="btn" data-go="menu" style="background:#5d5670;box-shadow:0 5px 0 #3b3650;min-height:46px">BACK</button>
+   </div>
+  </section>
+  <section class="screen" id="game" hidden>
+   <span class="q-type" id="qType"></span>
+   <div class="q-text" id="qText" aria-live="polite"></div>
+   <div class="answers" id="answers" role="group" aria-label="Answer choices"></div>
+   <div class="fb" id="fb" hidden aria-live="polite"><p id="fbText"></p><button class="btn" id="nextBtn">NEXT</button></div>
+  </section>
+  <section class="screen" id="end" hidden>
+   <h2>Quiz Complete!</h2>
+   <div class="big" id="finalScore"></div><p class="msg" id="endMsg"></p>
+   <div class="stack"><button class="btn" id="againBtn">PLAY AGAIN</button><button class="btn alt" data-go="menu">MAIN MENU</button></div>
+  </section>
+ </main>
+ <footer>Anvora Games — Developed by Arihant</footer>
+</div>
+<script>
+(function(){
+"use strict";
+// ==================== WORD WIZARD QUESTION BANK ====================
+// HOW TO ADD A QUESTION: copy any line below and paste it as a new line inside the
+// QUESTIONS array (before the closing "];"). Fill in each field:
+//   type:        "fill" | "meaning" | "synonym" | "antonym" | "spelling" | "bestfit"
+//   difficulty:  "easy" | "medium" | "hard"
+//   category:    any label, e.g. "Vocabulary", "Synonyms", "Antonyms", "Spelling",
+//                "Grammar", "Everyday English", "Academic Vocabulary"
+//   question:    the question text (use ____ for a blank)
+//   options:     exactly 4 answer choices
+//   answer:      position of the correct choice in options (0 = first, 1 = second, 2 = third, 3 = fourth)
+//   explanation: one short, simple sentence
+// The game shuffles the options when it shows them, so you can put the correct one anywhere.
+// Mistakes (not 4 options, bad answer number, duplicate question) are reported in the browser console.
+var QUESTIONS=[
+// ---------- EASY ----------
+{type:"fill",difficulty:"easy",category:"Everyday English",question:"The sky is usually ____ on a clear day.",options:["green","blue","black","pink"],answer:1,explanation:"A clear daytime sky usually looks blue."},
+{type:"fill",difficulty:"easy",category:"Everyday English",question:"I drink ____ when I am thirsty.",options:["water","chair","shoe","cloud"],answer:0,explanation:"Water is what we drink when we are thirsty."},
+{type:"fill",difficulty:"easy",category:"Vocabulary",question:"A bird can ____ in the sky.",options:["melt","dig","fly","drown"],answer:2,explanation:"Birds use their wings to fly."},
+{type:"fill",difficulty:"easy",category:"Vocabulary",question:"A fish lives in the ____.",options:["tree","road","roof","sea"],answer:3,explanation:"Fish live in water, such as the sea."},
+{type:"fill",difficulty:"easy",category:"Everyday English",question:"The cat drank its ____ from a bowl.",options:["milk","sand","paper","soap"],answer:0,explanation:"Cats drink milk, and milk can be poured into a bowl."},
+{type:"bestfit",difficulty:"easy",category:"Everyday English",question:"We use a ____ to cut paper.",options:["spoon","scissors","pillow","bucket"],answer:1,explanation:"Scissors are the tool used for cutting paper."},
+{type:"bestfit",difficulty:"easy",category:"Everyday English",question:"We eat soup with a ____.",options:["comb","pencil","spoon","towel"],answer:2,explanation:"A spoon holds liquid food like soup."},
+{type:"bestfit",difficulty:"easy",category:"Everyday English",question:"Every morning, I ____ my teeth before school.",options:["drive","throw","carry","brush"],answer:3,explanation:"We brush our teeth to keep them clean."},
+{type:"meaning",difficulty:"easy",category:"Vocabulary",question:"What does 'tiny' mean?",options:["Very small","Very loud","Very tall","Very hot"],answer:0,explanation:"Tiny things are extremely small."},
+{type:"meaning",difficulty:"easy",category:"Vocabulary",question:"What does 'sad' mean?",options:["Sleepy","Unhappy","Hungry","Funny"],answer:1,explanation:"Sad means unhappy."},
+{type:"meaning",difficulty:"easy",category:"Vocabulary",question:"What does 'angry' mean?",options:["Very sleepy","Very hungry","Very upset and mad","Very cold"],answer:2,explanation:"An angry person feels mad about something."},
+{type:"meaning",difficulty:"easy",category:"Everyday English",question:"What is a 'kitchen'?",options:["A room for sleeping","A place to buy shoes","A room for swimming","A room where food is cooked"],answer:3,explanation:"We cook meals in the kitchen."},
+{type:"synonym",difficulty:"easy",category:"Synonyms",question:"Which word means nearly the same as 'large'?",options:["huge","tiny","weak","slow"],answer:0,explanation:"Large and huge both mean big."},
+{type:"synonym",difficulty:"easy",category:"Synonyms",question:"Which word means nearly the same as 'begin'?",options:["stop","start","finish","close"],answer:1,explanation:"Begin and start mean the same thing."},
+{type:"synonym",difficulty:"easy",category:"Synonyms",question:"Which word means nearly the same as 'quick'?",options:["slow","loud","fast","heavy"],answer:2,explanation:"Quick and fast both describe high speed."},
+{type:"synonym",difficulty:"easy",category:"Synonyms",question:"Which word means nearly the same as 'smart'?",options:["silly","quiet","tired","clever"],answer:3,explanation:"Smart and clever both describe someone who learns quickly."},
+{type:"antonym",difficulty:"easy",category:"Antonyms",question:"What is the opposite of 'early'?",options:["late","quick","soon","first"],answer:0,explanation:"Early means before the expected time; late means after it."},
+{type:"antonym",difficulty:"easy",category:"Antonyms",question:"What is the opposite of 'hot'?",options:["warm","cold","spicy","dry"],answer:1,explanation:"Hot and cold are opposites."},
+{type:"antonym",difficulty:"easy",category:"Antonyms",question:"What is the opposite of 'happy'?",options:["glad","kind","sad","tall"],answer:2,explanation:"Happy and sad are opposites."},
+{type:"antonym",difficulty:"easy",category:"Antonyms",question:"What is the opposite of 'empty'?",options:["hollow","clean","small","full"],answer:3,explanation:"An empty box has nothing in it; a full box has a lot."},
+{type:"antonym",difficulty:"easy",category:"Antonyms",question:"What is the opposite of 'day'?",options:["night","morning","week","sun"],answer:0,explanation:"Day is when it is light; night is when it is dark."},
+{type:"spelling",difficulty:"easy",category:"Spelling",question:"Which is the correct spelling of the word meaning 'very pretty'?",options:["Beautifull","Beautiful","Beutiful","Beautifol"],answer:1,explanation:"Beautiful ends with a single 'l'."},
+{type:"spelling",difficulty:"easy",category:"Spelling",question:"Which spelling is correct for a person you like and trust?",options:["Freind","Frend","Friend","Friand"],answer:2,explanation:"Friend has 'ie' in the middle: a friend is there till the end."},
+{type:"spelling",difficulty:"easy",category:"Spelling",question:"Select the correct spelling of the large animal with a trunk.",options:["Elefant","Elephent","Elaphant","Elephant"],answer:3,explanation:"Elephant is spelled with 'ph', not 'f'."},
+{type:"spelling",difficulty:"easy",category:"Spelling",question:"Which option is the correct spelling of the word we use to give a reason?",options:["Becuase","Because","Becouse","Becausse"],answer:1,explanation:"Because: b-e-c-a-u-s-e."},
+// ---------- MEDIUM ----------
+{type:"fill",difficulty:"medium",category:"Vocabulary",question:"She was ____ because she won the competition.",options:["gloomy","furious","delighted","bored"],answer:2,explanation:"Delighted means very happy, which is how winning feels."},
+{type:"fill",difficulty:"medium",category:"Vocabulary",question:"The teacher gave a clear ____ of the rule.",options:["explanation","ceiling","journey","harvest"],answer:0,explanation:"An explanation helps you understand something."},
+{type:"fill",difficulty:"medium",category:"Vocabulary",question:"The ____ in the library made it easy to concentrate.",options:["traffic","silence","music","laughter"],answer:1,explanation:"Silence means no noise, which helps people focus."},
+{type:"fill",difficulty:"medium",category:"Vocabulary",question:"After running the marathon, she felt completely ____.",options:["energetic","amused","exhausted","generous"],answer:2,explanation:"Exhausted means extremely tired, as after a long race."},
+{type:"bestfit",difficulty:"medium",category:"Vocabulary",question:"He walked ____ across the icy river, testing each step.",options:["carelessly","noisily","generously","cautiously"],answer:3,explanation:"Cautiously means very carefully."},
+{type:"bestfit",difficulty:"medium",category:"Everyday English",question:"Because it was raining, the match was ____ until next week.",options:["postponed","celebrated","measured","discovered"],answer:0,explanation:"Postponed means moved to a later time."},
+{type:"meaning",difficulty:"medium",category:"Vocabulary",question:"What does 'ancient' mean?",options:["Very fast","Very old","Very loud","Very small"],answer:1,explanation:"Ancient describes things that existed a very long time ago."},
+{type:"meaning",difficulty:"medium",category:"Vocabulary",question:"What does 'fragile' mean?",options:["Very heavy","Brightly colored","Easily broken","Extremely old"],answer:2,explanation:"Glass is fragile, so we handle it with care."},
+{type:"meaning",difficulty:"medium",category:"Vocabulary",question:"What does 'generous' mean?",options:["Always in a hurry","Afraid of everything","Very clever","Happy to give to others"],answer:3,explanation:"A generous person shares freely."},
+{type:"meaning",difficulty:"medium",category:"Vocabulary",question:"What does 'curious' mean?",options:["Eager to learn or know more","Easily frightened","Very tidy","Slow to speak"],answer:0,explanation:"A curious person asks questions and wants to find out."},
+{type:"synonym",difficulty:"medium",category:"Synonyms",question:"Which word means nearly the same as 'brave'?",options:["timid","courageous","clumsy","gentle"],answer:1,explanation:"Brave and courageous both mean not afraid of danger."},
+{type:"synonym",difficulty:"medium",category:"Synonyms",question:"Which word means nearly the same as 'rapid'?",options:["steady","silent","swift","brief"],answer:2,explanation:"Rapid and swift both mean very fast."},
+{type:"synonym",difficulty:"medium",category:"Synonyms",question:"Which word means nearly the same as 'difficult'?",options:["simple","boring","cheap","challenging"],answer:3,explanation:"Difficult and challenging both mean hard to do."},
+{type:"synonym",difficulty:"medium",category:"Synonyms",question:"Which word means nearly the same as 'choose'?",options:["select","ignore","forget","borrow"],answer:0,explanation:"To choose something is to select it."},
+{type:"antonym",difficulty:"medium",category:"Antonyms",question:"What is the opposite of 'ancient'?",options:["old","modern","distant","famous"],answer:1,explanation:"Ancient means very old; modern means new and current."},
+{type:"antonym",difficulty:"medium",category:"Antonyms",question:"What is the opposite of 'expand'?",options:["grow","stretch","shrink","spread"],answer:2,explanation:"Expand means get bigger; shrink means get smaller."},
+{type:"antonym",difficulty:"medium",category:"Antonyms",question:"What is the opposite of 'victory'?",options:["triumph","reward","contest","defeat"],answer:3,explanation:"Victory means winning; defeat means losing."},
+{type:"antonym",difficulty:"medium",category:"Antonyms",question:"What is the opposite of 'permit'?",options:["forbid","allow","invite","offer"],answer:0,explanation:"To permit is to allow; to forbid is to not allow."},
+{type:"spelling",difficulty:"medium",category:"Spelling",question:"Choose the correctly spelled word that means 'needed'.",options:["Neccessary","Necessary","Necesary","Neccesary"],answer:1,explanation:"Necessary has one 'c' and two 's' letters."},
+{type:"spelling",difficulty:"medium",category:"Spelling",question:"Find the correctly spelled word meaning 'to divide or keep apart'.",options:["Seperate","Separete","Separate","Sepparate"],answer:2,explanation:"There is 'a rat' in sep-a-rate."},
+{type:"spelling",difficulty:"medium",category:"Spelling",question:"Which word is the correct spelling for 'the natural world around us'?",options:["Enviroment","Environmant","Enviornment","Environment"],answer:3,explanation:"Environment contains 'iron': envIRONment."},
+// ---------- HARD ----------
+{type:"fill",difficulty:"hard",category:"Academic Vocabulary",question:"The scientist's theory was so ____ that few could follow it.",options:["convoluted","transparent","trivial","cheerful"],answer:0,explanation:"Convoluted means twisted and very complicated."},
+{type:"fill",difficulty:"hard",category:"Vocabulary",question:"Her ____ remarks hurt his feelings, even though she smiled.",options:["benevolent","caustic","jovial","mundane"],answer:1,explanation:"Caustic means sharp and bitterly critical."},
+{type:"fill",difficulty:"hard",category:"Vocabulary",question:"After years of drought, the farmers faced ____ conditions.",options:["lavish","trivial","dire","festive"],answer:2,explanation:"Dire means extremely serious or terrible."},
+{type:"bestfit",difficulty:"hard",category:"Academic Vocabulary",question:"Her argument was so ____ that even her critics were persuaded.",options:["tedious","reluctant","fragile","compelling"],answer:3,explanation:"A compelling argument is powerful and convincing."},
+{type:"meaning",difficulty:"hard",category:"Academic Vocabulary",question:"What does 'ephemeral' mean?",options:["Lasting a very short time","Extremely powerful","Hidden from view","Full of energy"],answer:0,explanation:"A rainbow is ephemeral because it disappears quickly."},
+{type:"meaning",difficulty:"hard",category:"Academic Vocabulary",question:"What does 'meticulous' mean?",options:["Easily confused","Very careful about details","Rude and loud","Short and quick"],answer:1,explanation:"A meticulous person checks every small detail."},
+{type:"meaning",difficulty:"hard",category:"Academic Vocabulary",question:"What does 'ubiquitous' mean?",options:["Very rare","Dangerous","Found everywhere","Hard to see"],answer:2,explanation:"Something ubiquitous seems to be present everywhere."},
+{type:"meaning",difficulty:"hard",category:"Academic Vocabulary",question:"What does 'ambiguous' mean?",options:["Very certain","Extremely brief","Easy to prove","Open to more than one meaning"],answer:3,explanation:"An ambiguous sentence can be understood in different ways."},
+{type:"meaning",difficulty:"hard",category:"Academic Vocabulary",question:"What does 'pragmatic' mean?",options:["Practical and realistic","Extremely emotional","Related to ancient times","Careless and hasty"],answer:0,explanation:"A pragmatic person focuses on what works in real life."},
+{type:"synonym",difficulty:"hard",category:"Synonyms",question:"Which word means nearly the same as 'reluctant'?",options:["eager","unwilling","curious","careless"],answer:1,explanation:"Reluctant means not wanting to do something."},
+{type:"synonym",difficulty:"hard",category:"Synonyms",question:"Which word means nearly the same as 'scarce'?",options:["plentiful","ancient","rare","fragile"],answer:2,explanation:"Scarce means hard to find, like rare."},
+{type:"synonym",difficulty:"hard",category:"Synonyms",question:"Which word means nearly the same as 'diligent'?",options:["lazy","careless","anxious","hardworking"],answer:3,explanation:"A diligent person works carefully and steadily."},
+{type:"synonym",difficulty:"hard",category:"Synonyms",question:"Which word means nearly the same as 'obsolete'?",options:["outdated","essential","fashionable","fragile"],answer:0,explanation:"Obsolete things are no longer used because newer things replaced them."},
+{type:"antonym",difficulty:"hard",category:"Antonyms",question:"What is the opposite of 'benevolent'?",options:["generous","malevolent","gentle","wealthy"],answer:1,explanation:"Benevolent means kind; malevolent means wishing to cause harm."},
+{type:"antonym",difficulty:"hard",category:"Antonyms",question:"What is the opposite of 'transparent'?",options:["clear","thin","opaque","bright"],answer:2,explanation:"You can see through transparent things but not opaque ones."},
+{type:"antonym",difficulty:"hard",category:"Antonyms",question:"What is the opposite of 'abundant'?",options:["plentiful","common","wealthy","limited"],answer:3,explanation:"Abundant means more than enough; limited means not much."},
+{type:"antonym",difficulty:"hard",category:"Antonyms",question:"What is the opposite of 'optimistic'?",options:["pessimistic","hopeful","cheerful","confident"],answer:0,explanation:"An optimist expects good things; a pessimist expects bad things."},
+{type:"spelling",difficulty:"hard",category:"Spelling",question:"Which spelling is correct for the verb meaning 'to provide room for'?",options:["Accomodate","Accommodate","Acommodate","Acomodate"],answer:1,explanation:"Accommodate has a double 'c' and a double 'm'."},
+{type:"spelling",difficulty:"hard",category:"Spelling",question:"Select the correct spelling of the verb meaning 'to make someone feel awkward'.",options:["Embarass","Embarras","Embarrass","Emberrass"],answer:2,explanation:"Embarrass has a double 'r' and a double 's'."},
+{type:"spelling",difficulty:"hard",category:"Spelling",question:"Which word has the correct spelling for your inner sense of right and wrong?",options:["Consience","Concience","Conscence","Conscience"],answer:3,explanation:"Conscience contains 'science': con-SCIENCE."}
+// >>> ADD NEW QUESTIONS ABOVE THIS LINE (remember the comma after the previous question) <<<
+];
+var TYPES={fill:"Fill in the Blank",meaning:"Word Meaning",synonym:"Synonym",antonym:"Antonym",spelling:"Correct Spelling",bestfit:"Best Word for the Sentence"};
+(function validate(){ // reports mistakes in the console; the game still runs
+ var seen={};
+ QUESTIONS.forEach(function(q,n){
+  var bad=!TYPES[q.type]||["easy","medium","hard"].indexOf(q.difficulty)<0||!q.question||!Array.isArray(q.options)||q.options.length!==4||new Set(q.options).size!==4||!(q.answer>=0&&q.answer<4)||!q.explanation;
+  if(bad)console.warn("Word Wizard: question #"+(n+1)+" has a problem:",q.question);
+  if(seen[q.question])console.warn("Word Wizard: duplicate question #"+(n+1)+":",q.question);
+  seen[q.question]=1;
+ });
+})();
+// ==================== END OF QUESTION BANK ====================
+var ROUND=10,POINTS=10,LETTERS=["A","B","C","D"];
+var PRAISE=["Great job!","Spot on!","Nicely done!","Magical!"];
+
+// ---------- HELPERS ----------
+var $=function(id){return document.getElementById(id)};
+var screens=["menu","how","levels","game","end"];
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+// ---------- SOUND (generated locally, no files) ----------
+var actx=null,soundOn=true;
+function tone(f,d,delay,type){
+ if(!soundOn)return;
+ try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==="suspended")actx.resume();
+  var o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime+(delay||0);
+  o.type=type||"sine";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d+.05);
+ }catch(e){}
+}
+var sfx={
+ ok:function(){tone(660,.14);tone(880,.22,.12)},
+ no:function(){tone(220,.28,0,"triangle")},
+ tap:function(){tone(500,.06)},
+ win:function(){tone(523,.15);tone(659,.15,.15);tone(784,.3,.3)}
+};
+
+// ---------- NAVIGATION ----------
+function show(id){
+ screens.forEach(function(s){$(s).hidden=(s!==id)});
+ var inGame=(id==="game");
+ $("hud").hidden=!inGame;$("hudSpacer").hidden=inGame;
+ state.screen=id;
+ var f=$(id).querySelector(inGame?".ans":".btn");
+ if(f&&!inGame)f.focus({preventScroll:true});
+}
+
+// ---------- GAME ----------
+var state={screen:"menu",level:"easy",qs:[],i:0,score:0,locked:false,cur:null};
+
+function startRound(level){
+ state.level=level;state.score=0;state.i=0;
+ state.qs=shuffle(QUESTIONS.filter(function(q){return q.difficulty===level})).slice(0,ROUND); // shuffled, no duplicates
+ show("game");loadQuestion();
+}
+function loadQuestion(){
+ var q=state.qs[state.i];
+ var order=shuffle(q.options.map(function(t,n){return {t:t,ok:n===q.answer}})); // answer positions randomized
+ var opts=order.map(function(o){return o.t});
+ state.cur={correct:order.findIndex(function(o){return o.ok}),tip:q.explanation};
+ state.locked=false;
+ $("qType").textContent=TYPES[q.type];
+ $("qText").textContent=q.question;
+ $("fb").hidden=true;
+ updateHud();
+ var box=$("answers");box.innerHTML="";
+ opts.forEach(function(text,idx){
+  var b=document.createElement("button");
+  b.type="button";b.className="ans";b.dataset.i=idx;
+  b.innerHTML='<b aria-hidden="true">'+LETTERS[idx]+')</b><span></span>';
+  b.querySelector("span").textContent=text;
+  b.setAttribute("aria-label",LETTERS[idx]+") "+text);
+  box.appendChild(b);
+ });
+}
+function updateHud(){
+ $("hudScore").textContent="Score: "+state.score;
+ $("hudQ").textContent=(state.i+1)+" / "+state.qs.length;
+}
+function answer(idx){
+ if(state.locked||state.screen!=="game")return;
+ state.locked=true;
+ var btns=$("answers").children,c=state.cur.correct,right=(idx===c);
+ for(var k=0;k<btns.length;k++){
+  btns[k].disabled=true;
+  if(k===c)btns[k].classList.add("correct");
+  else if(k===idx)btns[k].classList.add("wrong");
+  else btns[k].classList.add("dim");
+ }
+ if(right){state.score+=POINTS;sfx.ok()}else sfx.no();
+ updateHud();
+ var fb=$("fb");fb.hidden=false;fb.className="fb "+(right?"ok":"no");
+ var head=right?"Correct!":"Not quite!";
+ $("fbText").innerHTML="<strong></strong><span></span>";
+ $("fbText").firstChild.textContent=head;
+ $("fbText").lastChild.textContent=(right?"":"Answer: "+LETTERS[c]+") "+btns[c].querySelector("span").textContent+". ")+state.cur.tip;
+ var last=state.i===state.qs.length-1;
+ $("nextBtn").textContent=last?"FINISH":"NEXT";
+ $("nextBtn").focus({preventScroll:true});
+}
+function next(){
+ if(!state.locked)return;
+ sfx.tap();
+ if(state.i>=state.qs.length-1){finish()}
+ else{state.i++;loadQuestion()}
+}
+function finish(){
+ var total=state.qs.length*POINTS,s=state.score,pct=s/total;
+ $("finalScore").textContent="Score: "+s+" / "+total;
+ $("endMsg").textContent=pct===1?"Perfect! You are a true Word Wizard!":pct>=.7?"Wonderful work, wizard!":pct>=.4?"Good effort! Practice makes magic.":"Keep going. Every spell takes practice!";
+ show("end");sfx.win();
+}
+
+// ---------- EVENTS ----------
+$("playBtn").addEventListener("click",function(){sfx.tap();show("levels")});
+$("howBtn").addEventListener("click",function(){sfx.tap();show("how")});
+$("nextBtn").addEventListener("click",next);
+$("againBtn").addEventListener("click",function(){sfx.tap();startRound(state.level)});
+$("answers").addEventListener("click",function(e){
+ var b=e.target.closest(".ans");if(b)answer(+b.dataset.i);
+});
+document.addEventListener("click",function(e){
+ var g=e.target.closest("[data-go]"),l=e.target.closest("[data-level]");
+ if(g){sfx.tap();show(g.dataset.go)}
+ if(l){sfx.tap();startRound(l.dataset.level)}
+});
+document.addEventListener("keydown",function(e){
+ if(e.ctrlKey||e.metaKey||e.altKey)return;
+ var k=e.key.toLowerCase();
+ if(state.screen==="game"){
+  var n="abcd".indexOf(k);if(n<0)n="1234".indexOf(k);
+  if(n>-1&&!state.locked){e.preventDefault();answer(n);return}
+  if((k==="enter"||k===" ")&&state.locked&&document.activeElement.tagName!=="BUTTON"){e.preventDefault();next();return}
+ }
+ if(k==="escape"&&state.screen!=="menu"&&!document.fullscreenElement){show("menu")}
+});
+
+// Sound toggle
+$("soundBtn").addEventListener("click",function(){
+ soundOn=!soundOn;this.textContent="SOUND: "+(soundOn?"ON":"OFF");this.setAttribute("aria-pressed",soundOn);
+ if(soundOn)sfx.tap();
+});
+
+// ---------- FULLSCREEN ----------
+var root=document.documentElement;
+var reqFS=root.requestFullscreen||root.webkitRequestFullscreen;
+var exitFS=document.exitFullscreen||document.webkitExitFullscreen;
+function isFS(){return !!(document.fullscreenElement||document.webkitFullscreenElement)}
+function syncFS(){$("fsBtn").textContent=isFS()?"EXIT FULLSCREEN":"FULLSCREEN"}
+if(!reqFS){$("fsBtn").hidden=true} // unsupported (e.g. iPhone Safari): game still works
+$("fsBtn").addEventListener("click",function(){
+ try{
+  if(isFS()){exitFS.call(document)}
+  else{
+   var p=reqFS.call(root);
+   var lock=function(){try{if(screen.orientation&&screen.orientation.lock&&window.matchMedia("(pointer:coarse)").matches)screen.orientation.lock("landscape").catch(function(){})}catch(e){}};
+   if(p&&p.then){p.then(lock).catch(function(){})}else lock();
+  }
+ }catch(e){}
+});
+document.addEventListener("fullscreenchange",syncFS);
+document.addEventListener("webkitfullscreenchange",syncFS);
+
+// Block pinch/double-tap zoom on iOS
+["gesturestart","gesturechange"].forEach(function(ev){document.addEventListener(ev,function(e){e.preventDefault()})});
+var lastTouch=0;
+document.addEventListener("touchend",function(e){var n=Date.now();if(n-lastTouch<300)e.preventDefault();lastTouch=n},{passive:false});
+
+show("menu");
+})();
+</script>
+</body>
+</html>
