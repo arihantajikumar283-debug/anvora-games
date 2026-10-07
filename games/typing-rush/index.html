@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17143f"><meta name="mobile-web-app-capable" content="yes">
+<title>TYPING RUSH — ANVORA GAMES</title>
+<style>
+:root{--bg:#17143f;--bg2:#31227a;--card:#fff8ec;--ink:#1d1840;--teal:#25e0bd;--coral:#ff5d73;--sun:#ffd23f;--vio:#8f73ff;--sa:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sl:env(safe-area-inset-left,0px);--sr:env(safe-area-inset-right,0px);--u:1vmin}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overscroll-behavior:none}
+button{font-family:inherit;color:inherit}
+#app{position:fixed;left:0;top:0;width:100vw;height:100dvh;overflow:hidden;background:radial-gradient(120% 90% at 15% 0,var(--bg2),var(--bg))}
+#app::before{content:"";position:absolute;inset:0;background:radial-gradient(90% 80% at 50% 40%,#ff5d7355,#8f73ff33 50%,transparent);opacity:0;transition:opacity .5s}
+#app.rush::before{opacity:1}
+canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}#bg{z-index:0}#fx{z-index:5}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;z-index:1;gap:calc(var(--u)*1.6);padding:calc(var(--sa) + 8px) calc(var(--sr) + 12px) calc(var(--sb) + 8px) calc(var(--sl) + 12px)}
+.scr.on{display:flex}
+.c{align-items:center;justify-content:center;text-align:center}
+h1{margin:0;font-size:clamp(34px,calc(var(--u)*11),100px);line-height:.95;background:linear-gradient(90deg,var(--sun),var(--coral),var(--vio),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #0006)}
+h2{margin:0;font-size:clamp(18px,calc(var(--u)*4.5),40px)}h3{margin:0 0 6px;font-size:12px;letter-spacing:.15em;opacity:.8}
+.sub{margin:.4em 0 0;font-size:clamp(13px,calc(var(--u)*2.6),22px);opacity:.92}
+.btn{border:0;border-radius:14px;padding:.65em 1.3em;font-weight:800;font-size:clamp(14px,calc(var(--u)*3),22px);background:var(--sun);color:#2a1f00;box-shadow:0 5px 0 #b8901c,0 10px 20px #0005;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.btn.alt{background:var(--vio);color:#fff;box-shadow:0 5px 0 #5a43c9,0 10px 20px #0005}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0006}
+button:focus-visible,select:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.ib{border:2px solid #ffffff44;background:#ffffff18;border-radius:10px;padding:.35em .8em;font-weight:700;font-size:clamp(11px,calc(var(--u)*2.4),15px);cursor:pointer;white-space:nowrap}
+.mb{display:flex;flex-direction:column;gap:clamp(7px,calc(var(--u)*1.8),14px);width:min(320px,80vw)}
+.tr{position:absolute;top:calc(var(--sa) + 8px);right:calc(var(--sr) + 12px);display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.brand{position:absolute;bottom:calc(var(--sb) + 6px);left:0;right:0;font-size:12px;opacity:.85}.brand b{letter-spacing:.14em}
+@media(orientation:landscape){#menu{flex-direction:row;gap:5vw}.mb{width:min(300px,38vw)}}
+.top{display:flex;align-items:center;gap:10px;flex:0 0 auto}.sp{flex:1}
+.sc{flex:1;overflow:auto;touch-action:pan-y;display:flex;flex-direction:column;gap:12px;min-height:0}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid #ffffff44;background:#ffffff14;border-radius:12px;padding:.45em .9em;font-weight:700;font-size:clamp(13px,calc(var(--u)*2.8),18px);cursor:pointer}
+.chip[aria-pressed=true]{background:var(--teal);color:#042;border-color:#fff}.chip[aria-pressed=true]::before{content:"✓ "}
+select{font:inherit;padding:.5em;border-radius:10px;background:#fff;color:#111;max-width:100%}
+#hint{margin:0;opacity:.9}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(120px,calc(var(--u)*24),200px),1fr));gap:10px}
+.tile{background:#ffffff14;border:2px solid #ffffff22;border-radius:14px;padding:10px;text-align:center}
+.tile b{display:block;font-size:clamp(20px,calc(var(--u)*5.5),38px);color:var(--sun)}.tile small{font-size:12px;letter-spacing:.1em;opacity:.85}
+.card2{background:#ffffff14;border:2px solid #ffffff33;border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.hud{display:flex;align-items:center;gap:clamp(5px,1.4vw,14px);flex:0 0 auto}
+.st{background:#ffffff18;border-radius:12px;padding:.2em .7em;text-align:center;min-width:clamp(52px,9vw,110px)}
+.st b{display:block;font-size:clamp(16px,calc(var(--u)*4.2),34px);line-height:1.1;font-variant-numeric:tabular-nums}.st small{font-size:clamp(9px,calc(var(--u)*1.6),12px);letter-spacing:.12em;opacity:.85}
+.rush .st b{color:var(--sun)}
+#arena{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,calc(var(--u)*1.6),16px);touch-action:none;cursor:text}
+#nx{display:flex;gap:10px;max-width:100%;overflow:hidden}
+#nx span{background:#ffffff22;border:2px solid #ffffff44;border-radius:12px;padding:.1em .7em;font:700 clamp(14px,calc(var(--u)*3.2),28px) ui-monospace,Menlo,Consolas,monospace;animation:bob 3s ease-in-out infinite}
+#nx span:nth-child(2){animation-delay:-1s}#nx span:nth-child(3){animation-delay:-2s}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.short #nx{display:none}
+#card{background:var(--card);color:var(--ink);border-radius:clamp(14px,calc(var(--u)*3),28px);padding:clamp(8px,calc(var(--u)*2.6),28px) clamp(14px,4vw,48px);box-shadow:0 8px 0 #0004,0 20px 40px #0006;max-width:97%}
+.rush #card{box-shadow:0 8px 0 #0004,0 0 40px 6px #ffd23faa}
+#word{font:800 40px/1.1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em;white-space:nowrap}
+#word span{display:inline-block;min-width:.3em;border-bottom:.08em solid transparent;border-radius:3px}
+#word .ok{color:#0b7a64;border-bottom-color:#0b7a64}
+#word .bad{background:#ff5d73;color:#fff;border-bottom:.08em wavy #7a0016;text-decoration:underline wavy #7a0016}
+#word .cur{background:var(--sun);border-bottom-color:#b8901c;animation:blink 1s infinite}
+@keyframes blink{50%{background:#ffe88a}}
+#pop{position:absolute;top:8%;left:0;right:0;text-align:center;font-weight:900;font-size:clamp(14px,calc(var(--u)*4),32px);letter-spacing:.12em;color:var(--teal);opacity:0;pointer-events:none}
+#cnt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--u)*22);font-weight:900;color:var(--sun);text-shadow:0 6px 0 #0006;pointer-events:none;z-index:3}
+.bar{display:flex;align-items:center;gap:12px;flex:0 0 auto}
+#combo{min-width:clamp(90px,16vw,170px);font-weight:900;font-size:clamp(14px,calc(var(--u)*3.2),26px);transition:transform .1s,color .2s}
+#combo[data-l="1"]{color:var(--teal)}#combo[data-l="2"]{color:var(--sun);transform:scale(1.1)}#combo[data-l="3"]{color:var(--coral);transform:scale(1.2)}
+.en{flex:1;height:clamp(14px,calc(var(--u)*3),26px);position:relative;background:#ffffff22;border-radius:99px;overflow:hidden;border:2px solid #ffffff33}
+#enF{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--teal),var(--sun),var(--coral))}
+.en span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(9px,calc(var(--u)*1.8),12px);font-weight:800;letter-spacing:.15em;text-shadow:0 1px 2px #000a}
+#inp{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;border:0;padding:0;font-size:16px;pointer-events:none}
+#tap{position:absolute;inset:0;z-index:4;display:none;align-items:center;justify-content:center;background:#17143fcc;font-weight:900;font-size:clamp(18px,calc(var(--u)*5),40px);letter-spacing:.1em;cursor:pointer}#tap.on{display:flex}
+.modal{position:absolute;inset:0;background:#0b0926ee;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:6}.modal.on{display:flex}
+.big{font-size:clamp(18px,calc(var(--u)*5),40px);font-weight:800}.big b{font-size:clamp(44px,calc(var(--u)*17),150px);color:var(--sun);line-height:1}
+.mid{font-size:clamp(16px,calc(var(--u)*4.5),34px);font-weight:800;color:var(--teal)}
+.g3{display:flex;gap:clamp(10px,3vw,30px)}.g3 div{background:#ffffff18;border-radius:12px;padding:.4em 1em;font-size:12px;letter-spacing:.1em}.g3 b{display:block;font-size:clamp(18px,calc(var(--u)*5),34px);letter-spacing:0}
+.nb{min-height:1.2em;font-weight:900;color:var(--sun);font-size:clamp(14px,calc(var(--u)*3.6),28px)}
+#toast{position:absolute;bottom:calc(var(--sb) + 40px);left:50%;transform:translateX(-50%);background:#000c;padding:.6em 1em;border-radius:10px;z-index:9;display:none;max-width:90%;text-align:center}
+.rm *{animation:none!important;transition:none!important}
+@media(max-height:420px){.hud .ib{padding:.2em .5em}}
+</style></head><body>
+<div id="app"><canvas id="bg"></canvas><canvas id="fx"></canvas>
+
+<section id="menu" class="scr c">
+ <div class="tr"><button class="ib" data-t="fs">⛶ FULLSCREEN</button><button class="ib" data-t="snd"></button><button class="ib" data-t="mus"></button></div>
+ <div class="mw"><h1>TYPING<br>RUSH</h1><p class="sub">Type Fast. Stay Accurate. Beat Your Best.</p></div>
+ <div class="mb"><button class="btn" data-go="setup:speed">PLAY</button><button class="btn alt" data-go="challenges">CHALLENGES</button><button class="btn alt" data-go="setup:practice">PRACTICE</button><button class="btn alt" data-go="stats">STATS</button><button class="btn alt" data-go="settings">SETTINGS</button></div>
+ <div class="brand"><b>ANVORA GAMES</b> · Developed by Arihant</div>
+</section>
+
+<section id="setup" class="scr">
+ <div class="top"><button class="ib" data-go="menu">← BACK</button><h2>CHOOSE YOUR RUN</h2><span class="sp"></span><button class="ib" data-t="fs">⛶ FULLSCREEN</button></div>
+ <div class="sc"><div><h3>MODE</h3><div id="gMode" class="row"></div></div><div id="gTime"><h3>TIME</h3><div id="gT" class="row"></div></div><div><h3>DIFFICULTY</h3><div id="gD" class="row"></div></div><div><h3>TOPIC</h3><select id="cat" aria-label="Topic"></select></div><p id="hint"></p></div>
+ <button class="btn" data-a="startSetup">START</button>
+</section>
+
+<section id="challenges" class="scr">
+ <div class="top"><button class="ib" data-go="menu">← BACK</button><h2>CHALLENGES</h2></div>
+ <div class="sc"><div class="card2"><h3>TODAY'S CHALLENGE</h3><h2 id="dTitle"></h2><div id="dMeta"></div><div id="dBest" style="opacity:.85"></div><button class="btn" data-a="startDaily">START DAILY</button></div>
+ <div class="row"><button class="btn alt" data-go="setup:accuracy">ACCURACY MASTER</button><button class="btn alt" data-go="setup:endless">ENDLESS</button></div></div>
+</section>
+
+<section id="stats" class="scr">
+ <div class="top"><button class="ib" data-go="menu">← BACK</button><h2>STATS</h2></div>
+ <div class="sc"><div id="sGrid" class="grid"></div></div>
+</section>
+
+<section id="settings" class="scr">
+ <div class="top"><button class="ib" data-go="menu">← BACK</button><h2>SETTINGS</h2></div>
+ <div class="sc"><div class="row"><button class="chip" data-t="snd"></button><button class="chip" data-t="mus"></button><button class="chip" data-t="rm"></button><button class="chip" data-t="fs">⛶ FULLSCREEN</button></div>
+ <div><button class="chip" data-a="reset">RESET ALL SAVED DATA</button></div><p class="sub">Everything is saved only on this device. No accounts, no personal data.</p></div>
+</section>
+
+<section id="game" class="scr">
+ <div class="hud">
+  <div class="st"><b id="hT">0</b><small id="hTl">TIME</small></div><div class="st"><b id="hW">0</b><small>WPM</small></div><div class="st"><b id="hA">100%</b><small>ACC</small></div><div class="st"><b id="hS">0</b><small>SCORE</small></div>
+  <span class="sp"></span><button class="ib" data-a="pause">⏸ PAUSE</button><button class="ib" data-t="fs">⛶ FULLSCREEN</button>
+ </div>
+ <div id="arena"><div id="nx"><span></span><span></span><span></span></div><div id="card"><div id="word"></div></div><div id="pop"></div><div id="cnt"></div></div>
+ <div class="bar"><div id="combo">0 COMBO</div><div class="en"><i id="enF"></i><span>RUSH ENERGY</span></div></div>
+ <input id="inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done" aria-label="Type the word shown">
+ <div id="tap">TAP TO TYPE</div>
+ <div id="pauseM" class="modal"><h2>PAUSED</h2><button class="btn" data-a="resume" id="bRes">RESUME</button><button class="btn alt" data-a="restart">RESTART</button><button class="btn alt" data-a="quit" id="bQuit">QUIT</button></div>
+</section>
+
+<section id="results" class="scr c">
+ <h2 id="rT">RUN COMPLETE</h2><div class="big"><b id="rW">0</b> WPM</div><div id="rA" class="mid"></div>
+ <div class="g3"><div>WORDS<b id="rWo"></b></div><div>ERRORS<b id="rE"></b></div><div>SCORE<b id="rS"></b></div></div>
+ <div id="rNB" class="nb"></div>
+ <div class="row" style="justify-content:center"><button class="btn" data-a="again">TRY AGAIN</button><button class="btn alt" data-go="menu">MAIN MENU</button><button class="btn alt" data-a="prac">PRACTICE</button></div>
+</section>
+<div id="toast" role="status"></div>
+</div>
+<script>
+"use strict";
+const $=id=>document.getElementById(id),app=$('app'),inp=$('inp');
+/* ---------- data ---------- */
+const CAT={Everyday:"time year people day thing life child world school family place week home water room money story night point hand friend house morning reason change moment kitchen journey weather holiday neighbour birthday",
+Animals:"cat dog fox owl bat bear wolf horse tiger zebra otter rabbit turtle monkey dolphin penguin giraffe leopard kangaroo hedgehog squirrel butterfly crocodile elephant chameleon flamingo woodpecker orangutan armadillo salamander",
+Food:"rice egg pie jam soup bread pizza apple mango pasta salad honey cheese banana noodle butter cookie lemon pancake sandwich tomato avocado broccoli chocolate dumpling blueberry cinnamon watermelon strawberry mushroom marmalade",
+Science:"atom cell gas ion mass wave force light orbit magnet energy proton neuron fossil gravity climate enzyme thermal voltage molecule friction velocity electron particle chemical spectrum catalyst bacteria evolution hypothesis experiment",
+Technology:"app bug code data byte chip link web pixel cloud robot laptop screen server cursor router sensor program network browser battery keyboard software database wireless algorithm processor interface bandwidth encryption",
+Nature:"sun sky sea mud fog leaf tree rain wind river cloud forest meadow canyon desert valley island thunder glacier volcano blossom rainbow waterfall mountain sunrise peninsula wilderness rainforest avalanche",
+Space:"sun moon star mars orbit comet venus saturn galaxy planet meteor rocket nebula eclipse asteroid satellite universe telescope astronaut supernova cosmos gravity lunar solar crater payload constellation observatory spacecraft",
+Sports:"run jump kick ball goal team swim race score coach track serve pitch sprint tennis soccer hockey archery cycling surfing climbing champion athlete stadium marathon gymnastics basketball tournament endurance",
+Games:"dice card quest level boss puzzle token score arcade combo player bonus avatar joystick checkers strategy champion treasure obstacle gameplay character challenge adventure leaderboard multiplayer",
+Adventure:"map cave trek camp rope raft trail quest jungle compass lantern journey explorer canyon treasure survival expedition wilderness discovery navigate mountain backpack adventure shipwreck uncharted",
+Education:"book pen desk quiz math essay learn study class lesson reading teacher student science library grammar history diploma lecture homework knowledge vocabulary geography curriculum literature mathematics"};
+const SEN=["Quick hands, calm focus, and steady rhythm win the race.","Every mistake is a clue; adjust, breathe, and keep going!","The telescope revealed three faint galaxies behind the nebula.","Can you type 'accuracy' without looking at the keys?","Rain tapped the window while the robot calibrated its sensors.","Practice builds speed; patience builds precision.","Explorers crossed the canyon at dawn, carrying lanterns and maps.","Fresh mango, warm bread, and honey: a perfect breakfast!","Her score climbed higher, level after level, combo after combo.","Gravity, friction, and energy shape every motion we see.","Wait - was that a comet, or just a distant satellite?","Keep your wrists relaxed; let your fingers glide.","The coach shouted, \"Sprint to the finish line!\"","Tiny penguins waddled across the glacier at sunrise.","Great typists read ahead while their fingers catch up.","A curious otter tested the river's speed (twice)."];
+const cats=Object.keys(CAT),ALL=[].concat(...cats.map(k=>CAT[k].split(' ')));
+const DN=['EASY','NORMAL','HARD','EXPERT'],DM=[1,1.25,1.5,2],LIVES=10,RUSHMS=8000;
+const lenOK=[w=>w.length<=5,w=>w.length>=4&&w.length<=8,w=>w.length>=7,w=>w.length>=7];
+/* ---------- storage ---------- */
+const DEF={best:{wpm:0,acc:0,score:0,t30:0,t60:0,t120:0,combo:0},tot:{words:0,chars:0,errs:0,n:0,sw:0,sa:0},set:{snd:1,mus:0,rm:0},daily:{}};
+let S,stored=null;try{stored=JSON.parse(localStorage.getItem('typingrush'))}catch(e){}
+S=stored||{};for(const k in DEF)S[k]=Object.assign({},DEF[k],S[k]);
+if(!stored&&matchMedia('(prefers-reduced-motion:reduce)').matches)S.set.rm=1;
+const save=()=>{try{localStorage.setItem('typingrush',JSON.stringify(S))}catch(e){}};
+/* ---------- helpers ---------- */
+const calcWPM=(c,ms,fl=8000)=>ms<=0?0:c/5/(Math.max(ms,fl)/60000);
+const calcAcc=(c,e)=>c+e?Math.round(100*c/(c+e)):100;
+const hash=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
+const mul=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+let R=Math.random;const shuf=a=>{for(let i=a.length;i>1;){const j=(R()*i--)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const dkey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+const dInfo=()=>{const k=dkey(),h=hash(k);return{k,cat:cats[h%cats.length],d:1+((h>>>4)%2)}};
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3200)}
+/* ---------- audio ---------- */
+let AC,mi=null,ms=0;
+const ac=()=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}};
+function tone(f,d=.06,ty='sine',v=.05,w=0){const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+w;o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
+const beep=(...a)=>{if(S.set.snd)tone(...a)};
+const NT=[262,330,392,330,294,370,440,370];
+function music(){clearInterval(mi);mi=null;if(S.set.mus)mi=setInterval(()=>{if(G.state==='pause')return;tone(NT[ms++%8]*(app.classList.contains('rush')?2:1),.2,'triangle',.02)},app.classList.contains('rush')?200:300)}
+let unlocked=0;const unlock=()=>{if(!unlocked){unlocked=1;ac();if(S.set.mus)music()}};
+/* ---------- fx ---------- */
+const bg=$('bg'),fxc=$('fx'),bx=bg.getContext('2d'),px=fxc.getContext('2d');let W=1,H=1;
+const P=Array.from({length:110},()=>({l:0,m:1,x:0,y:0,vx:0,vy:0,c:'',s:3}));
+const D=Array.from({length:34},()=>({x:Math.random()*900,y:Math.random()*600,v:.4+Math.random()*1.2,r:1+Math.random()*1.5,a:.06+Math.random()*.14}));
+const COL=['#25e0bd','#ffd23f','#ff5d73','#8f73ff'];
+function burst(x,y,n,sp=1){if(S.set.rm)return;for(const p of P){if(n<=0)break;if(p.l<=0){const a=Math.random()*6.28,v=(1+Math.random()*3)*sp;p.x=x;p.y=y;p.vx=Math.cos(a)*v;p.vy=Math.sin(a)*v-1;p.l=p.m=30+Math.random()*20;p.c=COL[(Math.random()*4)|0];p.s=2+Math.random()*3;n--}}}
+function fx(dt){bx.clearRect(0,0,W,H);px.clearRect(0,0,W,H);if(S.set.rm)return;const r=app.classList.contains('rush')?4:1;bx.lineCap='round';
+ for(const d of D){d.x+=d.v*r*dt*.06;if(d.x>W+80){d.x=-80;d.y=Math.random()*H}bx.strokeStyle='rgba(255,255,255,'+d.a+')';bx.lineWidth=d.r;bx.beginPath();bx.moveTo(d.x-d.v*r*14,d.y);bx.lineTo(d.x,d.y);bx.stroke()}
+ for(const p of P){if(p.l<=0)continue;p.l--;p.x+=p.vx;p.y+=p.vy;p.vy+=.08;px.globalAlpha=p.l/p.m;px.fillStyle=p.c;px.fillRect(p.x,p.y,p.s,p.s)}px.globalAlpha=1}
+function fit(){const v=window.visualViewport,w=v?v.width:innerWidth,h=v?v.height:innerHeight;
+ app.style.width=w+'px';app.style.height=h+'px';app.style.top=(v?v.offsetTop:0)+'px';app.style.left=(v?v.offsetLeft:0)+'px';
+ app.style.setProperty('--u',Math.min(w,h)/100+'px');app.classList.toggle('short',h<320);
+ const dpr=Math.min(devicePixelRatio||1,2);W=w;H=h;for(const c of[bg,fxc]){c.width=w*dpr;c.height=h*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0)}
+ if(window.scrollY)scrollTo(0,0)}
+['resize','orientationchange','fullscreenchange','webkitfullscreenchange'].forEach(e=>addEventListener(e,()=>{fit();setTimeout(fit,250)}));
+if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}
+function fs(){const d=document,e=d.documentElement;if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d);return}
+ const f=e.requestFullscreen||e.webkitRequestFullscreen;if(!f){toast('Fullscreen is not supported here. On iPhone: Share → Add to Home Screen.');return}
+ try{const p=f.call(e,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(x){}}).catch(()=>toast('Fullscreen was blocked by the browser.'))}catch(x){}}
+/* ---------- game ---------- */
+let G={state:'idle'},last=0;
+function show(id){document.querySelectorAll('.scr').forEach(e=>e.classList.toggle('on',e.id===id));if(id==='stats')renderStats();if(id==='challenges')renderCh()}
+function goMenu(){clearTimeout(G.cdt);G.state='idle';app.classList.remove('rush');inp.blur();$('pauseM').classList.remove('on');$('tap').classList.remove('on');show('menu')}
+function nextTok(){const d=G.mode==='endless'?Math.min(3,G.d+((G.words/20)|0)):G.d;
+ if(d===3){if(!G.sq.length){if(R()<.65){if(!G.sb.length)G.sb=shuf(SEN.slice());G.sq=G.sb.pop().split(' ')}else{const w=pickWord(3);G.sq=[w[0].toUpperCase()+w.slice(1)+(R()<.5?',':'.')]}}return G.sq.shift()}
+ return pickWord(d)}
+function pickWord(d){if(!G.bag.length||G.bd!==d){G.bd=d;const src=G.cat?CAT[G.cat].split(' '):ALL;let p=[...new Set(src)].filter(lenOK[d]);if(p.length<6)p=[...new Set(src)];G.bag=shuf(p)}return G.bag.pop()}
+function startGame(o){clearTimeout(G.cdt);R=o.daily?mul(hash(o.daily)):Math.random;
+ G={opts:o,mode:o.mode,d:o.d,cat:o.cat,daily:o.daily,state:'count',pr:o.mode==='practice',el:0,left:(o.mode==='speed'||o.mode==='accuracy')?o.dur*1000:null,cor:0,err:0,words:0,combo:0,maxC:0,en:0,rush:0,score:0,typed:'',q:[],bag:[],sb:[],sq:[],bd:-1,wpm:0,lastK:-1e3,sp:[]};
+ for(let i=0;i<4;i++)G.q.push(nextTok());G.word=G.q.shift();
+ app.classList.remove('rush');$('pauseM').classList.remove('on');$('tap').classList.remove('on');$('cnt').textContent='';
+ $('hTl').textContent=G.left!=null?'TIME':G.mode==='endless'?'LIVES':'WORDS';$('bQuit').textContent=(G.pr||G.mode==='endless')?'FINISH':'QUIT';
+ show('game');inp.value='';inp.focus({preventScroll:true});buildWord();buildNext();hud();
+ if(G.pr)G.state='run';else countdown()}
+function countdown(){let n=3;const c=$('cnt'),step=()=>{if(G.state!=='count')return;if(n>0){c.textContent=n;if(!S.set.rm)c.animate([{transform:'scale(1.5)',opacity:.2},{transform:'scale(1)',opacity:1}],{duration:250});beep(520,.1);n--;G.cdt=setTimeout(step,800)}else{c.textContent='GO!';beep(880,.2);G.state='run';G.cdt=setTimeout(()=>c.textContent='',600)}};step()}
+function buildWord(){const w=G.word,el=$('word');el.innerHTML='';G.sp=[...w].map(c=>{const s=document.createElement('span');s.textContent=c;el.appendChild(s);return s});
+ el.style.fontSize='clamp(22px,min(calc(var(--u)*11),'+(88/(w.length*.66+1.6)).toFixed(2)+'vw),130px)';$('card').setAttribute('aria-label','Type: '+w);drawWord()}
+function drawWord(){const t=G.typed,w=G.word;G.sp.forEach((s,i)=>{const c=i<t.length?(t[i]===w[i]?'ok':'bad'):i===t.length?'cur':'';if(s.className!==c)s.className=c})}
+function buildNext(){const n=$('nx').children;for(let i=0;i<3;i++)n[i].textContent=G.q[i]||''}
+const C={};const st=(id,v)=>{if(C[id]!==v){C[id]=v;$(id).textContent=v}};
+const acc=()=>calcAcc(G.cor,G.err);
+function hud(){st('hT',G.left!=null?Math.ceil(G.left/1000):G.mode==='endless'?Math.max(0,LIVES-G.err):G.words);
+ G.wpm+=(calcWPM(G.cor,G.el)-G.wpm)*.2;st('hW',Math.round(G.wpm));st('hA',acc()+'%');st('hS',G.pr?'—':G.score.toLocaleString());
+ st('combo',G.combo+' COMBO');const l=G.combo>=50?3:G.combo>=25?2:G.combo>=12?1:0;if(C.l!==l){C.l=l;$('combo').dataset.l=l}
+ $('enF').style.transform='scaleX('+(G.en/100).toFixed(3)+')'}
+function tick(dt){G.el+=dt;if(G.left!=null){G.left-=dt;if(G.left<=0){G.left=0;hud();finish();return}}
+ if(G.rush>0){G.rush-=dt;G.en=Math.max(0,G.rush/RUSHMS*100);if(G.rush<=0){G.rush=0;G.en=0;app.classList.remove('rush');music()}}else if(G.en>0)G.en=Math.max(0,G.en-dt*.003);hud()}
+function loop(t){requestAnimationFrame(loop);const dt=Math.min(t-last,100);last=t;if(G.state==='run')tick(dt);fx(dt)}
+function pop(txt){const p=$('pop');p.textContent=txt;p.animate([{opacity:1,transform:'translateY(0) scale(1)'},{opacity:0,transform:S.set.rm?'none':'translateY(-26px) scale(1.15)'}],{duration:650,fill:'forwards'})}
+function gain(x){if(G.rush)return;G.en+=x;if(G.en>=100){G.en=100;G.rush=RUSHMS;app.classList.add('rush');pop('RUSH MODE!');[523,659,784,1046].forEach((f,i)=>beep(f,.15,'square',.03,i*.07));music();const r=$('card').getBoundingClientRect();burst(r.left+r.width/2,r.top,40,1.6)}}
+function onInput(){const v=inp.value,t=G.typed;
+ if(G.state!=='run'){inp.value='';return}
+ if(v===t)return;
+ if(v.length<t.length&&t.startsWith(v)){G.typed=v;drawWord();return}
+ if(v.length===t.length+1&&v.startsWith(t)&&t.length<G.word.length){const ch=v[t.length];if(ch===' '||ch==='\n'){inp.value=t;return}char(ch);return}
+ inp.value=t}
+function char(ch){const now=performance.now(),gap=now-G.lastK;if(gap<12){inp.value=G.typed;return}G.lastK=now;
+ const t=G.typed,ok=G.word.startsWith(t)&&G.word[t.length]===ch;G.typed=t+ch;const i=t.length,sp=G.sp[i];
+ if(ok){G.cor++;G.combo++;if(G.combo>G.maxC)G.maxC=G.combo;
+  if(!G.pr)G.score+=Math.round(10*DM[G.d]*(1+Math.min(G.combo,60)/120)*(G.rush?1.5:1));
+  gain(gap<450?2.2:.8);
+  if(G.combo%25===0){pop(G.combo+' COMBO!');[600,800,1000].forEach((f,k)=>beep(f,.08,'triangle',.04,k*.06))}else beep(700+Math.min(G.combo,30)*6,.03,'triangle',.02);
+  if(!S.set.rm){$('card').animate([{transform:'scale(1.02)'},{transform:'none'}],90);const a=app.getBoundingClientRect(),r=sp.getBoundingClientRect();burst(r.left-a.left+r.width/2,r.top-a.top,G.combo>=25?3:1)}
+  if(G.typed===G.word)done()}
+ else{G.err++;G.combo>>=1;if(!G.rush)G.en=Math.max(0,G.en-10);if(G.mode==='accuracy')G.score=Math.max(0,G.score-75);
+  beep(160,.1,'sawtooth',.03);if(!S.set.rm)$('card').animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:140})}
+ drawWord();hud();if(!ok&&G.mode==='endless'&&G.err>=LIVES)finish()}
+function done(){const L=G.word.length;G.words++;if(!G.pr)G.score+=Math.round(L*5*DM[G.d]*(G.rush?1.5:1));
+ pop('WORD COMPLETE');beep(660,.08);beep(990,.1,'sine',.05,.07);const r=$('card').getBoundingClientRect(),a=app.getBoundingClientRect();burst(r.left-a.left+r.width/2,r.top-a.top+r.height/2,12);
+ G.word=G.q.shift();G.q.push(nextTok());G.typed='';inp.value='';buildWord();buildNext()}
+function pause(){if(G.state!=='run')return;G.state='pause';$('pauseM').classList.add('on');inp.blur();$('bRes').focus()}
+function resume(){if(G.state!=='pause')return;G.state='run';$('pauseM').classList.remove('on');inp.focus({preventScroll:true})}
+function finish(){if(G.state==='over')return;clearTimeout(G.cdt);G.state='over';app.classList.remove('rush');inp.blur();$('pauseM').classList.remove('on');
+ const a=acc(),w=Math.round(calcWPM(G.cor,G.el,1000));let sc=G.score;
+ if(!G.pr){if(G.mode==='accuracy'&&a<95)sc=Math.round(sc*Math.pow(a/95,2));else if(a>=95)sc=Math.round(sc*(G.mode==='accuracy'?1.25:1.1))}
+ const nb=[];if(!G.pr&&G.cor>0){const T=S.tot,B=S.best;T.words+=G.words;T.chars+=G.cor;T.errs+=G.err;T.n++;T.sw+=w;T.sa+=a;
+  if(w>B.wpm){B.wpm=w;nb.push('BEST WPM')}if(G.cor>=30&&a>B.acc){B.acc=a;nb.push('BEST ACCURACY')}if(sc>B.score){B.score=sc;nb.push('BEST SCORE')}
+  if(G.maxC>B.combo){B.combo=G.maxC;nb.push('HIGHEST COMBO')}
+  if(G.mode==='speed'&&!G.daily){const k='t'+G.opts.dur;if(sc>B[k]){B[k]=sc;nb.push('BEST '+G.opts.dur+'s RUN')}}
+  if(G.daily){const o=S.daily[G.daily];if(!o||sc>o.score)S.daily[G.daily]={score:sc,wpm:w,acc:a}}save()}
+ $('rT').textContent=G.pr?'PRACTICE COMPLETE':G.daily?'DAILY COMPLETE':'RUN COMPLETE';$('rW').textContent=w;$('rA').textContent=a+'% ACCURACY';
+ $('rWo').textContent=G.words;$('rE').textContent=G.err;$('rS').textContent=G.pr?'—':sc.toLocaleString();
+ $('rNB').textContent=nb.length?'NEW PERSONAL BEST! '+nb.join(' · '):'';show('results');
+ if(nb.length){beep(523,.15,'triangle',.05);beep(659,.15,'triangle',.05,.12);beep(784,.3,'triangle',.05,.24);for(let i=0;i<5;i++)setTimeout(()=>burst(W*(.15+Math.random()*.7),H*.25,22,1.8),i*180)}
+ else beep(440,.2,'triangle',.04)}
+/* ---------- UI ---------- */
+const SU={mode:'speed',dur:60,d:1,cat:''};
+const HINT={speed:'Type as many words as you can before time runs out. Words complete automatically - no space needed.',accuracy:'60 seconds. Every mistake costs points - aim for 95%+ accuracy.',endless:'No clock. Ten mistakes end the run, and words get harder as you go.',practice:'No pressure and no score saved. Warm up and learn the keys.'};
+function chips(id,items,key){const r=$(id);items.forEach(([l,v])=>{const b=document.createElement('button');b.className='chip';b.textContent=l;b.dataset.k=key;b.dataset.v=v;b.onclick=()=>{SU[key]=v;sync()};r.appendChild(b)})}
+function sync(){document.querySelectorAll('.chip[data-k]').forEach(b=>b.setAttribute('aria-pressed',String(SU[b.dataset.k]==b.dataset.v)));$('gTime').style.display=SU.mode==='speed'?'':'none';$('hint').textContent=HINT[SU.mode]}
+chips('gMode',[['SPEED RUN','speed'],['ACCURACY MASTER','accuracy'],['ENDLESS','endless'],['PRACTICE','practice']],'mode');
+chips('gT',[['30 SEC',30],['60 SEC',60],['120 SEC',120]],'dur');
+chips('gD',DN.map((n,i)=>[n,i]),'d');
+$('cat').innerHTML='<option value="">Mixed topics</option>'+cats.map(c=>'<option>'+c+'</option>').join('');$('cat').onchange=e=>SU.cat=e.target.value;
+function openSetup(m){SU.mode=m;sync();show('setup')}
+function renderStats(){const T=S.tot,B=S.best,n=T.n;$('sGrid').innerHTML=[['Best WPM',B.wpm],['Average WPM',n?Math.round(T.sw/n):0],['Best Accuracy',B.acc+'%'],['Average Accuracy',(n?Math.round(T.sa/n):0)+'%'],['Total Words',T.words.toLocaleString()],['Total Characters',T.chars.toLocaleString()],['Total Errors',T.errs.toLocaleString()],['Highest Combo',B.combo],['Games Played',n],['Best Score',B.score.toLocaleString()],['Best 30s Run',B.t30.toLocaleString()],['Best 60s Run',B.t60.toLocaleString()],['Best 120s Run',B.t120.toLocaleString()]].map(([l,v])=>'<div class="tile"><b>'+v+'</b><small>'+l.toUpperCase()+'</small></div>').join('')}
+function renderCh(){const i=dInfo(),r=S.daily[i.k];$('dTitle').textContent=i.cat.toUpperCase();$('dMeta').textContent=DN[i.d]+' · 60 seconds';$('dBest').textContent=r?"Today's best: "+r.score.toLocaleString()+' pts · '+r.wpm+' WPM · '+r.acc+'%':'Not attempted yet today'}
+const TL={snd:()=>'🔊 SOUND: '+(S.set.snd?'ON':'OFF'),mus:()=>'🎵 MUSIC: '+(S.set.mus?'ON':'OFF'),rm:()=>'REDUCED MOTION: '+(S.set.rm?'ON':'OFF')};
+function syncSet(){document.body.classList.toggle('rm',!!S.set.rm);document.querySelectorAll('[data-t]').forEach(b=>{const f=TL[b.dataset.t];if(f)b.textContent=f()})}
+const ACT={startSetup(){startGame({mode:SU.mode,dur:SU.mode==='accuracy'?60:+SU.dur,d:+SU.d,cat:SU.cat,daily:null})},
+ startDaily(){const i=dInfo();startGame({mode:'speed',dur:60,d:i.d,cat:i.cat,daily:i.k})},
+ pause,resume,restart(){startGame(G.opts)},again(){startGame(G.opts)},prac(){startGame({mode:'practice',d:G.opts?G.opts.d:1,cat:G.opts?G.opts.cat:'',daily:null})},
+ quit(){clearTimeout(G.cdt);if((G.pr||G.mode==='endless')&&G.cor>0)finish();else goMenu()},
+ reset(){if(confirm('Delete all Typing Rush scores and settings on this device?')){try{localStorage.removeItem('typingrush')}catch(e){}S=JSON.parse(JSON.stringify(DEF));syncSet();toast('Saved data cleared.')}}};
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;unlock();const g=b.dataset.go,a=b.dataset.a,t=b.dataset.t;
+ if(g){const[s,m]=g.split(':');s==='setup'?openSetup(m):show(s)}
+ else if(t){if(t==='fs')fs();else{S.set[t]=S.set[t]?0:1;save();syncSet();if(t==='mus')music()}}
+ else if(a&&ACT[a])ACT[a]()});
+$('arena').addEventListener('pointerdown',()=>{if(G.state==='run')inp.focus({preventScroll:true})});
+$('tap').addEventListener('pointerdown',e=>{e.preventDefault();inp.focus({preventScroll:true})});
+inp.addEventListener('input',onInput);
+inp.addEventListener('focus',()=>$('tap').classList.remove('on'));
+inp.addEventListener('blur',()=>{if(G.state==='run'||G.state==='count')setTimeout(()=>{if(document.activeElement!==inp&&(G.state==='run'||G.state==='count'))$('tap').classList.add('on')},150)});
+['paste','drop','cut','contextmenu'].forEach(ev=>inp.addEventListener(ev,e=>e.preventDefault()));
+inp.addEventListener('beforeinput',e=>{if(/paste|drop|Replacement/i.test(e.inputType||''))e.preventDefault()});
+inp.addEventListener('keydown',e=>{if(e.repeat||e.key==='Tab')e.preventDefault()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){G.state==='run'?pause():G.state==='pause'&&resume();return}
+ if(G.state==='run'&&document.activeElement!==inp&&e.key.length===1&&!e.ctrlKey&&!e.metaKey)inp.focus({preventScroll:true})});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});addEventListener('blur',()=>pause());
+addEventListener('touchmove',e=>{if(G.state==='run'||G.state==='count')e.preventDefault()},{passive:false});
+/* ---------- diagnostics ---------- */
+window.runTypingRushDiagnostics=function(){const out=[];const T=(n,f)=>{let ok=false,note='';try{ok=f()===true}catch(e){note=e.message}out.push({test:n,result:ok?'PASS':'FAIL',note})};
+ T('localStorage',()=>{localStorage.setItem('trd','1');const v=localStorage.getItem('trd')==='1';localStorage.removeItem('trd');return v});
+ T('WPM calculation',()=>calcWPM(250,60000,1)===50&&calcWPM(0,5000)===0);
+ T('Accuracy calculation',()=>calcAcc(95,5)===95&&calcAcc(0,0)===100);
+ startGame({mode:'speed',dur:30,d:1,cat:'',daily:null});clearTimeout(G.cdt);G.state='run';
+ const sim=s=>{G.lastK=-1e3;inp.value=G.typed+s;onInput()};
+ T('Input focus',()=>document.activeElement===inp);
+ T('Keyboard input',()=>{const w=G.word;sim(w[0]);return G.cor===1&&G.combo===1&&G.typed===w[0]});
+ T('Mobile input setup',()=>{const cs=getComputedStyle(inp);return parseFloat(cs.fontSize)>=16&&inp.getAttribute('autocomplete')==='off'&&!!document.querySelector('meta[name=viewport]')});
+ T('Paste / multi-char blocked',()=>{const t=G.typed;inp.value=t+'zzzz';onInput();return G.typed===t&&inp.value===t});
+ T('Wrong key + backspace',()=>{const e=G.err,x=G.word[G.typed.length]==='~'?'!':'~';sim(x);const a=G.err===e+1&&G.combo===0;inp.value=G.typed.slice(0,-1);onInput();return a&&G.typed.length===1});
+ T('Word complete + score + combo',()=>{const w0=G.words,s0=G.score,w=G.word;for(const c of w.slice(G.typed.length))sim(c);return G.words===w0+1&&G.score>s0&&G.combo>0});
+ T('Rush Mode',()=>{gain(100);return G.rush>0&&app.classList.contains('rush')});
+ T('Timer',()=>{const l=G.left;tick(1000);return G.left===l-1000});
+ T('Pause',()=>{pause();const c=G.cor,p=G.state==='pause';sim('a');const ok=p&&G.cor===c;resume();return ok&&G.state==='run'});
+ T('Restart',()=>{ACT.restart();clearTimeout(G.cdt);return G.cor===0&&G.score===0&&G.el===0});
+ T('Responsive layout (no horizontal overflow)',()=>document.documentElement.scrollWidth<=innerWidth+1&&app.scrollWidth<=app.clientWidth+1);
+ T('Fullscreen API available',()=>!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen));
+ T('Sound settings persist',()=>{const s=S.set.snd;S.set.snd=s?0:1;save();const ok=JSON.parse(localStorage.getItem('typingrush')).set.snd===S.set.snd;S.set.snd=s;save();return ok});
+ goMenu();console.table(out);const f=out.filter(r=>r.result==='FAIL').length;
+ console.log(f?'%c'+f+' test(s) FAILED':'%cAll '+out.length+' tests PASSED',f?'color:#ff5d73;font-weight:bold':'color:#25e0bd;font-weight:bold');return out};
+/* ---------- init ---------- */
+syncSet();sync();fit();show('menu');requestAnimationFrame(loop);
+</script></body></html>
